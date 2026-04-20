@@ -80,33 +80,12 @@ formatting again and again…</p>
 <li><p>Attempt to ensure each column and row is suitably sized</p></li>
 <li><p>Font set to “Tahoma” “10”</p></li>
 </ul>
-<table style="width:100%;">
-<colgroup>
-<col style="width: 99%" />
-</colgroup>
-<thead>
-<tr>
-<th>Before</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><blockquote>
+<h4 id="before">Before</h4>
 <p><img src="./media/image6.png"
 style="width:5.27184in;height:1.65339in" /></p>
-</blockquote></td>
-</tr>
-<tr>
-<td>After</td>
-</tr>
-<tr>
-<td><blockquote>
+<h4 id="after">After</h4>
 <p><img src="./media/image7.png"
 style="width:5.78918in;height:1.6338in" /></p>
-</blockquote></td>
-</tr>
-</tbody>
-</table>
 <p><strong>Don’t Use:</strong></p>
 <ul>
 <li><p>On blank spreadsheets</p></li>
@@ -305,69 +284,62 @@ that this data is to be loaded.</p></li>
 <li><p>Possibly optional: Nexus 6 requires fields to be specifically
 named</p></li>
 </ul>
-<table>
-<colgroup>
-<col style="width: 44%" />
-<col style="width: 55%" />
-</colgroup>
-<thead>
-<tr>
-<th colspan="2"><p><img src="./media/image8.png"
-style="width:7.31806in;height:0.35903in" /></p>
-<p>Default column names in processed ROV Track provided by
-Survey</p></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><img src="./media/image9.png"
-style="width:2.54398in;height:1.90798in" /></td>
-<td>When you click "Rename Columns", you will see this dialog.</td>
-</tr>
-<tr>
-<td><img src="./media/image10.png"
-style="width:3.00941in;height:1.63291in" /></td>
-<td><p>The first button will create the required "ColumnNames" tabsheet,
+<h4 id="workflow">Workflow:</h4>
+<ul>
+<li><p>Default column names in processed ROV Track provided by DOF
+Survey</p>
+<ul>
+<li><p><img src="./media/image8.png"
+style="width:7.31806in;height:0.35903in" /></p></li>
+</ul></li>
+<li><p>When you click "Rename Columns", you will see this dialog.</p>
+<ul>
+<li><p><img src="./media/image9.png"
+style="width:2.54398in;height:1.90798in" /></p></li>
+</ul></li>
+<li><p>The first button will create the required "ColumnNames" tabsheet,
 and populate it with defaults values.</p>
-<p>Ensure you are confident these mappings are correct, and ensure the
-"Default Value" column is correctly populated for the Survey Set you
+<ul>
+<li><p>Ensure you are confident these mappings are correct, and ensure
+the "Default Value" column is correctly populated for the Survey Set you
 have created in Nexus 6. Unfortunately, you will need to ensure this is
-correct each and every time, there is no "Save" routine.</p>
-<p><strong>Recommendation</strong>: Create &amp; save your own tab sheet
-"ColumnNames" and copy / paste from there to here each time instead of
-using this button to create the defaults.</p>
-<p><strong>Note</strong>: There is no renaming for "Survey Data.Data
-Set" as this column is not provided in the original survey file</p></td>
-</tr>
-<tr>
-<td><img src="./media/image11.png"
-style="width:2.6462in;height:0.39589in" /></td>
-<td><p>Ensure you have the Tabsheet with the survey data selected
+correct each and every time, there is no "Save" routine.</p></li>
+<li><p><strong>Recommendation</strong>: Create &amp; save your own tab
+sheet "ColumnNames" and copy / paste from there to here each time
+instead of using this button to create the defaults.</p></li>
+<li><p><strong>Note</strong>: There is no renaming for "Survey Data.Data
+Set" as this column is not provided in the original survey file</p></li>
+<li><p><img src="./media/image10.png"
+style="width:3.00941in;height:1.63291in" /></p></li>
+</ul></li>
+<li><p>Ensure you have the Tabsheet with the survey data selected
 first.</p>
-<p>This button renames all the columns in survey data from their
-original values to their new values.</p>
-<p>i.e. "Date Time" column is renamed to "Survey Data.Clock"</p>
-<p>This button will additionally create any column not present.
-<strong>"Survey Data.Survey Set"</strong> for example, is not in the
-original file supplied by Survey. But when you click this button, it
-will be created and populated with the value in the "Default Value"
-Column</p></td>
-</tr>
-<tr>
-<td colspan="2"><p><img src="./media/image12.png"
-style="width:7.31806in;height:0.22847in" /></p>
-<p>First few renamed columns</p></td>
-</tr>
-<tr>
-<td><img src="./media/image13.png"
-style="width:2.55244in;height:0.33338in" /></td>
-<td><p>This button is really just for testing, allowing me to test
+<ul>
+<li><p>This button renames all the columns in survey data from their
+original values to their new values.</p></li>
+<li><p>i.e. "Date Time" column is renamed to "Survey
+Data.Clock"</p></li>
+<li><p>This button will additionally create any column not present.
+"Survey Data.Survey Set" for example, is not in the original file
+supplied by Survey. But when you click this button, it will be created
+and populated with the value in the "Default Value" Column</p></li>
+<li><p><img src="./media/image11.png"
+style="width:2.6462in;height:0.39589in" /></p></li>
+</ul></li>
+<li><p>First few renamed columns</p>
+<ul>
+<li><p><img src="./media/image12.png"
+style="width:7.31806in;height:0.22847in" /></p></li>
+</ul></li>
+<li><p>This button is really just for testing, allowing me to test
 multiple times without reloading the data.</p>
-<p><strong>Note</strong>: This does not delete the "Survey Data.Data
-Set" column</p></td>
-</tr>
-</tbody>
-</table>
+<ul>
+<li><p><strong>Note</strong>: This does not delete the "Survey Data.Data
+Set" column</p></li>
+<li><p><img src="./media/image13.png"
+style="width:2.55244in;height:0.33338in" /></p></li>
+</ul></li>
+</ul>
 <p><strong>Warning</strong>: If you are dealing with CSV files, and you
 have the "ColumnNames" tabsheet visible when you click save, then all
 the Survey Data will be lost, replaced with the Column Mappings. Please
@@ -418,30 +390,6 @@ locations)</p></li>
 Proprietry Code, added unit tests, added routines for Fugro software,
 refactoring</p></li>
 </ul>
-<table>
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 32%" />
-</colgroup>
-<thead>
-<tr>
-<th><p><strong>Dec 2017:</strong></p>
-<blockquote>
-<p><img src="./media/image14.png"
-style="width:1.93341in;height:2.00478in" /></p>
-</blockquote></th>
-<th><p><strong>Aug 2022</strong></p>
-<p><img src="./media/image15.png"
-style="width:1.87966in;height:3.05976in" /></p></th>
-<th><p><strong>Apr 2026</strong></p>
-<p><img src="./media/image16.png"
-style="width:1.37199in;height:3.8541in" /></p></th>
-</tr>
-</thead>
-<tbody>
-</tbody>
-</table>
 <p>There’s been no version management of this code. I don’t want to talk
 about how many changes I’ve lost or mismanaged over the years… (2026
 started prep for addition to github)</p>

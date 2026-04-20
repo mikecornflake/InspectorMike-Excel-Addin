@@ -102,15 +102,13 @@ Designed to perform simple formatting on tabular data:
 
 - Font set to "Tahoma" "10"
 
-+----------------------------------------------------------------------+
-| Before                                                               |
-+======================================================================+
-| > ![](./media/image6.png){style="width:5.27184in;height:1.65339in"}  |
-+----------------------------------------------------------------------+
-| After                                                                |
-+----------------------------------------------------------------------+
-| > ![](./media/image7.png){style="width:5.78918in;height:1.6338in"}   |
-+----------------------------------------------------------------------+
+#### Before
+
+![](./media/image6.png){style="width:5.27184in;height:1.65339in"}
+
+#### After
+
+![](./media/image7.png){style="width:5.78918in;height:1.6338in"}
 
 **Don't Use:**
 
@@ -363,71 +361,57 @@ names, and the new.
 
 - Possibly optional: Nexus 6 requires fields to be specifically named
 
-+-----------------------------------------------------------------------------------------------------------+
-| ![](./media/image8.png){style="width:7.31806in;height:0.35903in"}                                         |
-|                                                                                                           |
-| Default column names in processed ROV Track provided by Survey                                            |
-+====================================================================+======================================+
-| ![](./media/image9.png){style="width:2.54398in;height:1.90798in"}  | When you click \"Rename Columns\",   |
-|                                                                    | you will see this dialog.            |
-+--------------------------------------------------------------------+--------------------------------------+
-| ![](./media/image10.png){style="width:3.00941in;height:1.63291in"} | The first button will create the     |
-|                                                                    | required \"ColumnNames\" tabsheet,   |
-|                                                                    | and populate it with defaults        |
-|                                                                    | values.                              |
-|                                                                    |                                      |
-|                                                                    | Ensure you are confident these       |
-|                                                                    | mappings are correct, and ensure the |
-|                                                                    | \"Default Value\" column is          |
-|                                                                    | correctly populated for the Survey   |
-|                                                                    | Set you have created in Nexus 6.     |
-|                                                                    | Unfortunately, you will need to      |
-|                                                                    | ensure this is correct each and      |
-|                                                                    | every time, there is no \"Save\"     |
-|                                                                    | routine.                             |
-|                                                                    |                                      |
-|                                                                    | **Recommendation**: Create & save    |
-|                                                                    | your own tab sheet \"ColumnNames\"   |
-|                                                                    | and copy / paste from there to here  |
-|                                                                    | each time instead of using this      |
-|                                                                    | button to create the defaults.       |
-|                                                                    |                                      |
-|                                                                    | **Note**: There is no renaming for   |
-|                                                                    | \"Survey Data.Data Set\" as this     |
-|                                                                    | column is not provided in the        |
-|                                                                    | original survey file                 |
-+--------------------------------------------------------------------+--------------------------------------+
-| ![](./media/image11.png){style="width:2.6462in;height:0.39589in"}  | Ensure you have the Tabsheet with    |
-|                                                                    | the survey data selected first.      |
-|                                                                    |                                      |
-|                                                                    | This button renames all the columns  |
-|                                                                    | in survey data from their original   |
-|                                                                    | values to their new values.          |
-|                                                                    |                                      |
-|                                                                    | i.e. \"Date Time\" column is renamed |
-|                                                                    | to \"Survey Data.Clock\"             |
-|                                                                    |                                      |
-|                                                                    | This button will additionally create |
-|                                                                    | any column not present. **\"Survey   |
-|                                                                    | Data.Survey Set\"** for example, is  |
-|                                                                    | not in the original file supplied by |
-|                                                                    | Survey. But when you click this      |
-|                                                                    | button, it will be created and       |
-|                                                                    | populated with the value in the      |
-|                                                                    | \"Default Value\" Column             |
-+--------------------------------------------------------------------+--------------------------------------+
-| ![](./media/image12.png){style="width:7.31806in;height:0.22847in"}                                        |
-|                                                                                                           |
-| First few renamed columns                                                                                 |
-+--------------------------------------------------------------------+--------------------------------------+
-| ![](./media/image13.png){style="width:2.55244in;height:0.33338in"} | This button is really just for       |
-|                                                                    | testing, allowing me to test         |
-|                                                                    | multiple times without reloading the |
-|                                                                    | data.                                |
-|                                                                    |                                      |
-|                                                                    | **Note**: This does not delete the   |
-|                                                                    | \"Survey Data.Data Set\" column      |
-+--------------------------------------------------------------------+--------------------------------------+
+#### Workflow:
+
+- Default column names in processed ROV Track provided by DOF Survey
+
+  - ![](./media/image8.png){style="width:7.31806in;height:0.35903in"}
+
+- When you click \"Rename Columns\", you will see this dialog.
+
+  - ![](./media/image9.png){style="width:2.54398in;height:1.90798in"}
+
+- The first button will create the required \"ColumnNames\" tabsheet,
+  and populate it with defaults values.
+
+  - Ensure you are confident these mappings are correct, and ensure the
+    \"Default Value\" column is correctly populated for the Survey Set
+    you have created in Nexus 6. Unfortunately, you will need to ensure
+    this is correct each and every time, there is no \"Save\" routine.
+
+  - **Recommendation**: Create & save your own tab sheet \"ColumnNames\"
+    and copy / paste from there to here each time instead of using this
+    button to create the defaults.
+
+  - **Note**: There is no renaming for \"Survey Data.Data Set\" as this
+    column is not provided in the original survey file
+
+  - ![](./media/image10.png){style="width:3.00941in;height:1.63291in"}
+
+- Ensure you have the Tabsheet with the survey data selected first.
+
+  - This button renames all the columns in survey data from their
+    original values to their new values.
+
+  - i.e. \"Date Time\" column is renamed to \"Survey Data.Clock\"
+
+  - This button will additionally create any column not present.
+    \"Survey Data.Survey Set\" for example, is not in the original file
+    supplied by Survey. But when you click this button, it will be
+    created and populated with the value in the \"Default Value\" Column
+
+  - ![](./media/image11.png){style="width:2.6462in;height:0.39589in"}
+
+- First few renamed columns
+
+  - ![](./media/image12.png){style="width:7.31806in;height:0.22847in"}
+
+- This button is really just for testing, allowing me to test multiple
+  times without reloading the data.
+
+  - **Note**: This does not delete the \"Survey Data.Data Set\" column
+
+  - ![](./media/image13.png){style="width:2.55244in;height:0.33338in"}
 
 **Warning**: If you are dealing with CSV files, and you have the
 \"ColumnNames\" tabsheet visible when you click save, then all the
@@ -494,12 +478,6 @@ All of these work on the selected cells.
 - 2025 Mike Thompson back to freelance. Addin renamed. Removed DOF
   Proprietry Code, added unit tests, added routines for Fugro software,
   refactoring
-
-+----------------------------------------------------------------------+--------------------------------------------------------------------+-------------------------------------------------------------------+
-| **Dec 2017:**                                                        | **Aug 2022**                                                       | **Apr 2026**                                                      |
-|                                                                      |                                                                    |                                                                   |
-| > ![](./media/image14.png){style="width:1.93341in;height:2.00478in"} | ![](./media/image15.png){style="width:1.87966in;height:3.05976in"} | ![](./media/image16.png){style="width:1.37199in;height:3.8541in"} |
-+======================================================================+====================================================================+===================================================================+
 
 There's been no version management of this code. I don't want to talk
 about how many changes I've lost or mismanaged over the years... (2026
