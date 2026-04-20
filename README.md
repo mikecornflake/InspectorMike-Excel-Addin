@@ -501,21 +501,6 @@ started prep for addition to github)
 
 2018: Ribbon UI handled through OfficeCustomUIEditorSetup.msi
 
-On a vessel for Chevron:
-
-- Z:\\Administration\\03. Equipment\\01. Software\\Microsoft
-  Office\\Excel Addin\\Edit Software
-
-On a vessel for Shell Prelude:
-
-- Y:\\Administration\\03. Equipment\\01. Software\\Microsoft
-  Office\\Excel Addin\\Edit Software
-
-In the Perth INSPECTORMIKE Office:
-
-- I:\\Departments\\14 Inspection\\08 Software\\INSPECTORMIKE Excel
-  Addin\\Edit Software
-
 2022 -- Ribbon UI management moved to forked project following Microsoft
 dropping support for the original
 
