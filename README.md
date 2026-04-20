@@ -1,8 +1,8 @@
-# Inspector Mike - Excel Addin {#inspector-mike---excel-addin .TOC-Heading}
+# Inspector Mike - Excel Addin 
 
 ## Background
 
-![](./media/image1.png){style="width:5.89666in;height:1.34394in"}
+![](./media/image1.png)
 
 The routines contained within InspectorMike_Addin.xlam have been
 developed over time, being started in 2004.
@@ -30,12 +30,12 @@ They are designed to:
   - (Just paste %appdata%\\Microsoft\\Addins into the address bar in
     Windows explorer and hit enter)
 
-  - ![](./media/image2.png){style="width:4.0379in;height:1.06037in"}
+  - ![](./media/image2.png)
 
 - Once InspectorMike_Addin.xlam is installed in the correct folder, Open
   Excel, then navigate to File -- Options -- Add-ins -- "Go..."
 
-  - ![](./media/image3.png){style="width:3.21647in;height:2.76503in"}
+  - ![](./media/image3.png)
 
 ## Upgrade
 
@@ -77,17 +77,17 @@ They are designed to:
 
 ### About
 
-![](./media/image1.png){style="width:5.89666in;height:1.34394in"}
+![](./media/image1.png)
 
 Primarily implemented to allow versioning using the "Last Updated" date
 and "Recent Changes". Opens a web page. Excel will mildly complain, go
 ahead and allow it to open this page.
 
-![](./media/image4.png){style="width:5.93206in;height:6.57548in"}
+![](./media/image4.png)
 
 ### Basic Table Tidy
 
-![](./media/image5.png){style="width:5.8951in;height:1.34358in"}
+![](./media/image5.png)
 
 This routine was developed because I got annoyed performing the same
 formatting again and again...
@@ -104,11 +104,11 @@ Designed to perform simple formatting on tabular data:
 
 #### Before
 
-![](./media/image6.png){style="width:5.27184in;height:1.65339in"}
+![](./media/image6.png)
 
 #### After
 
-![](./media/image7.png){style="width:5.78918in;height:1.6338in"}
+![](./media/image7.png)
 
 **Don't Use:**
 
@@ -120,7 +120,7 @@ Designed to perform simple formatting on tabular data:
 
 ### Export Current Sheet As CSV
 
-![](./media/image5.png){style="width:5.8951in;height:1.34358in"}
+![](./media/image5.png)
 
 This was developed during the 2016 Chevron Pipeline processing. As part
 of the processing, data is exported from VisualEdit in Excel or CSV
@@ -155,7 +155,7 @@ this will work on all worksheets that contain tabular data.
 
 ### Save As PDF and Exit
 
-![](./media/image5.png){style="width:5.8951in;height:1.34358in"}
+![](./media/image5.png)
 
 Designed for preparing a whole slew of appendices during final reporting
 (INSPECTORMIKE Doc Control insisted that all spreadsheets be
@@ -172,7 +172,7 @@ wide). It assumes this has already been performed.
 
 ### Interpolate NAV to 3 Sec
 
-![](./media/image5.png){style="width:5.8951in;height:1.34358in"}
+![](./media/image5.png)
 
 Developed primarily for Malmapaya after they moved from Nexus 5 to Nexus
 6.
@@ -257,7 +257,7 @@ until you click save.
 
 ### Format Standard Columns
 
-![](./media/image5.png){style="width:5.8951in;height:1.34358in"}
+![](./media/image5.png)
 
 This was written to format large CSV files prior to being saved, though
 it can be used on data formatted as a Table. This does much the same as
@@ -347,7 +347,7 @@ be lost until you click save.
 
 ### Rename Columns
 
-![](./media/image5.png){style="width:5.8951in;height:1.34358in"}
+![](./media/image5.png)
 
 This routine requires a new Excel worksheet called \"ColumnNames\". This
 new worksheet manages the relationship between the existing column
@@ -365,11 +365,11 @@ names, and the new.
 
 - Default column names in processed ROV Track provided by DOF Survey
 
-  - ![](./media/image8.png){style="width:7.31806in;height:0.35903in"}
+  - ![](./media/image8.png)
 
 - When you click \"Rename Columns\", you will see this dialog.
 
-  - ![](./media/image9.png){style="width:2.54398in;height:1.90798in"}
+  - ![](./media/image9.png)
 
 - The first button will create the required \"ColumnNames\" tabsheet,
   and populate it with defaults values.
@@ -386,7 +386,7 @@ names, and the new.
   - **Note**: There is no renaming for \"Survey Data.Data Set\" as this
     column is not provided in the original survey file
 
-  - ![](./media/image10.png){style="width:3.00941in;height:1.63291in"}
+  - ![](./media/image10.png)
 
 - Ensure you have the Tabsheet with the survey data selected first.
 
@@ -400,18 +400,18 @@ names, and the new.
     supplied by Survey. But when you click this button, it will be
     created and populated with the value in the \"Default Value\" Column
 
-  - ![](./media/image11.png){style="width:2.6462in;height:0.39589in"}
+  - ![](./media/image11.png)
 
 - First few renamed columns
 
-  - ![](./media/image12.png){style="width:7.31806in;height:0.22847in"}
+  - ![](./media/image12.png)
 
 - This button is really just for testing, allowing me to test multiple
   times without reloading the data.
 
   - **Note**: This does not delete the \"Survey Data.Data Set\" column
 
-  - ![](./media/image13.png){style="width:2.55244in;height:0.33338in"}
+  - ![](./media/image13.png)
 
 **Warning**: If you are dealing with CSV files, and you have the
 \"ColumnNames\" tabsheet visible when you click save, then all the
@@ -421,7 +421,7 @@ save.
 
 ### Formatting
 
-![](./media/image5.png){style="width:5.8951in;height:1.34358in"}
+![](./media/image5.png)
 
 Restores missing functionality to Excel. For use when processing
 anomalies in Excel.
