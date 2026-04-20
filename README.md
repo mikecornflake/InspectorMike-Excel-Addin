@@ -1,54 +1,48 @@
 # Contents {#contents .TOC-Heading}
 
-[1 Inspector Mike - Excel Addin
-[2](#inspector-mike---excel-addin)](#inspector-mike---excel-addin)
+[1 Inspector Mike - Excel Addin 2](#inspector-mike---excel-addin)
 
-[1.1 Background [2](#background)](#background)
+[1.1 Background 2](#background)
 
-[1.2 Installation [3](#installation)](#installation)
+[1.2 Installation 3](#installation)
 
-[1.3 Upgrade [4](#upgrade)](#upgrade)
+[1.3 Upgrade 4](#upgrade)
 
-[1.4 Operation [4](#operation)](#operation)
+[1.4 Operation 4](#operation)
 
-[1.4.1 Warnings [4](#warnings)](#warnings)
+[1.4.1 Warnings 4](#warnings)
 
-[1.4.1 About [5](#about)](#about)
+[1.4.1 About 5](#about)
 
-[1.4.2 Basic Table Tidy [6](#basic-table-tidy)](#basic-table-tidy)
+[1.4.2 Basic Table Tidy 6](#basic-table-tidy)
 
-[1.4.3 Export Current Sheet As CSV
-[7](#export-current-sheet-as-csv)](#export-current-sheet-as-csv)
+[1.4.3 Export Current Sheet As CSV 7](#export-current-sheet-as-csv)
 
-[1.4.4 Save As PDF and Exit
-[7](#save-as-pdf-and-exit)](#save-as-pdf-and-exit)
+[1.4.4 Save As PDF and Exit 7](#save-as-pdf-and-exit)
 
-[1.4.5 Tidy Event Export [8](#_Toc227597252)](#_Toc227597252)
+[1.4.5 Tidy Event Export 8](#_Toc227597252)
 
-[1.4.6 Interpolate NAV to 3 Sec
-[10](#interpolate-nav-to-3-sec)](#interpolate-nav-to-3-sec)
+[1.4.6 Interpolate NAV to 3 Sec 10](#interpolate-nav-to-3-sec)
 
-[1.4.7 Format Standard Columns
-[11](#format-standard-columns)](#format-standard-columns)
+[1.4.7 Format Standard Columns 11](#format-standard-columns)
 
-[1.4.8 Rename Columns [12](#rename-columns)](#rename-columns)
+[1.4.8 Rename Columns 12](#rename-columns)
 
-[1.4.9 Process Event Export [13](#_Toc227597256)](#_Toc227597256)
+[1.4.9 Process Event Export 13](#_Toc227597256)
 
-[1.4.1 Formatting [13](#formatting)](#formatting)
+[1.4.1 Formatting 13](#formatting)
 
-[2 History [14](#history)](#history)
+[2 History 14](#history)
 
-[2.1 TODO [15](#todo)](#todo)
+[2.1 TODO 15](#todo)
 
-[3 Development Notes [16](#development-notes)](#development-notes)
+[3 Development Notes 16](#development-notes)
 
 # Inspector Mike - Excel Addin
 
 ## Background
 
-![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image1.png){width="5.896655730533683in"
-height="1.3439370078740158in"}
+![](media/image1.png){style="width:5.89666in;height:1.34394in"}
 
 The routines contained within InspectorMike_Addin.xlam have been
 developed over time, being started in 2004.
@@ -64,35 +58,37 @@ They are designed to:
 
 ## Installation
 
-+-----------------------------------------------------------------------------------------------------------------------------------------------------+
-| Close Excel, and use Task Manager to ensure there isn\'t a frozen instance of Excel still present                                                   |
-+=====================================+===============================================================================================================+
-| Find "InspectorMike_Addin.xlam"     | On a vessel for Chevron:                                                                                      |
-|                                     |                                                                                                               |
-|                                     | - Z:\\Administration\\03. Equipment\\01. Software\\Microsoft Office\\Excel Addin                              |
-+-------------------------------------+---------------------------------------------------------------------------------------------------------------+
-| Copy "InspectorMike_Addin.xlam" to  | Destination folder has to be: **%appdata%\\Microsoft\\Addins**                                                |
-| the correct location on your PC     |                                                                                                               |
-|                                     | (Just paste %appdata%\\Microsoft\\Addins into the address bar in Windows explorer and hit enter)              |
-|                                     |                                                                                                               |
-|                                     | ![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image2.png){width="4.037900262467192in"  |
-|                                     | height="1.060372922134733in"}                                                                                 |
-+-------------------------------------+---------------------------------------------------------------------------------------------------------------+
-| Once InspectorMike_Addin.xlam is    | ![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image3.png){width="3.2164676290463694in" |
-| installed in the correct folder,    | height="2.7650339020122483in"}                                                                                |
-| Open Excel, then navigate to File   |                                                                                                               |
-| -- Options -- Add-ins -- "Go..."    |                                                                                                               |
-+-------------------------------------+---------------------------------------------------------------------------------------------------------------+
-| Click Browse, navigate to           | ![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image4.png){width="2.088487532808399in"  |
-| **"%appdata%\\Microsoft\\Addins"**  | height="2.853086176727909in"}                                                                                 |
-| and select                          |                                                                                                               |
-| "InspectorMike_Addin.xlam"          |                                                                                                               |
-+-------------------------------------+---------------------------------------------------------------------------------------------------------------+
-| Congratulations, you now have       | ![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image1.png){width="4.395897856517935in"  |
-| Inspector Mike Addins               | height="1.0018919510061242in"}                                                                                |
-+-------------------------------------+---------------------------------------------------------------------------------------------------------------+
-| Close and re-open Excel             | If this step isn't followed, then the add-in may need to be re-installed next time you run Excel              |
-+-------------------------------------+---------------------------------------------------------------------------------------------------------------+
++------------------------------------------------------------------------------------------------------+
+| Close Excel, and use Task Manager to ensure there isn\'t a frozen instance of Excel still present    |
++====================================+=================================================================+
+| Find "InspectorMike_Addin.xlam"    | On a vessel for Chevron:                                        |
+|                                    |                                                                 |
+|                                    | - Z:\\Administration\\03. Equipment\\01. Software\\Microsoft    |
+|                                    |   Office\\Excel Addin                                           |
++------------------------------------+-----------------------------------------------------------------+
+| Copy "InspectorMike_Addin.xlam" to | Destination folder has to be: **%appdata%\\Microsoft\\Addins**  |
+| the correct location on your PC    |                                                                 |
+|                                    | (Just paste %appdata%\\Microsoft\\Addins into the address bar   |
+|                                    | in Windows explorer and hit enter)                              |
+|                                    |                                                                 |
+|                                    | ![](media/image2.png){style="width:4.0379in;height:1.06037in"}  |
++------------------------------------+-----------------------------------------------------------------+
+| Once InspectorMike_Addin.xlam is   | ![](media/image3.png){style="width:3.21647in;height:2.76503in"} |
+| installed in the correct folder,   |                                                                 |
+| Open Excel, then navigate to File  |                                                                 |
+| -- Options -- Add-ins -- "Go..."   |                                                                 |
++------------------------------------+-----------------------------------------------------------------+
+| Click Browse, navigate to          | ![](media/image4.png){style="width:2.08849in;height:2.85309in"} |
+| **"%appdata%\\Microsoft\\Addins"** |                                                                 |
+| and select                         |                                                                 |
+| "InspectorMike_Addin.xlam"         |                                                                 |
++------------------------------------+-----------------------------------------------------------------+
+| Congratulations, you now have      | ![](media/image1.png){style="width:4.3959in;height:1.00189in"}  |
+| Inspector Mike Addins              |                                                                 |
++------------------------------------+-----------------------------------------------------------------+
+| Close and re-open Excel            | If this step isn't followed, then the add-in may need to be     |
+|                                    | re-installed next time you run Excel                            |
++------------------------------------+-----------------------------------------------------------------+
 
 ## Upgrade
 
@@ -134,20 +130,17 @@ They are designed to:
 
 ### About
 
-![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image1.png){width="5.896655730533683in"
-height="1.3439370078740158in"}
+![](media/image1.png){style="width:5.89666in;height:1.34394in"}
 
 Primarily implemented to allow versioning using the "Last Updated" date
 and "Recent Changes". Opens a web page. Excel will mildly complain, go
 ahead and allow it to open this page.
 
-![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image5.png){width="5.932064741907261in"
-height="6.575483377077865in"}
+![](media/image5.png){style="width:5.93206in;height:6.57548in"}
 
 ### Basic Table Tidy
 
-![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image6.png){width="5.895096237970254in"
-height="1.343581583552056in"}
+![](media/image6.png){style="width:5.8951in;height:1.34358in"}
 
 This routine was developed because I got annoyed performing the same
 formatting again and again...
@@ -162,17 +155,15 @@ Designed to perform simple formatting on tabular data:
 
 - Font set to "Tahoma" "10"
 
-+----------------------------------------------------------------------------------------------------------------+
-| Before                                                                                                         |
-+================================================================================================================+
-| > ![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image7.png){width="5.271844925634296in" |
-| > height="1.6533923884514437in"}                                                                               |
-+----------------------------------------------------------------------------------------------------------------+
-| After                                                                                                          |
-+----------------------------------------------------------------------------------------------------------------+
-| > ![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image8.png){width="5.78917760279965in"  |
-| > height="1.6338013998250218in"}                                                                               |
-+----------------------------------------------------------------------------------------------------------------+
++----------------------------------------------------------------------+
+| Before                                                               |
++======================================================================+
+| > ![](media/image7.png){style="width:5.27184in;height:1.65339in"}    |
++----------------------------------------------------------------------+
+| After                                                                |
++----------------------------------------------------------------------+
+| > ![](media/image8.png){style="width:5.78918in;height:1.6338in"}     |
++----------------------------------------------------------------------+
 
 **Don't Use:**
 
@@ -184,8 +175,7 @@ Designed to perform simple formatting on tabular data:
 
 ### Export Current Sheet As CSV
 
-![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image6.png){width="5.895096237970254in"
-height="1.343581583552056in"}
+![](media/image6.png){style="width:5.8951in;height:1.34358in"}
 
 This was developed during the 2016 Chevron Pipeline processing. As part
 of the processing, data is exported from VisualEdit in Excel or CSV
@@ -220,8 +210,7 @@ this will work on all worksheets that contain tabular data.
 
 ### Save As PDF and Exit
 
-![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image6.png){width="5.895096237970254in"
-height="1.343581583552056in"}
+![](media/image6.png){style="width:5.8951in;height:1.34358in"}
 
 Designed for preparing a whole slew of appendices during final reporting
 (INSPECTORMIKE Doc Control insisted that all spreadsheets be
@@ -238,8 +227,7 @@ wide). It assumes this has already been performed.
 
 ### Interpolate NAV to 3 Sec
 
-![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image6.png){width="5.895096237970254in"
-height="1.343581583552056in"}
+![](media/image6.png){style="width:5.8951in;height:1.34358in"}
 
 Developed primarily for Malmapaya after they moved from Nexus 5 to Nexus
 6.
@@ -324,8 +312,7 @@ until you click save.
 
 ### Format Standard Columns
 
-![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image6.png){width="5.895096237970254in"
-height="1.343581583552056in"}
+![](media/image6.png){style="width:5.8951in;height:1.34358in"}
 
 This was written to format large CSV files prior to being saved, though
 it can be used on data formatted as a Table. This does much the same as
@@ -415,8 +402,7 @@ be lost until you click save.
 
 ### Rename Columns
 
-![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image6.png){width="5.895096237970254in"
-height="1.343581583552056in"}
+![](media/image6.png){style="width:5.8951in;height:1.34358in"}
 
 This routine requires a new Excel worksheet called \"ColumnNames\". This
 new worksheet manages the relationship between the existing column
@@ -430,59 +416,71 @@ names, and the new.
 
 - Possibly optional: Nexus 6 requires fields to be specifically named
 
-+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image9.png){width="7.3180555555555555in" height="0.3590277777777778in"}                             |
-|                                                                                                                                                                          |
-| Default column names in processed ROV Track provided by Survey                                                                                                           |
-+================================================================================================================+=========================================================+
-| ![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image10.png){width="2.543976377952756in"  | When you click \"Rename Columns\", you will see this    |
-| height="1.907982283464567in"}                                                                                  | dialog.                                                 |
-+----------------------------------------------------------------------------------------------------------------+---------------------------------------------------------+
-| ![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image11.png){width="3.0094149168853894in" | The first button will create the required               |
-| height="1.632911198600175in"}                                                                                  | \"ColumnNames\" tabsheet, and populate it with defaults |
-|                                                                                                                | values.                                                 |
-|                                                                                                                |                                                         |
-|                                                                                                                | Ensure you are confident these mappings are correct,    |
-|                                                                                                                | and ensure the \"Default Value\" column is correctly    |
-|                                                                                                                | populated for the Survey Set you have created in Nexus  |
-|                                                                                                                | 6. Unfortunately, you will need to ensure this is       |
-|                                                                                                                | correct each and every time, there is no \"Save\"       |
-|                                                                                                                | routine.                                                |
-|                                                                                                                |                                                         |
-|                                                                                                                | **Recommendation**: Create & save your own tab sheet    |
-|                                                                                                                | \"ColumnNames\" and copy / paste from there to here     |
-|                                                                                                                | each time instead of using this button to create the    |
-|                                                                                                                | defaults.                                               |
-|                                                                                                                |                                                         |
-|                                                                                                                | **Note**: There is no renaming for \"Survey Data.Data   |
-|                                                                                                                | Set\" as this column is not provided in the original    |
-|                                                                                                                | survey file                                             |
-+----------------------------------------------------------------------------------------------------------------+---------------------------------------------------------+
-| ![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image12.png){width="2.6462029746281717in" | Ensure you have the Tabsheet with the survey data       |
-| height="0.39588910761154855in"}                                                                                | selected first.                                         |
-|                                                                                                                |                                                         |
-|                                                                                                                | This button renames all the columns in survey data from |
-|                                                                                                                | their original values to their new values.              |
-|                                                                                                                |                                                         |
-|                                                                                                                | i.e. \"Date Time\" column is renamed to \"Survey        |
-|                                                                                                                | Data.Clock\"                                            |
-|                                                                                                                |                                                         |
-|                                                                                                                | This button will additionally create any column not     |
-|                                                                                                                | present. **\"Survey Data.Survey Set\"** for example, is |
-|                                                                                                                | not in the original file supplied by Survey. But when   |
-|                                                                                                                | you click this button, it will be created and populated |
-|                                                                                                                | with the value in the \"Default Value\" Column          |
-+----------------------------------------------------------------------------------------------------------------+---------------------------------------------------------+
-| ![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image13.png){width="7.3180555555555555in" height="0.22847222222222222in"}                           |
-|                                                                                                                                                                          |
-| First few renamed columns                                                                                                                                                |
-+----------------------------------------------------------------------------------------------------------------+---------------------------------------------------------+
-| ![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image14.png){width="2.5524398512685913in" | This button is really just for testing, allowing me to  |
-| height="0.33338035870516186in"}                                                                                | test multiple times without reloading the data.         |
-|                                                                                                                |                                                         |
-|                                                                                                                | **Note**: This does not delete the \"Survey Data.Data   |
-|                                                                                                                | Set\" column                                            |
-+----------------------------------------------------------------------------------------------------------------+---------------------------------------------------------+
++---------------------------------------------------------------------------------------------------------+
+| ![](media/image9.png){style="width:7.31806in;height:0.35903in"}                                         |
+|                                                                                                         |
+| Default column names in processed ROV Track provided by Survey                                          |
++==================================================================+======================================+
+| ![](media/image10.png){style="width:2.54398in;height:1.90798in"} | When you click \"Rename Columns\",   |
+|                                                                  | you will see this dialog.            |
++------------------------------------------------------------------+--------------------------------------+
+| ![](media/image11.png){style="width:3.00941in;height:1.63291in"} | The first button will create the     |
+|                                                                  | required \"ColumnNames\" tabsheet,   |
+|                                                                  | and populate it with defaults        |
+|                                                                  | values.                              |
+|                                                                  |                                      |
+|                                                                  | Ensure you are confident these       |
+|                                                                  | mappings are correct, and ensure the |
+|                                                                  | \"Default Value\" column is          |
+|                                                                  | correctly populated for the Survey   |
+|                                                                  | Set you have created in Nexus 6.     |
+|                                                                  | Unfortunately, you will need to      |
+|                                                                  | ensure this is correct each and      |
+|                                                                  | every time, there is no \"Save\"     |
+|                                                                  | routine.                             |
+|                                                                  |                                      |
+|                                                                  | **Recommendation**: Create & save    |
+|                                                                  | your own tab sheet \"ColumnNames\"   |
+|                                                                  | and copy / paste from there to here  |
+|                                                                  | each time instead of using this      |
+|                                                                  | button to create the defaults.       |
+|                                                                  |                                      |
+|                                                                  | **Note**: There is no renaming for   |
+|                                                                  | \"Survey Data.Data Set\" as this     |
+|                                                                  | column is not provided in the        |
+|                                                                  | original survey file                 |
++------------------------------------------------------------------+--------------------------------------+
+| ![](media/image12.png){style="width:2.6462in;height:0.39589in"}  | Ensure you have the Tabsheet with    |
+|                                                                  | the survey data selected first.      |
+|                                                                  |                                      |
+|                                                                  | This button renames all the columns  |
+|                                                                  | in survey data from their original   |
+|                                                                  | values to their new values.          |
+|                                                                  |                                      |
+|                                                                  | i.e. \"Date Time\" column is renamed |
+|                                                                  | to \"Survey Data.Clock\"             |
+|                                                                  |                                      |
+|                                                                  | This button will additionally create |
+|                                                                  | any column not present. **\"Survey   |
+|                                                                  | Data.Survey Set\"** for example, is  |
+|                                                                  | not in the original file supplied by |
+|                                                                  | Survey. But when you click this      |
+|                                                                  | button, it will be created and       |
+|                                                                  | populated with the value in the      |
+|                                                                  | \"Default Value\" Column             |
++------------------------------------------------------------------+--------------------------------------+
+| ![](media/image13.png){style="width:7.31806in;height:0.22847in"}                                        |
+|                                                                                                         |
+| First few renamed columns                                                                               |
++------------------------------------------------------------------+--------------------------------------+
+| ![](media/image14.png){style="width:2.55244in;height:0.33338in"} | This button is really just for       |
+|                                                                  | testing, allowing me to test         |
+|                                                                  | multiple times without reloading the |
+|                                                                  | data.                                |
+|                                                                  |                                      |
+|                                                                  | **Note**: This does not delete the   |
+|                                                                  | \"Survey Data.Data Set\" column      |
++------------------------------------------------------------------+--------------------------------------+
 
 **Warning**: If you are dealing with CSV files, and you have the
 \"ColumnNames\" tabsheet visible when you click save, then all the
@@ -492,8 +490,7 @@ save.
 
 ### Formatting
 
-![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image6.png){width="5.895096237970254in"
-height="1.343581583552056in"}
+![](media/image6.png){style="width:5.8951in;height:1.34358in"}
 
 Restores missing functionality to Excel. For use when processing
 anomalies in Excel.
@@ -551,12 +548,11 @@ All of these work on the selected cells.
   Proprietry Code, added unit tests, added routines for Fugro software,
   refactoring
 
-+-----------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------+
-| **Dec 2017:**                                                                                                   | **Aug 2022**                                                                                                   | **Apr 2026**                                                                                                   |
-|                                                                                                                 |                                                                                                                |                                                                                                                |
-| > ![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image15.png){width="1.933409886264217in" | ![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image16.png){width="1.8796642607174103in" | ![](B:\Code\Office Macros\InspectorMike Excel Addin\Docs\media/media/image17.png){width="1.3719925634295713in" |
-| > height="2.0047845581802273in"}                                                                                | height="3.0597550306211723in"}                                                                                 | height="3.8541010498687664in"}                                                                                 |
-+=================================================================================================================+================================================================================================================+================================================================================================================+
++--------------------------------------------------------------------+------------------------------------------------------------------+-----------------------------------------------------------------+
+| **Dec 2017:**                                                      | **Aug 2022**                                                     | **Apr 2026**                                                    |
+|                                                                    |                                                                  |                                                                 |
+| > ![](media/image15.png){style="width:1.93341in;height:2.00478in"} | ![](media/image16.png){style="width:1.87966in;height:3.05976in"} | ![](media/image17.png){style="width:1.37199in;height:3.8541in"} |
++====================================================================+==================================================================+=================================================================+
 
 There's been no version management of this code. I don't want to talk
 about how many changes I've lost or mismanaged over the years... (2026
