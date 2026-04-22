@@ -35,7 +35,7 @@ They are designed to:
 - Once InspectorMike_Addin.xlam is installed in the correct folder, Open
   Excel, then navigate to File -- Options -- Add-ins -- "Go..."
 
-  - ![](./media/image3.png)
+  - ![](./media/image3.png | width=300)
 
 ## Upgrade
 
