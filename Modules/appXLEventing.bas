@@ -86,7 +86,7 @@ Public Function GetFormTypeForForm(ByVal pFormID As String) As String
     colFormID = FindColumnInSheet(wsForms, "FormID")
     colType = FindColumnInSheet(wsForms, "Type")
     
-    If (colFormID = 0) Or (colType = 0) Then Exit Function
+    If (colFormID <= 0) Or (colType <= 0) Then Exit Function
     
     lastRow = LastUsedRow(wsForms)
     
@@ -98,26 +98,6 @@ Public Function GetFormTypeForForm(ByVal pFormID As String) As String
             Exit Function
         End If
     Next iRow
-End Function
-
-' TODO Move this to LibraryWorksheet
-Public Function IsWorksheetRowPopulated(ByVal pWS As Worksheet, ByVal pRow As Long) As Boolean
-    Dim lastCol As Long
-    Dim iCol As Long
-    
-    IsWorksheetRowPopulated = False
-    
-    If pRow < 2 Then Exit Function
-    
-    lastCol = pWS.Cells(1, pWS.Columns.Count).End(xlToLeft).Column
-    If lastCol < 1 Then Exit Function
-    
-    For iCol = 1 To lastCol
-        If Len(Trim$(CStr(pWS.Cells(pRow, iCol).Value))) > 0 Then
-            IsWorksheetRowPopulated = True
-            Exit Function
-        End If
-    Next iCol
 End Function
 
 Public Function SafeControlSuffix(ByVal pFieldName As String, ByVal pRow As Long) As String
@@ -145,66 +125,6 @@ Public Function SafeControlSuffix(ByVal pFieldName As String, ByVal pRow As Long
     SafeControlSuffix = out & "_" & CStr(pRow)
 End Function
 
-' TODO: Move this to LibraryWorksheets
-Public Function WorksheetExists(ByVal pSheetName As String) As Boolean
-    Dim ws As Worksheet
-
-    WorksheetExists = False
-
-    For Each ws In ActiveWorkbook.Worksheets
-        If StrComp(ws.Name, pSheetName, vbTextCompare) = 0 Then
-            WorksheetExists = True
-            Exit Function
-        End If
-    Next ws
-End Function
-
-' TODO: Move this to LibraryWorksheets
-Public Function FindColumnInSheet(ByVal pWS As Worksheet, ByVal pHeaderName As String) As Long
-    Dim lastCol As Long
-    Dim iCol As Long
-    Dim sHeader As String
-
-    FindColumnInSheet = 0
-
-    lastCol = pWS.Cells(1, pWS.Columns.Count).End(xlToLeft).Column
-
-    For iCol = 1 To lastCol
-        sHeader = Trim$(CStr(pWS.Cells(1, iCol).Value))
-        If StrComp(sHeader, pHeaderName, vbTextCompare) = 0 Then
-            FindColumnInSheet = iCol
-            Exit Function
-        End If
-    Next iCol
-End Function
-
-' TODO: Move this to LibraryWorksheets
-Public Function LastUsedRow(ByVal pWS As Worksheet) As Long
-    Dim lastCell As Range
-
-    On Error Resume Next
-    Set lastCell = pWS.Cells.Find(What:="*", _
-                                  After:=pWS.Cells(1, 1), _
-                                  LookIn:=xlFormulas, _
-                                  LookAt:=xlPart, _
-                                  SearchOrder:=xlByRows, _
-                                  SearchDirection:=xlPrevious, _
-                                  MatchCase:=False)
-    On Error GoTo 0
-
-    If lastCell Is Nothing Then
-        LastUsedRow = 1
-    Else
-        LastUsedRow = lastCell.Row
-    End If
-End Function
-
-Public Sub BasicTidyWorksheet(ByVal pWS As Worksheet)
-    pWS.Activate
-    BasicTidy
-End Sub
-
-
 ' Thanks Copilot 8/4/2026
 Sub IntelligentlyInsertDateTime()
 
@@ -221,16 +141,23 @@ Sub IntelligentlyInsertDateTime()
     Dim colTimeLocal As Long
     Dim colStartTime As Long
     Dim colEndTime As Long
+    Dim colDateTime As Long
+    Dim colStartDateTime As Long
+    Dim colEndDateTime As Long
     
     colDate = FindFirstColumn(Array("Date"))
     colTimeLocal = FindFirstColumn(Array("Time (Local)", "Time"))
     colStartTime = FindFirstColumn(Array("Start Time (Local)", "Start Time"))
     colEndTime = FindFirstColumn(Array("End Time (Local)", "End Time"))
+    colDateTime = FindFirstColumn(Array("Date/Time", "Date Time", "Datetime"))
+    colStartDateTime = FindFirstColumn(Array("Start Date/Time", "Start Date Time", "Start Datetime"))
+    colEndDateTime = FindFirstColumn(Array("End Date/Time", "End Date Time", "End Datetime"))
     
     ' --- Date ---
     If colDate > 0 Then
         If isEmpty(ws.Cells(activeRow, colDate)) Then
             ws.Cells(activeRow, colDate).Value = Date
+            ws.Cells(activeRow, colDate).Select
         End If
     End If
     
@@ -238,6 +165,7 @@ Sub IntelligentlyInsertDateTime()
     If colTimeLocal > 0 Then
         If isEmpty(ws.Cells(activeRow, colTimeLocal)) Then
             ws.Cells(activeRow, colTimeLocal).Value = Time
+            ws.Cells(activeRow, colTimeLocal).Select
         End If
     End If
     
@@ -247,6 +175,8 @@ Sub IntelligentlyInsertDateTime()
         ' If Start Time exists and is blank ? set to now
         If isEmpty(ws.Cells(activeRow, colStartTime)) Then
             ws.Cells(activeRow, colStartTime).Value = Time
+            ws.Cells(activeRow, colStartTime).Select
+
         
         ' If Start Time exists and NOT blank
         Else
@@ -254,6 +184,35 @@ Sub IntelligentlyInsertDateTime()
             If colEndTime > 0 Then
                 If isEmpty(ws.Cells(activeRow, colEndTime)) Then
                     ws.Cells(activeRow, colEndTime).Value = Time
+                    ws.Cells(activeRow, colEndTime).Select
+                End If
+            End If
+        End If
+    End If
+    
+    ' --- DateTime ---
+    If colDateTime > 0 Then
+        If isEmpty(ws.Cells(activeRow, colDateTime)) Then
+            ws.Cells(activeRow, colDateTime).Value = Date + Time
+            ws.Cells(activeRow, colDateTime).Select
+        End If
+    End If
+
+    ' --- Start / End DateTime Logic ---
+    If colStartDateTime > 0 Then
+        
+        ' If Start DateTime exists and is blank ? set to now
+        If isEmpty(ws.Cells(activeRow, colStartDateTime)) Then
+            ws.Cells(activeRow, colStartDateTime).Value = Date + Time
+            ws.Cells(activeRow, colStartDateTime).Select
+        
+        ' If Start DateTime exists and NOT blank
+        Else
+            ' Then if End DateTime exists and is blank ? set to now
+            If colEndDateTime > 0 Then
+                If isEmpty(ws.Cells(activeRow, colEndDateTime)) Then
+                    ws.Cells(activeRow, colEndDateTime).Value = Date + Time
+                    ws.Cells(activeRow, colEndDateTime).Select
                 End If
             End If
         End If
@@ -280,7 +239,7 @@ Public Function GetTargetSheetForForm(ByVal pFormID As String) As String
     colFormID = FindColumnInSheet(wsForms, "FormID")
     colTargetSheet = FindColumnInSheet(wsForms, "TargetSheet")
     
-    If (colFormID = 0) Or (colTargetSheet = 0) Then Exit Function
+    If (colFormID <= 0) Or (colTargetSheet <= 0) Then Exit Function
     
     lastRow = LastUsedRow(wsForms)
     
@@ -312,7 +271,7 @@ Public Function EnsureTargetSheetExists(ByVal pSheetName As String, ByVal pFormI
         CreateSheetHeadersFromFields ws, pFormID
         
         On Error Resume Next
-        BasicTidyWorksheet ws
+        Call BasicTidy(ws)
         On Error GoTo 0
     End If
     
@@ -364,7 +323,7 @@ Public Sub CreateSheetHeadersFromFields(ByVal pWS As Worksheet, ByVal pFormID As
     colDisplayOrder = FindColumnInSheet(wsFields, "DisplayOrder")
     colFieldName = FindColumnInSheet(wsFields, "FieldName")
     
-    If (colFormID = 0) Or (colDisplayOrder = 0) Or (colFieldName = 0) Then
+    If (colFormID <= 0) Or (colDisplayOrder <= 0) Or (colFieldName <= 0) Then
         MsgBox "xe.fields is missing required columns.", vbExclamation, "xlEventing"
         Exit Sub
     End If
@@ -400,99 +359,11 @@ Public Sub CreateSheetHeadersFromFields(ByVal pWS As Worksheet, ByVal pFormID As
     
     On Error Resume Next
     
-    BasicTidyWorksheet pWS
+    Call BasicTidy(pWS)
     
     On Error GoTo 0
 End Sub
 
-' TODO Move this to a LibraryControls
-Public Sub RemoveComboItem(ByVal cbo As MSForms.ComboBox, ByVal pValue As String)
-    Dim i As Long
-    
-    For i = cbo.ListCount - 1 To 0 Step -1
-        If StrComp(Trim$(cbo.List(i)), Trim$(pValue), vbTextCompare) = 0 Then
-            cbo.RemoveItem i
-            Exit For
-        End If
-    Next i
-End Sub
-
-' TODO put this in LibraryControls
-Public Function ComboContains(ByVal cbo As MSForms.ComboBox, ByVal pValue As String) As Boolean
-    Dim i As Long
-    
-    ComboContains = False
-    
-    For i = 0 To cbo.ListCount - 1
-        If StrComp(cbo.List(i), pValue, vbTextCompare) = 0 Then
-            ComboContains = True
-            Exit Function
-        End If
-    Next i
-End Function
-
-' TODO put this in LibraryControls
-Public Function GetControlValue(ByVal pCtl As MSForms.control) As Variant
-
-    Select Case TypeName(pCtl)
-        Case "TextBox"
-            GetControlValue = Trim$(CStr(pCtl.Text))
-        
-        Case "ComboBox"
-            GetControlValue = Trim$(CStr(pCtl.Value))
-        
-        Case "CheckBox"
-            GetControlValue = CBool(pCtl.Value)
-        
-        Case Else
-            GetControlValue = Trim$(CStr(pCtl.Value))
-    End Select
-End Function
-
-' TODO put this in LibraryControls
-Public Sub SetControlValue(ByVal pCtl As MSForms.control, ByVal pValue As Variant)
-    Select Case TypeName(pCtl)
-        Case "TextBox"
-            If IsNull(pValue) Then
-                pCtl.Text = ""
-            Else
-                pCtl.Text = Trim$(CStr(pValue))
-            End If
-        
-        Case "ComboBox"
-            If IsNull(pValue) Then
-                pCtl.Value = ""
-            Else
-                pCtl.Value = Trim$(CStr(pValue))
-            End If
-        
-        Case "CheckBox"
-            If IsNull(pValue) Or Len(Trim$(CStr(pValue))) = 0 Then
-                pCtl.Value = False
-            Else
-                Select Case LCase$(Trim$(CStr(pValue)))
-                    Case "true", "yes", "y", "1"
-                        pCtl.Value = True
-                    Case "false", "no", "n", "0"
-                        pCtl.Value = False
-                    Case Else
-                        On Error Resume Next
-                        pCtl.Value = CBool(pValue)
-                        On Error GoTo 0
-                End Select
-            End If
-    End Select
-End Sub
-
-' TODO put this in LibraryControls
-Public Function IsSupportedControlType(ByVal pControlType As String) As Boolean
-    Select Case LCase$(Trim$(pControlType))
-        Case "textbox", "combo", "checkbox"
-            IsSupportedControlType = True
-        Case Else
-            IsSupportedControlType = False
-    End Select
-End Function
 
 Public Function GetFormIDForTargetSheet(ByVal pTargetSheet As String) As String
     Const SHEET_FORMS As String = "xe.forms"
@@ -515,7 +386,7 @@ Public Function GetFormIDForTargetSheet(ByVal pTargetSheet As String) As String
     colFormID = FindColumnInSheet(wsForms, "FormID")
     colTargetSheet = FindColumnInSheet(wsForms, "TargetSheet")
     
-    If (colFormID = 0) Or (colTargetSheet = 0) Then Exit Function
+    If (colFormID <= 0) Or (colTargetSheet <= 0) Then Exit Function
     
     lastRow = LastUsedRow(wsForms)
     

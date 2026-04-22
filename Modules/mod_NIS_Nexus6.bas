@@ -80,7 +80,7 @@ Sub ProcessNexus6EventExport(ALocation As String)
 
     Set oWorkbook = ActiveWorkbook
     
-    Set oHUVR = FindSheet("HUVR")
+    Set oHUVR = FindSheet(ActiveWorkbook, "HUVR")
     If oHUVR Is Nothing Then
         DoProcessNexus6EventExport (ALocation)
     Else
@@ -138,18 +138,18 @@ Private Sub DoProcessNexus6EventExport(ALocation As String)
     'Delete unwanted sheets
     For Each oSheet In ActiveWorkbook.Sheets
         If Not oSheet.Visible Then
-            Call Delete_Sheet(oSheet)
+            Call DeleteSheet(ActiveWorkbook, oSheet)
         End If
     Next oSheet
     
-    Set oSheet = FindSheet("Legend")
+    Set oSheet = FindSheet(ActiveWorkbook, "Legend")
     If Not oSheet Is Nothing Then
-        Call Delete_Sheet(oSheet)
+        Call DeleteSheet(ActiveWorkbook, oSheet)
     End If
     
-    Set oSheet = FindSheet("HUVR")
+    Set oSheet = FindSheet(ActiveWorkbook, "HUVR")
     If Not oSheet Is Nothing Then
-        Call Delete_Sheet(oSheet)
+        Call DeleteSheet(ActiveWorkbook, oSheet)
     End If
     
     For Each oSheet In ActiveWorkbook.Sheets
@@ -163,7 +163,7 @@ Private Sub DoProcessNexus6EventExport(ALocation As String)
                 End If
                 
                 If Cells(2, 1).Value = "" Then
-                    Call Delete_Sheet(oSheet)
+                    Call DeleteSheet(ActiveWorkbook, oSheet)
                 Else
                     TidyEventSheet (bPipeline)
                 End If
@@ -171,12 +171,12 @@ Private Sub DoProcessNexus6EventExport(ALocation As String)
         End If
     Next oSheet
     
-    Sort_Sheets
+    Call SortSheetsAlphabetically(ActiveWorkbook)
     
     Populate_Findings_Tab
     
     If Not FMultimedia Is Nothing Then
-        Call Delete_Sheet(FMultimedia)
+        Call DeleteSheet(ActiveWorkbook, FMultimedia)
         Set FMultimedia = Nothing
     End If
     
@@ -238,7 +238,7 @@ Private Sub TidyEventSheet(APipeline As Boolean)
     AddFindingID
     MergeEventAndEventNumber
     
-    BasicTidy
+    Call BasicTidy(ActiveSheet)
     FormatColumns
     
     Cells(2, 1).Select
@@ -344,7 +344,7 @@ Private Sub Tidy_Tabs()
         End If
     Next oSheet
     
-    Set oSheet = FindSheet("Findings")
+    Set oSheet = FindSheet(ActiveWorkbook, "Findings")
     
     If Not oSheet Is Nothing Then
         oSheet.Tab.ColorIndex = 40
@@ -385,9 +385,9 @@ End Sub
 Private Function Create_Findings_Tab() As Worksheet
     Dim oFindings As Worksheet, oSheet As Worksheet
 
-    Set oFindings = FindSheet("Findings")
+    Set oFindings = FindSheet(ActiveWorkbook, "Findings")
     If oFindings Is Nothing Then
-        Set oFindings = Add_Sheet("Findings", 1)
+        Set oFindings = AddSheet(ActiveWorkbook, "Findings", 1)
         
         oFindings.Select
         
@@ -428,7 +428,7 @@ Private Sub Populate_Findings_Tab()
     
     sStatus = ActiveSheet.Name + ". Populating Findings Tab: "
     
-    Set oFindings = FindSheet("Findings")
+    Set oFindings = FindSheet(ActiveWorkbook, "Findings")
     If oFindings Is Nothing Then
         Set oFindings = Create_Findings_Tab
     End If
@@ -485,7 +485,7 @@ Private Sub Populate_Findings_Tab()
     Application.StatusBar = ""
     oFindings.Select
     
-    BasicTidy
+    Call BasicTidy(ActiveSheet)
     FormatColumns
     
     Cells(2, 1).Select
@@ -826,7 +826,7 @@ Private Sub Highlight_Finding()
 End Sub
 
 Private Sub Find_Multimedia()
-    Set FMultimedia = FindSheet("Multimedia")
+    Set FMultimedia = FindSheet(ActiveWorkbook, "Multimedia")
     
     If Not FMultimedia Is Nothing Then
         FMultimedia.Select
@@ -885,7 +885,7 @@ Private Sub Reprocess_Multimedia_By_MM_Tab()
             sSearchFilename = sName + sExt
             
             If sOrigFilename <> "" Then
-                immRow = Find_In_Column(FmmFilenameCol, sSearchFilename, FMultimedia)
+                immRow = FindInColumn(FMultimedia, FmmFilenameCol, sSearchFilename)
                 
                 If immRow > 0 Then
                     sNewFolder = Trim(FMultimedia.Cells(immRow, FmmFolderCol).Value)

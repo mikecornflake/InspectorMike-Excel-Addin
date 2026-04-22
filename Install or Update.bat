@@ -35,6 +35,7 @@ IF "%CONTINUE%"=="y" GOTO COPY
 :COPY
 	ECHO.
 	COPY InspectorMike_Addin.xlam %appdata%\Microsoft\Addins
+	COPY InspectorMike_Addin_docs %appdata%\Microsoft\Addins
 	ECHO.
 
 	DIR %appdata%\Microsoft\Addins

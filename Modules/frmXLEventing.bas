@@ -152,13 +152,13 @@ Private Sub BuildControls()
     colDataType = FindColumnInSheet(wsFields, "DataType")
     colListID = FindColumnInSheet(wsFields, "ListID")
     
-    If (colFormID = 0) Or _
-       (colDisplayOrder = 0) Or _
-       (colFieldName = 0) Or _
-       (colLabel = 0) Or _
-       (colControlType = 0) Or _
-       (colDataType = 0) Or _
-       (colListID = 0) Then
+    If (colFormID <= 0) Or _
+       (colDisplayOrder <= 0) Or _
+       (colFieldName <= 0) Or _
+       (colLabel <= 0) Or _
+       (colControlType <= 0) Or _
+       (colDataType <= 0) Or _
+       (colListID <= 0) Then
 
         MsgBox "There are missing columns on " & SHEET_FIELDS & ". Go speak to Mike.", vbExclamation, "xlEventing"
         Exit Sub
@@ -249,7 +249,7 @@ Private Function AddInputControl(ByVal pControlType As String, ByVal pControlSuf
         Case "textbox"
             Set AddInputControl = fraHost.Controls.Add("Forms.TextBox.1", "txt_" & pControlSuffix, True)
 
-        Case "combo"
+        Case "combobox"
             Set AddInputControl = fraHost.Controls.Add("Forms.ComboBox.1", "cbo_" & pControlSuffix, True)
             
             Dim handler As clsComboHandler
@@ -288,7 +288,7 @@ Private Sub PopulateAllLists()
     colFieldName = FindColumnInSheet(wsFields, "FieldName")
     colControlType = FindColumnInSheet(wsFields, "ControlType")
     
-    If (colFormID = 0) Or (colFieldName = 0) Or (colControlType = 0) Then Exit Sub
+    If (colFormID <= 0) Or (colFieldName <= 0) Or (colControlType <= 0) Then Exit Sub
     
     lastRow = LastUsedRow(wsFields)
     If lastRow < 2 Then Exit Sub
@@ -300,7 +300,7 @@ Private Sub PopulateAllLists()
             sFieldName = Trim$(CStr(wsFields.Cells(iRow, colFieldName).Value))
             sControlType = LCase$(Trim$(CStr(wsFields.Cells(iRow, colControlType).Value)))
             
-            If (sControlType = "combo") And (Len(sFieldName) > 0) Then
+            If (sControlType = "combobox") And (Len(sFieldName) > 0) Then
                 PopulateListForField sFieldName, True
             End If
         End If
@@ -342,7 +342,7 @@ Private Sub PopulateListForField(ByVal pFieldName As String, ByVal pPreserveValu
     colControlType = FindColumnInSheet(wsFields, "ControlType")
     colListID = FindColumnInSheet(wsFields, "ListID")
     
-    If (colFormID = 0) Or (colFieldName = 0) Or (colControlType = 0) Or (colListID = 0) Then Exit Sub
+    If (colFormID <= 0) Or (colFieldName <= 0) Or (colControlType <= 0) Or (colListID <= 0) Then Exit Sub
     
     sListID = ""
     lastRow = LastUsedRow(wsFields)
@@ -354,7 +354,7 @@ Private Sub PopulateListForField(ByVal pFieldName As String, ByVal pPreserveValu
         
         If StrComp(sFormID, mFormID, vbTextCompare) = 0 Then
             If StrComp(sFieldName, pFieldName, vbTextCompare) = 0 Then
-                If sControlType = "combo" Then
+                If sControlType = "combobox" Then
                     sListID = Trim$(CStr(wsFields.Cells(iRow, colListID).Value))
                 End If
                 Exit For
@@ -424,7 +424,7 @@ Public Sub RefreshChildLists(ByVal pParentFieldName As String)
     colParentField1 = FindColumnInSheet(wsFields, "ParentField1")
     colParentField2 = FindColumnInSheet(wsFields, "ParentField2")
     
-    If (colFormID = 0) Or (colFieldName = 0) Or (colControlType = 0) Then Exit Sub
+    If (colFormID <= 0) Or (colFieldName <= 0) Or (colControlType <= 0) Then Exit Sub
     
     lastRow = LastUsedRow(wsFields)
     
@@ -438,7 +438,7 @@ Public Sub RefreshChildLists(ByVal pParentFieldName As String)
             If colParentField1 > 0 Then sParentField1 = Trim$(CStr(wsFields.Cells(iRow, colParentField1).Value)) Else sParentField1 = ""
             If colParentField2 > 0 Then sParentField2 = Trim$(CStr(wsFields.Cells(iRow, colParentField2).Value)) Else sParentField2 = ""
             
-            If sControlType = "combo" Then
+            If sControlType = "combobox" Then
                 If (StrComp(sParentField1, pParentFieldName, vbTextCompare) = 0) Or _
                    (StrComp(sParentField2, pParentFieldName, vbTextCompare) = 0) Then
                     PopulateListForField sFieldName, False
@@ -502,7 +502,7 @@ Private Sub LoadRowValues(ByVal pLoadDependentFields As Boolean)
     colParentField1 = FindColumnInSheet(wsFields, "ParentField1")
     colParentField2 = FindColumnInSheet(wsFields, "ParentField2")
     
-    If (colFormID = 0) Or (colFieldName = 0) Then Exit Sub
+    If (colFormID <= 0) Or (colFieldName <= 0) Then Exit Sub
     
     lastRowFields = LastUsedRow(wsFields)
     
@@ -605,7 +605,7 @@ Private Function GetListValues(ByVal pListID As String) As Collection
     colDistinctValues = FindColumnInSheet(wsLists, "DistinctValues")
     colSortValues = FindColumnInSheet(wsLists, "SortValues")
     
-    If (colListID = 0) Or (colSourceSheet = 0) Or (colValueField = 0) Then
+    If (colListID <= 0) Or (colSourceSheet <= 0) Or (colValueField <= 0) Then
         Set GetListValues = Nothing
         Exit Function
     End If
@@ -651,14 +651,14 @@ Private Function GetListValues(ByVal pListID As String) As Collection
     Set wsSource = ActiveWorkbook.Worksheets(sSourceSheet)
     
     srcColValue = FindColumnInSheet(wsSource, sValueField)
-    If srcColValue = 0 Then
+    If srcColValue <= 0 Then
         Set GetListValues = Nothing
         Exit Function
     End If
     
     If Len(sFilterField1) > 0 Then
         srcColFilter1 = FindColumnInSheet(wsSource, sFilterField1)
-        If srcColFilter1 = 0 Then
+        If srcColFilter1 <= 0 Then
             Set GetListValues = Nothing
             Exit Function
         End If
@@ -666,7 +666,7 @@ Private Function GetListValues(ByVal pListID As String) As Collection
     
     If Len(sFilterField2) > 0 Then
         srcColFilter2 = FindColumnInSheet(wsSource, sFilterField2)
-        If srcColFilter2 = 0 Then
+        If srcColFilter2 <= 0 Then
             Set GetListValues = Nothing
             Exit Function
         End If
@@ -674,7 +674,7 @@ Private Function GetListValues(ByVal pListID As String) As Collection
     
     If Len(sFilterField3) > 0 Then
         srcColFilter3 = FindColumnInSheet(wsSource, sFilterField3)
-        If srcColFilter3 = 0 Then
+        If srcColFilter3 <= 0 Then
             Set GetListValues = Nothing
             Exit Function
         End If
@@ -843,7 +843,7 @@ Private Sub ConfigureInputControl(ByVal pCtl As MSForms.control, ByVal pControlT
                     ' Placeholder for later date validation
             End Select
 
-        Case "combo"
+        Case "combobox"
             Dim cbo As MSForms.ComboBox
             Set cbo = pCtl
 
@@ -917,7 +917,7 @@ Private Sub WriteFormValuesToSheet(ByVal pWS As Worksheet, ByVal pTargetRow As L
         
         lCol = FindColumnInSheet(pWS, CStr(vFieldName))
         
-        If lCol = 0 Then
+        If lCol <= 0 Then
             MsgBox "Target sheet '" & pWS.Name & "' is missing column '" & CStr(vFieldName) & "'.", vbExclamation, "xlEventing"
             Exit Sub
         End If

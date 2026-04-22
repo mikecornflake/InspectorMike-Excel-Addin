@@ -96,26 +96,9 @@ Public Sub FormatIEWorkpackDataSheet()
         End If
     Next oSheet
     
-    SortSheetsAlphabetically
+    Call SortSheetsAlphabetically(ActiveWorkbook)
     
     ActiveWorkbook.Sheets(1).Activate
-End Sub
-
-Private Sub SortSheetsAlphabetically()
-    Dim i As Integer, j As Integer
-    Dim tempSheet As Object
-    
-    ' Loop through all sheets in the workbook
-    For i = 1 To ActiveWorkbook.Sheets.Count - 1
-        For j = i + 1 To ActiveWorkbook.Sheets.Count
-            ' Compare the names of adjacent sheets
-            If ActiveWorkbook.Sheets(j).Name < ActiveWorkbook.Sheets(i).Name Then
-                ' Swap sheets by moving the latter before the former
-                Set tempSheet = ActiveWorkbook.Sheets(j)
-                tempSheet.Move Before:=ActiveWorkbook.Sheets(i)
-            End If
-        Next j
-    Next i
 End Sub
 
 Private Sub Format_Table()

@@ -1,7 +1,6 @@
 Attribute VB_Name = "mod_Z_TestFramework"
 ' 2025 08 15 - Added unit.  Framework and unit tests developed by copilot/Mike Thompson
 '
-'
 ' Interface :-)
 '
 ' Public ActiveTestModule As String
@@ -37,6 +36,7 @@ Public Sub RunAllTests()
     ' Call Test_LibraryClipboard
     Call Test_LibraryDate
     Call Test_LibraryFiles
+    Call Test_LibraryControls
 
     ' Report results
     Dim i As Long
@@ -73,29 +73,29 @@ Public Sub RunAllTests()
     End If
 End Sub
 
-Public Sub AssertEqual(TestName As String, Expected As Variant, Actual As Variant)
+Public Sub AssertEqual(TestName As String, Expected As Variant, actual As Variant)
     TestCount = TestCount + 1
     ReDim Preserve TestResults(1 To TestCount)
 
     With TestResults(TestCount)
         .Module = ActiveTestModule
         .Name = TestName
-        If Expected = Actual Then
+        If Expected = actual Then
             .Passed = True
             .Message = "Expected and received [" & FormatVariant(Expected) & "]"
         Else
             .Passed = False
-            .Message = "Expected [" & FormatVariant(Expected) & "], received [" & FormatVariant(Actual) & "]"
+            .Message = "Expected [" & FormatVariant(Expected) & "], received [" & FormatVariant(actual) & "]"
         End If
     End With
 End Sub
 
-Public Sub AssertTrue(TestName As String, Actual As Boolean)
-    Call AssertEqual(TestName, True, Actual)
+Public Sub AssertTrue(TestName As String, actual As Boolean)
+    Call AssertEqual(TestName, True, actual)
 End Sub
 
-Public Sub AssertFalse(TestName As String, Actual As Boolean)
-    Call AssertEqual(TestName, False, Actual)
+Public Sub AssertFalse(TestName As String, actual As Boolean)
+    Call AssertEqual(TestName, False, actual)
 End Sub
 
 Private Function FormatVariant(v As Variant) As String

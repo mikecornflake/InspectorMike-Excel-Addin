@@ -80,7 +80,7 @@ Public Sub ProcessSheet()
     Call SplitByEventCode
 
     ' Sort sheets alphabetically
-    Call SortSheetsAlphabetically
+    Call SortSheetsAlphabetically(ActiveWorkbook)
     
     ' Copy all the anomalies into a new sheet
     Application.StatusBar = "Processing anomalies..."
@@ -93,7 +93,7 @@ Public Sub ProcessSheet()
     Dim mediaFolder As String
     
     Application.StatusBar = "Hyperlinking multimedia..."
-    mediaFolder = PickFolder(ActiveWorkbook.Path, "Select the project folder containing multimedia...")
+    mediaFolder = PickFolder(ActiveWorkbook.path, "Select the project folder containing multimedia...")
     If mediaFolder <> "" Then
         Call HyperlinkImages(mediaFolder, True)
     Else
@@ -368,20 +368,6 @@ NextRow:
     Next r
 End Sub
 
-Private Sub SortSheetsAlphabetically()
-    Dim i As Long, j As Long
-    Dim tempName As String
-
-    ' Bubble sort
-    For i = 1 To Sheets.Count - 1
-        For j = i + 1 To Sheets.Count
-            If Sheets(i).Name > Sheets(j).Name Then
-                Sheets(j).Move Before:=Sheets(i)
-            End If
-        Next j
-    Next i
-End Sub
-
 Private Sub FormatAllSheets()
     Dim ws As Worksheet
     For Each ws In ActiveWorkbook.Worksheets
@@ -579,7 +565,7 @@ Public Sub HyperlinkImages(baseFolder As String, Optional forceRelative As Boole
     If forceRelative Then
         useRelative = (wbDrive = mediaDrive)
     Else
-        useRelative = (InStr(1, baseFolder, ActiveWorkbook.Path, vbTextCompare) = 1)
+        useRelative = (InStr(1, baseFolder, ActiveWorkbook.path, vbTextCompare) = 1)
     End If
 
     ' Recursively collect files
@@ -641,13 +627,13 @@ Private Sub CollectMediaFiles(folder As Object, fileDict As Object)
     For Each file In folder.Files
         If LCase(fso.GetExtensionName(file.Name)) = "jpg" Or LCase(fso.GetExtensionName(file.Name)) = "mp4" Or LCase(fso.GetExtensionName(file.Name)) = "png" Then
             If Not fileDict.Exists(file.Name) Then
-                fileDict.Add file.Name, file.Path
+                fileDict.Add file.Name, file.path
             End If
         End If
     Next file
     
     For Each subFolder In folder.SubFolders
-        Application.StatusBar = "Searching for media " & subFolder.Path & "..."
+        Application.StatusBar = "Searching for media " & subFolder.path & "..."
         CollectMediaFiles subFolder, fileDict
     Next subFolder
 End Sub

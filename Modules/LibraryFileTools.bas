@@ -640,8 +640,8 @@ Public Function BrowseForFolder(Optional ByRef initialPath As String _
         If LenB(.InitialFileName) = 0 Then
             Dim app As Object: Set app = Application 'Needs to be late-binded
             Select Case Application.Name
-                Case "Microsoft Excel": .InitialFileName = GetLocalPath(app.ThisWorkbook.Path, , True)
-                Case "Microsoft Word":  .InitialFileName = GetLocalPath(app.ThisDocument.Path, , True)
+                Case "Microsoft Excel": .InitialFileName = GetLocalPath(app.ThisWorkbook.path, , True)
+                Case "Microsoft Word":  .InitialFileName = GetLocalPath(app.ThisDocument.path, , True)
             End Select
         End If
         If .Show = actionButton Then

@@ -5,9 +5,9 @@ Dim FmmFilenameCol As Long, FmmNewFilenameCol As Long, FmmFolderCol As Long
 Public Sub Tidy_Event_Export()
     Dim iSheet As Long
     
-    ' Sort_Sheets
-    
-    If Sheet_Exists("Findings") Then
+    Call SortSheetsAlphabetically(ActiveWorkbook)
+
+    If WorksheetExists("Findings") Then
         Sheets("Findings").Move Before:=Sheets(1)
     End If
     
@@ -88,7 +88,7 @@ Sub Process_Multimedia()
         While (Trim(oCurrent.Cells(iRow, iMediaCol + iColAdd).Value) <> "")
             sOrigFilename = Trim(oCurrent.Cells(iRow, iMediaCol + iColAdd).Value)
             
-            immRow = Find_In_Column(FmmFilenameCol, sOrigFilename, FMultimedia)
+            immRow = FindInColumn(FMultimedia, FmmFilenameCol, sOrigFilename)
             
             If immRow > 0 Then
                 sNewFolder = Trim(FMultimedia.Cells(immRow, FmmFolderCol).Value)
@@ -229,7 +229,7 @@ Private Sub Hyperlink_Findings()
     Application.ScreenUpdating = False
     Application.CutCopyMode = False
     
-    If Sheet_Exists("Findings") Then
+    If WorksheetExists("Findings") Then
         Sheets("Findings").Select
         ActiveSheet.Tab.ColorIndex = 22
         
@@ -245,7 +245,7 @@ Private Sub Hyperlink_Findings()
                 sFullEvent = Cells(iFinding, iFindingEventCol)
                 sEvent = Left(sFullEvent, Find_Last(sFullEvent, " ") - 1)
                 
-                If Sheet_Exists(sEvent) Then
+                If WorksheetExists(sEvent) Then
                     Sheets(sEvent).Select
                     ActiveSheet.Tab.ColorIndex = 22
                     
@@ -254,7 +254,7 @@ Private Sub Hyperlink_Findings()
                     iEventCol = FindColumn("Event")
                     
                     If iEventCol <> 0 Then
-                        iEvent = Find_In_Column(iEventCol, sFullEvent)
+                        iEvent = FindInColumn(ActiveSheet, iEventCol, sFullEvent)
                         
                         If iEvent <> 0 Then
                             ' Color the Event with the findings

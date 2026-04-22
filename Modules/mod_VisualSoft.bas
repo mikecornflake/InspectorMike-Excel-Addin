@@ -679,7 +679,7 @@ Sub FormatActiveSheet()
     Dim i As Integer
     
     ' Use the Basic Tidy as a base...
-    BasicTidy
+    Call BasicTidy(ActiveSheet)
     
     ' Format specific columns
     ForceFindExtents
@@ -1367,7 +1367,7 @@ Public Sub ProcessVWCoabisExport()
     Dim dTemp As Date
     Dim sTemp As String
     
-    BasicTidy
+    Call BasicTidy(ActiveSheet)
     
     Rows("1:1").Select
     With Selection

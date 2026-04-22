@@ -99,7 +99,7 @@ Private Sub Validate_xe_forms()
         ws.Cells(4, 3).Value = "GVI"
         ws.Cells(4, 4).Value = "Event"
         
-        BasicTidyWorksheet ws
+        Call BasicTidy(ws)
     Else
         Set ws = ActiveWorkbook.Worksheets("xe.forms")
         Log "xe.forms exists"
@@ -141,18 +141,18 @@ Private Sub Validate_xe_fields()
         ws.Cells(r, 1).Resize(1, 10).Value = Array("Workpack", 2, "Code", "Workpack Code", "textbox", "text", "N", "", "", ""): r = r + 1
         
         ' Component
-        ws.Cells(r, 1).Resize(1, 10).Value = Array("Component", 1, "Installation", "Installation", "combo", "text", "Y", "", "", ""): r = r + 1
-        ws.Cells(r, 1).Resize(1, 10).Value = Array("Component", 2, "Substructure", "Substructure", "combo", "text", "Y", "", "", ""): r = r + 1
-        ws.Cells(r, 1).Resize(1, 10).Value = Array("Component", 3, "Component", "Component", "combo", "text", "Y", "", "", ""): r = r + 1
+        ws.Cells(r, 1).Resize(1, 10).Value = Array("Component", 1, "Installation", "Installation", "combobox", "text", "Y", "", "", ""): r = r + 1
+        ws.Cells(r, 1).Resize(1, 10).Value = Array("Component", 2, "Substructure", "Substructure", "combobox", "text", "Y", "", "", ""): r = r + 1
+        ws.Cells(r, 1).Resize(1, 10).Value = Array("Component", 3, "Component", "Component", "combobox", "text", "Y", "", "", ""): r = r + 1
         
         ' GVI
-        ws.Cells(r, 1).Resize(1, 10).Value = Array("GVI", 1, "Workpack", "Workpack", "combo", "text", "Y", "WorkpackList", "", ""): r = r + 1
-        ws.Cells(r, 1).Resize(1, 10).Value = Array("GVI", 2, "Installation", "Installation", "combo", "text", "Y", "InstallationList", "", ""): r = r + 1
-        ws.Cells(r, 1).Resize(1, 10).Value = Array("GVI", 3, "Substructure", "Substructure", "combo", "text", "Y", "SubstructureList", "Installation", ""): r = r + 1
-        ws.Cells(r, 1).Resize(1, 10).Value = Array("GVI", 4, "Component", "Component", "combo", "text", "Y", "ComponentList", "Installation", "Substructure"): r = r + 1
+        ws.Cells(r, 1).Resize(1, 10).Value = Array("GVI", 1, "Workpack", "Workpack", "combobox", "text", "Y", "WorkpackList", "", ""): r = r + 1
+        ws.Cells(r, 1).Resize(1, 10).Value = Array("GVI", 2, "Installation", "Installation", "combobox", "text", "Y", "InstallationList", "", ""): r = r + 1
+        ws.Cells(r, 1).Resize(1, 10).Value = Array("GVI", 3, "Substructure", "Substructure", "combobox", "text", "Y", "SubstructureList", "Installation", ""): r = r + 1
+        ws.Cells(r, 1).Resize(1, 10).Value = Array("GVI", 4, "Component", "Component", "combobox", "text", "Y", "ComponentList", "Installation", "Substructure"): r = r + 1
         ws.Cells(r, 1).Resize(1, 10).Value = Array("GVI", 5, "Good_Condition", "Is Component in good condition?", "checkbox", "bool", "Y", "", "", "")
         
-        BasicTidyWorksheet ws
+        Call BasicTidy(ws)
     Else
         Set ws = ActiveWorkbook.Worksheets("xe.fields")
         Log "xe.fields exists"
@@ -195,7 +195,7 @@ Private Sub Validate_xe_lists()
         ws.Cells(r, 1).Resize(1, 11).Value = Array("SubstructureList", "Component", "Substructure", "Installation", "Installation", "", "", "", "", "Y", "Y"): r = r + 1
         ws.Cells(r, 1).Resize(1, 11).Value = Array("ComponentList", "Component", "Component", "Installation", "Installation", "Substructure", "Substructure", "", "", "Y", "Y")
         
-        BasicTidyWorksheet ws
+        Call BasicTidy(ws)
     Else
         Set ws = ActiveWorkbook.Worksheets("xe.lists")
         Log "xe.lists exists"
@@ -221,7 +221,7 @@ Private Sub Validate_TargetSheets()
     colFormID = FindColumnInSheet(wsForms, "FormID")
     colTargetSheet = FindColumnInSheet(wsForms, "TargetSheet")
     
-    If colFormID = 0 Or colTargetSheet = 0 Then Exit Sub
+    If colFormID <= 0 Or colTargetSheet <= 0 Then Exit Sub
     
     lastRow = LastUsedRow(wsForms)
     

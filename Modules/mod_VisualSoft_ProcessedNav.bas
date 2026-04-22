@@ -393,7 +393,7 @@ Sub TidyProcessedNav()
     Dim iDateCol As Integer
     Dim iTimeCol As Integer
     
-    BasicTidy
+    Call BasicTidy(ActiveSheet)
     
     Columns("A:A").Select
     Selection.NumberFormat = "dd/mm/yyyy"

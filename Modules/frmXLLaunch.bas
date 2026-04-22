@@ -71,7 +71,7 @@ Private Sub BuildEventButtons()
     colCaption = FindColumnInSheet(wsForms, "Caption")
     colType = FindColumnInSheet(wsForms, "Type")
     
-    If (colFormID = 0) Or (colCaption = 0) Or (colType = 0) Then
+    If (colFormID <= 0) Or (colCaption <= 0) Or (colType <= 0) Then
         MsgBox "xe.forms is missing required columns.", vbExclamation, "xlEventing"
         Exit Sub
     End If
