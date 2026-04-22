@@ -1,10 +1,10 @@
 @CLS
 @ECHO OFF
 COLOR 0A
-TITLE Update Inspector Mike Excel Addins
+TITLE Update Inspector Mike Excel Addin
 
 ECHO.  
-ECHO DOF Excel Addin
+ECHO Inspector Mike Excel Addin
 ECHO.  
 
 ECHO.
