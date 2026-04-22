@@ -645,7 +645,7 @@ Public Function BrowseForFolder(Optional ByRef initialPath As String _
             End Select
         End If
         If .Show = actionButton Then
-            .InitialFileName = .SelectedItems.item(1)
+            .InitialFileName = .SelectedItems.Item(1)
             BrowseForFolder = .InitialFileName
         End If
     End With
@@ -946,7 +946,7 @@ Public Function DeleteFolder(ByRef folderPath As String _
     '
     Set collFolders = GetFolders(folderPath, True, True, True)
     For i = collFolders.Count To 1 Step -1 'From bottom to top level
-        If Not DeleteBottomMostFolder(collFolders.item(i)) Then Exit Function
+        If Not DeleteBottomMostFolder(collFolders.Item(i)) Then Exit Function
     Next i
     '
     DeleteFolder = DeleteBottomMostFolder(folderPath)
@@ -1058,7 +1058,7 @@ Private Function ForbiddenNameChars(ByVal addCaret As Boolean) As Collection
     If hasCaret And Not addCaret Then
         collForbiddenChars.Remove 1
     ElseIf Not hasCaret And addCaret Then
-        collForbiddenChars.Add item:="^", Before:=1
+        collForbiddenChars.Add Item:="^", Before:=1
     End If
     hasCaret = addCaret
     '
@@ -1083,7 +1083,7 @@ Private Function IsReservedName(ByRef nameToCheck As String) As Boolean
         Next v
     End If
     On Error Resume Next
-    collReservedNames.item nameToCheck
+    collReservedNames.Item nameToCheck
     IsReservedName = (Err.Number = 0)
     On Error GoTo 0
 End Function

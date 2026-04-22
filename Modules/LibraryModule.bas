@@ -2,7 +2,7 @@ Attribute VB_Name = "LibraryModule"
 Option Explicit
 
 Private Sub Test()
-    Call ExportModules(Workbooks("InspectorMike_Addin.xlam"), "B:\Code\Office Macros\Excel Addin\Modules")
+    Call ExportModules(Workbooks("InspectorMike_Addin.xlam"), "B:\Code\Office Macros\InspectorMike Excel Addin\Modules")
 End Sub
 
 ' Error unable to access Visual Basic Project?

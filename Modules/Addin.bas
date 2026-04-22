@@ -83,6 +83,18 @@ Sub CompareSheets_Callback(control As IRibbonControl)
     frmCompareSheets.Show
 End Sub
 
+Sub Show_Eventing_Admin_Callback(control As IRibbonControl)
+    Call ShowXLAdminForm
+End Sub
+
+Sub Show_Eventing_Launch_Callback(control As IRibbonControl)
+    ShowXlLaunchForm
+End Sub
+
+Public Sub Show_Eventing_Edit_Callback(control As IRibbonControl)
+    ShowXlEventingForm_EditOrAppendFromActiveSheet
+End Sub
+
 Sub ShowAboutHtml()
     Dim tempPath As String
     Dim filePath As String

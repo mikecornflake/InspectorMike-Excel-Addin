@@ -34,6 +34,13 @@ Public Sub SetupForm(ByVal pFormID As String, ByVal pActiveRow As Long)
     ClearDynamicControls
     BuildControls
     PopulateAllLists
+    
+    If mActiveRow >= 2 Then
+        LoadRowValues False
+        PopulateAllLists
+        LoadRowValues True
+    End If
+    
     LayoutForm
 
 CleanExit:
@@ -45,12 +52,17 @@ ErrHandler:
     Resume CleanExit
 End Sub
 
+Private Sub cmdCancel_Click()
+  Unload Me
+End Sub
+
+Private Sub cmdSave_Click()
+    SaveFormToRow
+End Sub
+
 Public Function IsLoading() As Boolean
     IsLoading = mIsLoading
 End Function
-
-Private Sub cmdSave_Click()
-End Sub
 
 Private Sub UserForm_Resize()
     LayoutForm
@@ -166,8 +178,8 @@ Private Sub BuildControls()
     widthFrame = fraHost.InsideWidth
     If widthFrame <= 0 Then widthFrame = fraHost.Width
 
-    labelWidth = widthFrame * 0.33
-    inputWidth = widthFrame * 0.67
+    labelWidth = widthFrame * 0.5
+    inputWidth = widthFrame * 0.5
 
     lastRow = LastUsedRow(wsFields)
     If lastRow < 2 Then
@@ -192,19 +204,26 @@ Private Sub BuildControls()
                 sControlName = SafeControlSuffix(sFieldName, iRow)
 
                 Set lbl = fraHost.Controls.Add("Forms.Label.1", "lbl_" & sControlName, True)
+                Set edt = AddInputControl(sControlType, sControlName, sFieldName)
+                
                 lbl.Caption = sLabel
                 lbl.Tag = sFieldName
                 lbl.Left = margin
                 lbl.Top = curTop + 2
                 lbl.Width = labelWidth - (1.5 * margin)
-
-                Set edt = AddInputControl(sControlType, sControlName, sFieldName)
-
+                lbl.TextAlign = fmTextAlignRight
+                
                 edt.Tag = sFieldName & "|" & sListID
                 edt.Left = lbl.Left + lbl.Width + (0.5 * margin)
-                edt.Top = curTop
-                edt.Width = inputWidth - (2 * margin)
-
+                
+                If sControlType = "checkbox" Then
+                    edt.Top = curTop - 2
+                    edt.Width = 18
+                Else
+                    edt.Top = curTop
+                    edt.Width = inputWidth - (2 * margin)
+                End If
+                
                 ConfigureInputControl edt, sControlType, sDataType
 
                 If Not mControlMap.Exists(sFieldName) Then
@@ -220,6 +239,32 @@ Private Sub BuildControls()
     fraHost.KeepScrollBarsVisible = fmScrollBarsVertical
     fraHost.ScrollHeight = curTop + margin
 End Sub
+
+Private Function AddInputControl(ByVal pControlType As String, ByVal pControlSuffix As String, ByVal pFieldName As String) As MSForms.control
+    Dim sControlType As String
+    
+    sControlType = LCase$(Trim$(pControlType))
+    
+    Select Case sControlType
+        Case "textbox"
+            Set AddInputControl = fraHost.Controls.Add("Forms.TextBox.1", "txt_" & pControlSuffix, True)
+
+        Case "combo"
+            Set AddInputControl = fraHost.Controls.Add("Forms.ComboBox.1", "cbo_" & pControlSuffix, True)
+            
+            Dim handler As clsComboHandler
+            Set handler = New clsComboHandler
+            handler.Init AddInputControl, pFieldName, Me
+            
+            mEventHandlers.Add handler
+
+        Case "checkbox"
+            Set AddInputControl = fraHost.Controls.Add("Forms.CheckBox.1", "chk_" & pControlSuffix, True)
+
+        Case Else
+            Set AddInputControl = fraHost.Controls.Add("Forms.TextBox.1", "txt_" & pControlSuffix, True)
+    End Select
+End Function
 
 Private Sub PopulateAllLists()
     Const SHEET_FIELDS As String = "xe.fields"
@@ -337,13 +382,13 @@ Private Sub PopulateListForField(ByVal pFieldName As String, ByVal pPreserveValu
     End If
     
     If pPreserveValue Then
-        If ComboContainsValue(cbo, oldValue) Then
+        If ComboContains(cbo, oldValue) Then
             cbo.Value = oldValue
         Else
             cbo.ListIndex = -1
         End If
     Else
-        If ComboContainsValue(cbo, oldValue) Then
+        If ComboContains(cbo, oldValue) Then
             cbo.Value = oldValue
         Else
             cbo.ListIndex = -1
@@ -403,20 +448,92 @@ Public Sub RefreshChildLists(ByVal pParentFieldName As String)
     Next iRow
 End Sub
 
-Private Function ComboContainsValue(ByVal pCombo As MSForms.ComboBox, ByVal pValue As String) As Boolean
-    Dim i As Long
+Private Sub LoadRowValues(ByVal pLoadDependentFields As Boolean)
+    Const SHEET_FIELDS As String = "xe.fields"
     
-    ComboContainsValue = False
+    Dim wsTarget As Worksheet
+    Dim wsFields As Worksheet
     
-    If Len(Trim$(pValue)) = 0 Then Exit Function
+    Dim sTargetSheet As String
+    Dim vFieldName As Variant
+    Dim sControlName As String
+    Dim ctl As MSForms.control
+    Dim lCol As Long
+    Dim vValue As Variant
     
-    For i = 0 To pCombo.ListCount - 1
-        If StrComp(Trim$(CStr(pCombo.List(i))), Trim$(pValue), vbTextCompare) = 0 Then
-            ComboContainsValue = True
-            Exit Function
+    Dim colFormID As Long
+    Dim colFieldName As Long
+    Dim colParentField1 As Long
+    Dim colParentField2 As Long
+    Dim lastRowFields As Long
+    Dim iRow As Long
+    
+    Dim sFormID As String
+    Dim sFieldName As String
+    Dim sParentField1 As String
+    Dim sParentField2 As String
+    Dim hasParents As Boolean
+    
+    If mActiveRow < 2 Then Exit Sub
+    If mControlMap Is Nothing Then Exit Sub
+    
+    sTargetSheet = GetTargetSheetForForm(mFormID)
+    
+    If Len(sTargetSheet) = 0 Then
+        MsgBox "No TargetSheet defined for form '" & mFormID & "'.", vbExclamation, "xlEventing"
+        Exit Sub
+    End If
+    
+    If Not WorksheetExists(sTargetSheet) Then
+        MsgBox "Target sheet '" & sTargetSheet & "' does not exist.", vbExclamation, "xlEventing"
+        Exit Sub
+    End If
+    
+    If Not WorksheetExists(SHEET_FIELDS) Then
+        MsgBox "xe.fields does not exist.", vbExclamation, "xlEventing"
+        Exit Sub
+    End If
+    
+    Set wsTarget = ActiveWorkbook.Worksheets(sTargetSheet)
+    Set wsFields = ActiveWorkbook.Worksheets(SHEET_FIELDS)
+    
+    colFormID = FindColumnInSheet(wsFields, "FormID")
+    colFieldName = FindColumnInSheet(wsFields, "FieldName")
+    colParentField1 = FindColumnInSheet(wsFields, "ParentField1")
+    colParentField2 = FindColumnInSheet(wsFields, "ParentField2")
+    
+    If (colFormID = 0) Or (colFieldName = 0) Then Exit Sub
+    
+    lastRowFields = LastUsedRow(wsFields)
+    
+    For iRow = 2 To lastRowFields
+        sFormID = Trim$(CStr(wsFields.Cells(iRow, colFormID).Value))
+        sFieldName = Trim$(CStr(wsFields.Cells(iRow, colFieldName).Value))
+        
+        If StrComp(sFormID, mFormID, vbTextCompare) = 0 Then
+            sParentField1 = ""
+            sParentField2 = ""
+            
+            If colParentField1 > 0 Then sParentField1 = Trim$(CStr(wsFields.Cells(iRow, colParentField1).Value))
+            If colParentField2 > 0 Then sParentField2 = Trim$(CStr(wsFields.Cells(iRow, colParentField2).Value))
+            
+            hasParents = (Len(sParentField1) > 0) Or (Len(sParentField2) > 0)
+            
+            If hasParents = pLoadDependentFields Then
+                If mControlMap.Exists(sFieldName) Then
+                    sControlName = CStr(mControlMap(sFieldName))
+                    Set ctl = fraHost.Controls(sControlName)
+                    
+                    lCol = FindColumnInSheet(wsTarget, sFieldName)
+                    If lCol > 0 Then
+                        vValue = wsTarget.Cells(mActiveRow, lCol).Value
+                        SetControlValue ctl, vValue
+                    End If
+                End If
+            End If
         End If
-    Next i
-End Function
+    Next iRow
+End Sub
 
 Private Function GetListValues(ByVal pListID As String) As Collection
     Const SHEET_LISTS As String = "xe.lists"
@@ -702,26 +819,13 @@ Private Function SortCollectionText(ByVal pValues As Collection) As Collection
     Set SortCollectionText = outValues
 End Function
 
-Private Function AddInputControl(ByVal pControlType As String, ByVal pControlSuffix As String, ByVal pFieldName As String) As MSForms.control
-    Select Case LCase$(Trim$(pControlType))
-        Case "textbox"
-            Set AddInputControl = fraHost.Controls.Add("Forms.TextBox.1", "txt_" & pControlSuffix, True)
-
-        Case "combo"
-            Set AddInputControl = fraHost.Controls.Add("Forms.ComboBox.1", "cbo_" & pControlSuffix, True)
-            
-            Dim handler As clsComboHandler
-            Set handler = New clsComboHandler
-            handler.Init AddInputControl, pFieldName, Me
-            
-            mEventHandlers.Add handler
-
-        Case Else
-            Set AddInputControl = fraHost.Controls.Add("Forms.TextBox.1", "txt_" & pControlSuffix, True)
-    End Select
-End Function
-
 Private Sub ConfigureInputControl(ByVal pCtl As MSForms.control, ByVal pControlType As String, ByVal pDataType As String)
+
+    If Not IsSupportedControlType(pControlType) Then
+        MsgBox "Control Type " & pControlType & " is not yet supported", vbExclamation, "xlEventing"
+        Exit Sub
+    End If
+    
     Select Case LCase$(Trim$(pControlType))
         Case "textbox"
             Dim txt As MSForms.TextBox
@@ -746,31 +850,79 @@ Private Sub ConfigureInputControl(ByVal pCtl As MSForms.control, ByVal pControlT
             cbo.Style = fmStyleDropDownCombo
             cbo.MatchEntry = fmMatchEntryComplete
             cbo.ListRows = 12
+            
+        
+        Case "checkbox"
+            Dim chk As MSForms.CheckBox
+            Set chk = pCtl
+            
+            chk.Caption = ""
+            chk.Value = False
+            chk.BackStyle = fmBackStyleTransparent
     End Select
 End Sub
 
-Private Function SafeControlSuffix(ByVal pFieldName As String, ByVal pRow As Long) As String
-    Dim s As String
-    Dim i As Long
-    Dim ch As String
-    Dim out As String
-
-    s = Trim$(pFieldName)
-
-    For i = 1 To Len(s)
-        ch = Mid$(s, i, 1)
-
-        If ch Like "[A-Za-z0-9_]" Then
-            out = out & ch
-        Else
-            out = out & "_"
-        End If
-    Next i
-
-    If Len(out) = 0 Then
-        out = "Field_" & CStr(pRow)
+Private Sub SaveFormToRow()
+    Dim wsTarget As Worksheet
+    Dim sTargetSheet As String
+    Dim lTargetRow As Long
+    
+    On Error GoTo ErrHandler
+    
+    sTargetSheet = GetTargetSheetForForm(mFormID)
+    
+    If Len(sTargetSheet) = 0 Then
+        MsgBox "No TargetSheet defined for form '" & mFormID & "' in xe.forms.", vbExclamation, "xlEventing"
+        Exit Sub
     End If
+    
+    Set wsTarget = EnsureTargetSheetExists(sTargetSheet, mFormID)
+    If wsTarget Is Nothing Then Exit Sub
+    
+    If mActiveRow < 0 Then
+        lTargetRow = LastUsedRow(wsTarget) + 1
+        If lTargetRow < 2 Then lTargetRow = 2
+    Else
+        If mActiveRow < 2 Then
+            MsgBox "Invalid target row " & CStr(mActiveRow) & ".", vbExclamation, "xlEventing"
+            Exit Sub
+        End If
+        lTargetRow = mActiveRow
+    End If
+    
+    WriteFormValuesToSheet wsTarget, lTargetRow
+    
+    wsTarget.Activate
+    wsTarget.Cells(lTargetRow, 1).Select
+    
+    Unload Me
+    Exit Sub
 
-    SafeControlSuffix = out & "_" & CStr(pRow)
-End Function
+ErrHandler:
+    MsgBox "Error saving form: " & Err.Description, vbExclamation, "xlEventing"
+End Sub
 
+Private Sub WriteFormValuesToSheet(ByVal pWS As Worksheet, ByVal pTargetRow As Long)
+    Dim vFieldName As Variant
+    Dim sControlName As String
+    Dim ctl As MSForms.control
+    Dim lCol As Long
+    Dim vValue As Variant
+    
+    If mControlMap Is Nothing Then Exit Sub
+    
+    For Each vFieldName In mControlMap.Keys
+        sControlName = CStr(mControlMap(vFieldName))
+        Set ctl = fraHost.Controls(sControlName)
+        
+        lCol = FindColumnInSheet(pWS, CStr(vFieldName))
+        
+        If lCol = 0 Then
+            MsgBox "Target sheet '" & pWS.Name & "' is missing column '" & CStr(vFieldName) & "'.", vbExclamation, "xlEventing"
+            Exit Sub
+        End If
+        
+        vValue = GetControlValue(ctl)
+        pWS.Cells(pTargetRow, lCol).Value = vValue
+    Next vFieldName
+End Sub

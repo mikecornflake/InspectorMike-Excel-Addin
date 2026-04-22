@@ -6,13 +6,14 @@ Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmXLAdmin
    ClientTop       =   465
    ClientWidth     =   4560
    OleObjectBlob   =   "frmXLAdmin.frx":0000
-   StartUpPosition =   1  'CenterOwner
+   StartUpPosition =   2  'CenterScreen
 End
 Attribute VB_Name = "frmXLAdmin"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 Private Sub btnValidateForms_Click()
     edtResults.Value = ""
     cboMissingTabsheets.Clear
@@ -38,20 +39,33 @@ End Sub
 
 Private Sub btnCreateTabsheets_Click()
     Dim sheetName As String
+    Dim formID As String
+    Dim ws As Worksheet
     
     sheetName = Trim$(cboMissingTabsheets.Value)
     
     If Len(sheetName) = 0 Then
-        MsgBox "Please select a missing tabsheet from the list.", vbExclamation
+        MsgBox "Please select a missing tabsheet from the list.", vbExclamation, "xlEventing"
         Exit Sub
     End If
     
-    If WorksheetExists(sheetName) Then
-        Log "Sheet already exists!"
+    formID = GetFormIDForTargetSheet(sheetName)
+    
+    If Len(formID) = 0 Then
+        MsgBox "No FormID found in xe.forms for target sheet '" & sheetName & "'.", vbExclamation, "xlEventing"
         Exit Sub
     End If
     
-    CreateTargetSheetFromFields sheetName
+    Set ws = EnsureTargetSheetExists(sheetName, formID)
+    
+    If ws Is Nothing Then
+        MsgBox "Failed to create or open sheet '" & sheetName & "'.", vbExclamation, "xlEventing"
+        Exit Sub
+    End If
+    
+    Log "Created sheet '" & sheetName & "' from FormID '" & formID & "' with headers only (no data populated)"
+    
+    RemoveComboItem cboMissingTabsheets, sheetName
 End Sub
 
 Private Sub Validate_xe_forms()
@@ -62,23 +76,30 @@ Private Sub Validate_xe_forms()
         
         Set ws = ActiveWorkbook.Worksheets.Add
         ws.Name = "xe.forms"
+        ws.Move Before:=ActiveWorkbook.Worksheets(1)
+        ColourAdminTab ws
         
         ws.Cells(1, 1).Value = "FormID"
         ws.Cells(1, 2).Value = "Caption"
         ws.Cells(1, 3).Value = "TargetSheet"
+        ws.Cells(1, 4).Value = "Type"
         
         ws.Cells(2, 1).Value = "Workpack"
         ws.Cells(2, 2).Value = "Workpack Details"
         ws.Cells(2, 3).Value = "Workpack"
+        ws.Cells(2, 4).Value = "Configuration"
         
         ws.Cells(3, 1).Value = "Component"
         ws.Cells(3, 2).Value = "Asset Hierarchy"
         ws.Cells(3, 3).Value = "Component"
+        ws.Cells(3, 4).Value = "Configuration"
         
         ws.Cells(4, 1).Value = "GVI"
         ws.Cells(4, 2).Value = "General Visual Inspection"
         ws.Cells(4, 3).Value = "GVI"
+        ws.Cells(4, 4).Value = "Event"
         
+        BasicTidyWorksheet ws
     Else
         Set ws = ActiveWorkbook.Worksheets("xe.forms")
         Log "xe.forms exists"
@@ -98,6 +119,9 @@ Private Sub Validate_xe_fields()
         
         Set ws = ActiveWorkbook.Worksheets.Add
         ws.Name = "xe.fields"
+        ws.Move After:=ActiveWorkbook.Worksheets(2)
+        ColourAdminTab ws
+
         
         ws.Cells(1, 1).Value = "FormID"
         ws.Cells(1, 2).Value = "DisplayOrder"
@@ -126,8 +150,9 @@ Private Sub Validate_xe_fields()
         ws.Cells(r, 1).Resize(1, 10).Value = Array("GVI", 2, "Installation", "Installation", "combo", "text", "Y", "InstallationList", "", ""): r = r + 1
         ws.Cells(r, 1).Resize(1, 10).Value = Array("GVI", 3, "Substructure", "Substructure", "combo", "text", "Y", "SubstructureList", "Installation", ""): r = r + 1
         ws.Cells(r, 1).Resize(1, 10).Value = Array("GVI", 4, "Component", "Component", "combo", "text", "Y", "ComponentList", "Installation", "Substructure"): r = r + 1
-        ws.Cells(r, 1).Resize(1, 10).Value = Array("GVI", 5, "Good Condition?", "Is the Component in acceptable condition?", "textbox", "text", "Y", "", "", "")
+        ws.Cells(r, 1).Resize(1, 10).Value = Array("GVI", 5, "Good_Condition", "Is Component in good condition?", "checkbox", "bool", "Y", "", "", "")
         
+        BasicTidyWorksheet ws
     Else
         Set ws = ActiveWorkbook.Worksheets("xe.fields")
         Log "xe.fields exists"
@@ -147,6 +172,9 @@ Private Sub Validate_xe_lists()
         
         Set ws = ActiveWorkbook.Worksheets.Add
         ws.Name = "xe.lists"
+        ws.Move After:=ActiveWorkbook.Worksheets(3)
+        ColourAdminTab ws
+
         
         ws.Cells(1, 1).Value = "ListID"
         ws.Cells(1, 2).Value = "SourceSheet"
@@ -167,6 +195,7 @@ Private Sub Validate_xe_lists()
         ws.Cells(r, 1).Resize(1, 11).Value = Array("SubstructureList", "Component", "Substructure", "Installation", "Installation", "", "", "", "", "Y", "Y"): r = r + 1
         ws.Cells(r, 1).Resize(1, 11).Value = Array("ComponentList", "Component", "Component", "Installation", "Installation", "Substructure", "Substructure", "", "", "Y", "Y")
         
+        BasicTidyWorksheet ws
     Else
         Set ws = ActiveWorkbook.Worksheets("xe.lists")
         Log "xe.lists exists"
@@ -177,19 +206,6 @@ Private Sub Validate_xe_lists()
         End If
     End If
 End Sub
-
-Private Function ComboContains(ByVal cbo As MSForms.ComboBox, ByVal pValue As String) As Boolean
-    Dim i As Long
-    
-    ComboContains = False
-    
-    For i = 0 To cbo.ListCount - 1
-        If StrComp(cbo.List(i), pValue, vbTextCompare) = 0 Then
-            ComboContains = True
-            Exit Function
-        End If
-    Next i
-End Function
 
 Private Sub Validate_TargetSheets()
     Dim wsForms As Worksheet
@@ -238,78 +254,5 @@ Private Sub Validate_TargetSheets()
             End If
         End If
     Next iRow
-End Sub
-
-Private Sub CreateTargetSheetFromFields(ByVal pSheetName As String)
-    Const SHEET_FIELDS As String = "xe.fields"
-    
-    Dim wsNew As Worksheet
-    Dim wsFields As Worksheet
-    
-    Dim colFormID As Long
-    Dim colFieldName As Long
-    Dim colDisplayOrder As Long
-    
-    Dim lastRow As Long
-    Dim iRow As Long
-    
-    Dim fields As Collection
-    Dim item As Variant
-    
-    If Not WorksheetExists(SHEET_FIELDS) Then
-        Log "xe.fields not found!"
-        Exit Sub
-    End If
-    
-    Set wsFields = ActiveWorkbook.Worksheets(SHEET_FIELDS)
-    
-    colFormID = FindColumnInSheet(wsFields, "FormID")
-    colFieldName = FindColumnInSheet(wsFields, "FieldName")
-    colDisplayOrder = FindColumnInSheet(wsFields, "DisplayOrder")
-    
-    If colFormID = 0 Or colFieldName = 0 Or colDisplayOrder = 0 Then
-        Log "xe.fields missing required columns!"
-        Exit Sub
-    End If
-    
-    ' Gather fields for this form
-    Set fields = New Collection
-    
-    lastRow = LastUsedRow(wsFields)
-    
-    For iRow = 2 To lastRow
-        If StrComp(Trim$(wsFields.Cells(iRow, colFormID).Value), pSheetName, vbTextCompare) = 0 Then
-            fields.Add Array( _
-                wsFields.Cells(iRow, colDisplayOrder).Value, _
-                wsFields.Cells(iRow, colFieldName).Value _
-            )
-        End If
-    Next iRow
-    
-    If fields.Count = 0 Then
-        Log "No field definitions found for '" & pSheetName & "'!"
-        Exit Sub
-    End If
-    
-    ' Sort by DisplayOrder
-    Set fields = CollectionBubbleSort(fields)
-    
-    ' Create sheet
-    Set wsNew = Add_Sheet(pSheetName, Sheets.Count + 1)
-    
-    ' Write headers
-    Dim col As Long: col = 1
-    
-    For Each item In fields
-        wsNew.Cells(1, col).Value = item(1) ' FieldName
-        col = col + 1
-    Next item
-    
-    ' Format header row (optional but nice)
-    wsNew.Rows(1).Font.Bold = True
-    
-    Call BasicTidyWorksheet(wsNew)
-    
-    Log "Created sheet '" & pSheetName & "' with headers only (no data populated)"
 End Sub
 
