@@ -214,7 +214,7 @@ Public Sub DeleteDuplicatesBySelectedColumn()
   DeleteDuplicatesByColumn (ActiveCell.Column)
 End Sub
 
-Public Sub DeleteDuplicatesByColumn(iCol As Integer)
+Public Sub DeleteDuplicatesByColumn(iCol As Long)
     Dim i As Long
     
     ForceFindExtents
@@ -259,7 +259,7 @@ End Function
 
 ' Return the column number for sName.  if sName doesn't exist, then this column is created
 ' Does not rely on ForceFindExtents
-Public Function Ensure_Column(sName As String) As Integer
+Public Function Ensure_Column(sName As String) As Long
     Ensure_Column = Find_Column(sName)
     
     If Ensure_Column = -1 Then
@@ -286,7 +286,7 @@ Public Function Delete_Column(sName As String) As Boolean
 End Function
 
 Public Function Rename_Column(sOldName As String, sNewName As String) As Boolean
-    Dim i As Integer
+    Dim i As Long
     
     i = Find_Column(sOldName)
     
@@ -301,8 +301,8 @@ End Function
 ' This function needs to be passed an Array
 ' For use finding columns when the name is subject to minor change (ie "depth" & "depth (m)")
 '   iCol = FindFirstColumn(Array("depth", "depth (m)"))
-Public Function FindFirstColumn(ANames) As Integer
-    Dim i As Long, iCol As Integer
+Public Function FindFirstColumn(ANames) As Long
+    Dim i As Long, iCol As Long
     Dim sTemp As String
     
     i = LBound(ANames)
@@ -335,16 +335,16 @@ Public Function FindColumnInSheet(ByVal pWS As Worksheet, ByVal pHeaderName As S
     Next iCol
 End Function
 
-Public Function Find_Column(pHeaderName As String) As Integer
+Public Function Find_Column(pHeaderName As String) As Long
     Find_Column = FindColumnInSheet(ActiveSheet, pHeaderName)
 End Function
 
 ' Deprecated
-Public Function FindColumn(pHeaderName As String) As Integer
+Public Function FindColumn(pHeaderName As String) As Long
     FindColumn = FindColumnInSheet(ActiveSheet, pHeaderName)
 End Function
 
-Public Function Insert_Column(AName As String, ACol As Long, Optional bQuiet As Boolean = True) As Integer
+Public Function Insert_Column(AName As String, ACol As Long, Optional bQuiet As Boolean = True) As Long
     ' Does not rely on ForceFindExtents
     If Find_Column(AName) <> -1 Then
         If Not bQuiet Then
@@ -365,9 +365,9 @@ Public Function Insert_Column(AName As String, ACol As Long, Optional bQuiet As 
     End If
 End Function
 
-Public Function Add_Column(sName As String, Optional bQuiet As Boolean = True) As Integer
+Public Function Add_Column(sName As String, Optional bQuiet As Boolean = True) As Long
     ' Does not rely on ForceFindExtents
-    Dim iLastColumn As Integer
+    Dim iLastColumn As Long
     
     If Find_Column(sName) <> -1 Then
         If Not bQuiet Then
@@ -413,10 +413,10 @@ Public Function Copy_Column(sName As String, sNewName As String) As Boolean
     End If
 End Function
 
-Function GetColumnLetter(columnNumber As Integer) As String
-    Dim dividend As Integer
+Function GetColumnLetter(columnNumber As Long) As String
+    Dim dividend As Long
     Dim columnLetter As String
-    Dim modulo As Integer
+    Dim modulo As Long
 
     columnLetter = ""
 
@@ -546,8 +546,8 @@ Public Function PopulateColumn(sColumn As String, sValue As String) As Boolean
     End If
 End Function
 
-Public Function Move_Column(sName As String, iNewColumn As Integer) As Boolean
-    Dim iColumn As Integer
+Public Function Move_Column(sName As String, iNewColumn As Long) As Boolean
+    Dim iColumn As Long
     
     Move_Column = False
     iColumn = Find_Column(sName)
@@ -563,12 +563,12 @@ Public Function Move_Column(sName As String, iNewColumn As Integer) As Boolean
 End Function
 
 Public Function Move_Column2(AColToMove As String, ABeforeCol As String) As Boolean
-    Dim iColBefore As Integer
+    Dim iColBefore As Long
     
     iColBefore = Find_Column(ABeforeCol)
     Move_Column2 = Move_Column(AColToMove, iColBefore)
 End Function
-Public Function First_Non_Header_Row() As Integer
+Public Function First_Non_Header_Row() As Long
     First_Non_Header_Row = 2
     
     While Cells(First_Non_Header_Row, 1).Value = ""

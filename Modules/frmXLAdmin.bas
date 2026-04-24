@@ -65,7 +65,7 @@ Private Sub btnCreateTabsheets_Click()
     
     Log "Created sheet '" & sheetName & "' from FormID '" & formID & "' with headers only (no data populated)"
     
-    RemoveComboItem cboMissingTabsheets, sheetName
+    ComboBox_RemoveItem cboMissingTabsheets, sheetName
 End Sub
 
 Private Sub Validate_xe_forms()
@@ -247,7 +247,7 @@ Private Sub Validate_TargetSheets()
                 Log formID & ": sheet '" & sheetName & "' MISSING"
 
                 If Len(sheetName) > 0 Then
-                    If Not ComboContains(cboMissingTabsheets, sheetName) Then
+                    If Not ComboBox_Contains(cboMissingTabsheets, sheetName) Then
                         cboMissingTabsheets.AddItem sheetName
                     End If
                 End If

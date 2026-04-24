@@ -4,116 +4,10 @@ Private FMaxFindingCols As Long
 Dim FMultimedia As Worksheet
 Dim FmmFilenameCol As Long, FmmNewFilenameCol As Long, FmmFolderCol As Long
 
-Sub Test()
-    Dim oWorkbook As Workbook
+Public Sub Nexus6_ProcessEventExport(ALocation As String)
+    ' Entry point - here in case some pre-processing is required
     
-    Set oWorkbook = ActiveWorkbook
-        
-    'oWorkbook.Activate
-    'Duplicate_ActiveBook ("D:\Temp\Working\2956-BKA200-MKA (Oil).xlsx")
-    'ProcessNexus6EventExport ("Gippsland Basin / Pipelines / BKA200-MKA (Oil)")
-    'ActiveWorkbook.Save
-    'ActiveWorkbook.Close
-    
-    oWorkbook.Activate
-    Duplicate_ActiveBook ("D:\Temp\Working\5355-CBA150-HLA (Oil).xlsx")
-    ProcessNexus6EventExport ("Gippsland Basin / Pipelines / CBA150-HLA (Oil)")
-    ActiveWorkbook.Save
-    ActiveWorkbook.Close
-    
-    oWorkbook.Activate
-    Duplicate_ActiveBook ("D:\Temp\Working\5358-01 - Oil To KFB.xlsx")
-    ProcessNexus6EventExport ("Gippsland Basin / Platforms / Kingfish A (KFA) / Risers / 01 - Oil To KFB")
-    ActiveWorkbook.Save
-    ActiveWorkbook.Close
-    
-    oWorkbook.Activate
-    Duplicate_ActiveBook ("D:\Temp\Working\5359-06 - Oil From WKF.xlsx")
-    ProcessNexus6EventExport ("Gippsland Basin / Platforms / Kingfish A (KFA) / Risers / 06 - Oil From WKF")
-    ActiveWorkbook.Save
-    ActiveWorkbook.Close
-    
-    oWorkbook.Activate
-    Duplicate_ActiveBook ("D:\Temp\Working\5360-14 - Fuel Gas From MLA.xlsx")
-    ProcessNexus6EventExport ("Gippsland Basin / Platforms / Kingfish A (KFA) / Risers / Fuel Gas Caisson / 14 - Fuel Gas From MLA")
-    ActiveWorkbook.Save
-    ActiveWorkbook.Close
-    
-    oWorkbook.Activate
-    Duplicate_ActiveBook ("D:\Temp\Working\5362-01 - Oil To KFA.xlsx")
-    ProcessNexus6EventExport ("Gippsland Basin / Platforms / West Kingfish (WKF) / Risers / 01 - Oil To KFA")
-    ActiveWorkbook.Save
-    ActiveWorkbook.Close
-    
-    oWorkbook.Activate
-    Duplicate_ActiveBook ("D:\Temp\Working\5356-Seahorse (SHA).xlsx")
-    ProcessNexus6EventExport ("Gippsland Basin / Subsea Completions / Seahorse (SHA)")
-    ActiveWorkbook.Save
-    ActiveWorkbook.Close
-    
-    oWorkbook.Activate
-    Duplicate_ActiveBook ("D:\Temp\Working\5357-Tarwhine (TWA).xlsx")
-    ProcessNexus6EventExport ("Gippsland Basin / Subsea Completions / Tarwhine (TWA)")
-    ActiveWorkbook.Save
-    ActiveWorkbook.Close
-   
-    MsgBox "Finished"
-End Sub
-
-Sub Test2()
-    ' Only works on the avtive Worksheet
-    'Delete_Events_By_Location ("Gippsland Basin / Pipelines / BMA350-VS3 (Gas)")
-    FormatColumns
-End Sub
-
-Sub Test3()
-    Duplicate_ActiveBook ("D:\Temp\Working\Delete Me.xlsx")
-    ProcessWorkbook ("")
-End Sub
-
-Sub ProcessNexus6EventExport(ALocation As String)
-    Dim oHUVR As Worksheet, oWorkbook As Workbook
-    
-    Dim iFilterCol As Long, iFilenameCol As Long, iFolderCol As Long
-    Dim sFilter As String, sFilename As String, sFolder As String
-    Dim iRow As Long
-
-    Set oWorkbook = ActiveWorkbook
-    
-    Set oHUVR = FindSheet(ActiveWorkbook, "HUVR")
-    If oHUVR Is Nothing Then
-        DoProcessNexus6EventExport (ALocation)
-    Else
-        oHUVR.Activate
-        
-        If (ActiveSheet.AutoFilterMode And ActiveSheet.FilterMode) Or ActiveSheet.FilterMode Then
-            ActiveSheet.ShowAllData
-        End If
-        
-        ForceFindExtents
-        
-        iFilterCol = FindColumn("Asset Location.Full Location")
-        iFilenameCol = FindColumn("Destination Filename")
-        iFolderCol = FindColumn("Destination Folder")
-        
-        For iRow = 2 To FLastRow
-            oWorkbook.Activate
-            oHUVR.Cells(iRow, iFilterCol).Select
-            
-            sFilter = oHUVR.Cells(iRow, iFilterCol).Value
-            sFilename = oHUVR.Cells(iRow, iFilenameCol).Value
-            sFolder = oHUVR.Cells(iRow, iFolderCol).Value
-            
-            If (UCase(sFilename) <> "SKIP") And (UCase(sFolder) <> "SKIP") Then
-                Duplicate_ActiveBook (AddTrailingDelimiter(sFolder) + sFilename)
-                DoProcessNexus6EventExport (Trim(sFilter))
-                
-                ActiveWorkbook.Save
-                ActiveWorkbook.Close
-            End If
-        Next iRow
-        
-    End If
+    DoProcessNexus6EventExport (ALocation)
 End Sub
 
 Private Sub DoProcessNexus6EventExport(ALocation As String)
@@ -126,10 +20,10 @@ Private Sub DoProcessNexus6EventExport(ALocation As String)
     sDatabase = RegistryRead("DOF_Addin", "Nexus 6", "Database", "Esso_Master")
     sUser = RegistryRead("DOF_Addin", "Nexus 6", "User", "")
     sPassword = RegistryRead("DOF_Addin", "Nexus 6", "Password", "")
-    FPipeline = StringBool(RegistryRead("DOF_Addin", "Nexus 6", "Pipeline", "True"))
+    FPipeline = Text_ToBool(RegistryRead("DOF_Addin", "Nexus 6", "Pipeline", "True"))
     
     If sServer <> "" Then
-        Call ConnectToSQLOLDDB(sServer, sDatabase, sUser, sPassword)
+        Call ConnectToSQLOLEDB(sServer, sDatabase, sUser, sPassword)
     End If
     
     Tidy_Tabs
@@ -143,11 +37,6 @@ Private Sub DoProcessNexus6EventExport(ALocation As String)
     Next oSheet
     
     Set oSheet = FindSheet(ActiveWorkbook, "Legend")
-    If Not oSheet Is Nothing Then
-        Call DeleteSheet(ActiveWorkbook, oSheet)
-    End If
-    
-    Set oSheet = FindSheet(ActiveWorkbook, "HUVR")
     If Not oSheet Is Nothing Then
         Call DeleteSheet(ActiveWorkbook, oSheet)
     End If
@@ -513,7 +402,7 @@ Private Sub Delete_Events_By_Location(AAllowedLocation As String)
     iImageCol = Find_Column("Multimedia.Image")
     
     sFilename = ActiveWorkbookLocalFilename
-    sImagePath = AddTrailingDelimiter(ExtractFolder(sFilename)) + AddTrailingDelimiter(ExtractFilenameOnly(sFilename) + "_Images")
+    sImagePath = Path_AddTrailingDelimiter(Path_GetFolder(sFilename)) + Path_AddTrailingDelimiter(Path_GetFileNameNoExt(sFilename) + "_Images")
     
     iAssetCol = Find_Column("Asset Location.Full Location")
     sAllowed = UCase(AAllowedLocation)
@@ -583,11 +472,11 @@ Private Sub Normalise_Event_By_MM()
     
     sFilename = ActiveWorkbookLocalFilename
     
-    sImagePath = AddTrailingDelimiter(ExtractFolder(sFilename)) + AddTrailingDelimiter(ExtractFilenameOnly(sFilename) + "_Images")
+    sImagePath = Path_AddTrailingDelimiter(Path_GetFolder(sFilename)) + Path_AddTrailingDelimiter(Path_GetFileNameNoExt(sFilename) + "_Images")
     
     If FMultimedia Is Nothing Then
-        sFindingImagePath = AddTrailingDelimiter(ExtractFolder(sFilename)) + AddTrailingDelimiter(ExtractFilenameOnly(sFilename) + "_Finding_Images")
-        ForceDirectories (sFindingImagePath)
+        sFindingImagePath = Path_AddTrailingDelimiter(Path_GetFolder(sFilename)) + Path_AddTrailingDelimiter(Path_GetFileNameNoExt(sFilename) + "_Finding_Images")
+        File_EnsureFolder (sFindingImagePath)
     End If
     
     Application.StatusBar = sStatus + "Beginning first pass"
@@ -646,7 +535,7 @@ Private Sub Normalise_Event_By_MM()
                 Cells(iActiveEventRow, iImageCol + (iRow - iActiveEventRow) + 1).Formula = sFormula
                 
                 If bIsFinding And (FMultimedia Is Nothing) Then
-                    If FileExists(sImagePath & sMMImage) Then
+                    If File_Exists(sImagePath & sMMImage) Then
                         On Error Resume Next
                         Call FileCopy(sImagePath & sMMImage, sFindingImagePath & "\" & sMMImage)
                     End If
@@ -865,7 +754,7 @@ Private Sub Reprocess_Multimedia_By_MM_Tab()
         Exit Sub
     End If
     
-    sImagesFolder = ExtractFilenameOnly(ActiveWorkbookLocalFilename) & "_Images\"
+    sImagesFolder = Path_GetFileNameNoExt(ActiveWorkbookLocalFilename) & "_Images\"
     sRootFolder = ActiveWorkbookPath & sImagesFolder
     
     Application.ScreenUpdating = False
@@ -878,9 +767,9 @@ Private Sub Reprocess_Multimedia_By_MM_Tab()
             sDisplay = Trim(oCurrent.Cells(iRow, iMediaCol + iColAdd).Value)
             sTemp = Trim(oCurrent.Cells(iRow, iMediaCol + iColAdd).Formula)
             
-            sOrigFilename = StringBetween(sTemp, "Images\", """,")
-            sName = StringBeforeLast(ExtractFilenameOnly(sOrigFilename), "_")
-            sExt = ExtractFilenameExt(sOrigFilename)
+            sOrigFilename = Text_Between(sTemp, "Images\", """,")
+            sName = Text_BeforeLast(Path_GetFileNameNoExt(sOrigFilename), "_")
+            sExt = Path_GetExtension(sOrigFilename)
             
             sSearchFilename = sName + sExt
             
@@ -892,21 +781,21 @@ Private Sub Reprocess_Multimedia_By_MM_Tab()
                     
                     ' sNewFilename = sOrigFilename
                     
-                    sNewFilename = Format(immRow - 1, "0000") & " - " & ValidateFilename(Trim(FMultimedia.Cells(immRow, FmmNewFilenameCol).Value))
+                    sNewFilename = Format(immRow - 1, "0000") & " - " & File_SanitizeName(Trim(FMultimedia.Cells(immRow, FmmNewFilenameCol).Value))
                     
                     If sNewFolder = "DO NOT MOVE" Then
                         sNewLink = Replace(sImagesFolder & sNewFilename, " ", "%20")
-                        If FileExists(sRootFolder & sOrigFilename) Then
-                            ' ForceDirectories (AddTrailingDelimiter(sRootFolder & sNewFolder))
+                        If File_Exists(sRootFolder & sOrigFilename) Then
+                            ' File_EnsureFolder (Path_AddTrailingDelimiter(sRootFolder & sNewFolder))
                             
                             Call FileCopy(sRootFolder & sOrigFilename, sRootFolder & sNewFilename)
-                            If FileExists(sRootFolder & sNewFilename) Then
+                            If File_Exists(sRootFolder & sNewFilename) Then
                                 DeleteFile (sRootFolder & sOrigFilename)
                             End If
                         End If
                         
                         ' It's possible the image was already processed on a different tab, if so, this hyperlink still needs updating
-                        If FileExists(sRootFolder & sNewFilename) Then
+                        If File_Exists(sRootFolder & sNewFilename) Then
                             sTemp = "=Hyperlink("""", """")"
                             oCurrent.Cells(iRow, iMediaCol + iColAdd).Select
                             
@@ -914,18 +803,18 @@ Private Sub Reprocess_Multimedia_By_MM_Tab()
                             Selection.Hyperlinks(1).TextToDisplay = sNewFilename
                         End If
                     Else
-                        sNewLink = Replace(sImagesFolder & AddTrailingDelimiter(sNewFolder) & sNewFilename, " ", "%20")
-                        If FileExists(sRootFolder & sOrigFilename) Then
-                            ForceDirectories (AddTrailingDelimiter(sRootFolder & sNewFolder))
+                        sNewLink = Replace(sImagesFolder & Path_AddTrailingDelimiter(sNewFolder) & sNewFilename, " ", "%20")
+                        If File_Exists(sRootFolder & sOrigFilename) Then
+                            File_EnsureFolder (Path_AddTrailingDelimiter(sRootFolder & sNewFolder))
                             
-                            Call FileCopy(sRootFolder & sOrigFilename, sRootFolder & AddTrailingDelimiter(sNewFolder) & sNewFilename)
-                            If FileExists(sRootFolder & AddTrailingDelimiter(sNewFolder) & sNewFilename) Then
+                            Call FileCopy(sRootFolder & sOrigFilename, sRootFolder & Path_AddTrailingDelimiter(sNewFolder) & sNewFilename)
+                            If File_Exists(sRootFolder & Path_AddTrailingDelimiter(sNewFolder) & sNewFilename) Then
                                 DeleteFile (sRootFolder & sOrigFilename)
                             End If
                         End If
                         
                         ' It's possible the image was already processed on a different tab, if so, this hyperlink still needs updating
-                        If FileExists(sRootFolder & AddTrailingDelimiter(sNewFolder) & sNewFilename) Then
+                        If File_Exists(sRootFolder & Path_AddTrailingDelimiter(sNewFolder) & sNewFilename) Then
                             sTemp = "=HYPERLINK(""" + sNewLink + """, """ + sDisplay + """)"
                             oCurrent.Cells(iRow, iMediaCol + iColAdd).Formula = sTemp
                         End If

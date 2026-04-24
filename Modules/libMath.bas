@@ -3,105 +3,55 @@ Attribute VB_Name = "libMath"
 
 Public Sub Test_LibraryMath()
     ActiveTestModule = "libMath"
-
-    Dim wsTest As Worksheet
-    Dim wb As Workbook
-    Set wb = ThisWorkbook
-    
-    ' === Create temporary sheet ===
-    Set wsTest = CreateTestSheet("UnitTestLibraryMath")
-    
-    On Error GoTo CleanUp
     
     ' ===== Basic min/max function tests =====
-    Call AssertEqual("max - 5 vs 10", 10, max(5, 10))
-    Call AssertEqual("min - 5 vs 10", 5, min(5, 10))
-    Call AssertEqual("max - negative", -2, max(-5, -2))
-    Call AssertEqual("min - decimal", 2.5, min(2.5, 9.8))
-    Call AssertEqual("max - string compare", "zebra", max("apple", "zebra"))
-    Call AssertEqual("min - string compare", "apple", min("apple", "zebra"))
-    Call AssertEqual("max - boolean", True, max(True, False))
-    Call AssertEqual("min - boolean", False, min(True, False))
+    Call AssertEqual("Math_Max - 5 vs 10", 10, Math_Max(5, 10))
+    Call AssertEqual("Math_Min - 5 vs 10", 5, Math_Min(5, 10))
+    Call AssertEqual("Math_Max - negative", -2, Math_Max(-5, -2))
+    Call AssertEqual("Math_Min - decimal", 2.5, Math_Min(2.5, 9.8))
+    Call AssertEqual("Math_Max - string compare", "zebra", Math_Max("apple", "zebra"))
+    Call AssertEqual("Math_Min - string compare", "apple", Math_Min("apple", "zebra"))
+    Call AssertEqual("Math_Max - boolean", True, Math_Max(True, False))
+    Call AssertEqual("Math_Min - boolean", False, Math_Min(True, False))
 
     ' ===== Edge cases =====
-    Call AssertEqual("max - empty", "abc", max("", "abc"))
-    Call AssertEqual("min - null vs number", 10, min(Null, 10))
-    Call AssertEqual("max - error ignored", CVErr(2000), max(CVErr(2000), CVErr(2000))) ' Custom test, expect error to echo
-
-    ' ===== Column level tests (requires setup) =====
-    ' A1: "ColAlpha", B1: "ColBeta"
-    ' === Setup test data ===
-    With wsTest
-        .Range("A1").Value = "ColAlpha"
-        .Range("B1").Value = "ColBeta"
-        .Range("A2:A4").Value = Application.Transpose(Array(11, 33, 7))
-        .Range("B2:B4").Value = Application.Transpose(Array(-1, 8, 0))
-    End With
-
-    ' === Test Column_Max/Min wrappers ===
-    Call AssertEqual("Column_Max wrapper - ColAlpha", 33, Column_Max("ColAlpha"))
-    Call AssertEqual("Column_Min wrapper - ColAlpha", 7, Column_Min("ColAlpha"))
-    Call AssertEqual("Column_Max wrapper - ColBeta", 8, Column_Max("ColBeta"))
-    Call AssertEqual("Column_Min wrapper - ColBeta", -1, Column_Min("ColBeta"))
-
-    Call AssertTrue("Column_Max - unknown returns Null", IsNull(Column_Max("Nope")))
-    Call AssertTrue("Column_Min - unknown returns Null", IsNull(Column_Min("FakeHeader")))
-    
-CleanUp:
-    ' === Delete temporary sheet ===
-    DeleteTestSheet ("UnitTestLibraryMath")
+    Call AssertEqual("Math_Max - empty", "abc", Math_Max("", "abc"))
+    Call AssertEqual("min - null vs number", 10, Math_Min(Null, 10))
+    Call AssertEqual("Math_Max - error ignored", CVErr(2000), Math_Max(CVErr(2000), CVErr(2000))) ' Custom test, expect error to echo
 End Sub
 
-Public Function max(a As Variant, b As Variant) As Variant
+Public Function Math_Max(a As Variant, b As Variant) As Variant
     If VarType(a) = vbBoolean And VarType(b) = vbBoolean Then
-        max = (a Or b) ' Logical max
+        Math_Max = (a Or b) ' Logical max
     ElseIf VarType(a) = vbString And VarType(b) = vbString Then
         If StrComp(a, b, vbBinaryCompare) >= 0 Then
-            max = a
+            Math_Max = a
         Else
-            max = b
+            Math_Max = b
         End If
     Else
         If a >= b Then
-            max = a
+            Math_Max = a
         Else
-            max = b
+            Math_Max = b
         End If
     End If
 End Function
 
-Public Function min(a As Variant, b As Variant) As Variant
+Public Function Math_Min(a As Variant, b As Variant) As Variant
     If VarType(a) = vbBoolean And VarType(b) = vbBoolean Then
-        min = (a And b) ' Logical min
+        Math_Min = (a And b) ' Logical min
     ElseIf VarType(a) = vbString And VarType(b) = vbString Then
         If StrComp(a, b, vbBinaryCompare) <= 0 Then
-            min = a
+            Math_Min = a
         Else
-            min = b
+            Math_Min = b
         End If
     Else
         If a <= b Then
-            min = a
+            Math_Min = a
         Else
-            min = b
+            Math_Min = b
         End If
-    End If
-End Function
-
-Public Function Column_Max(AColumnName As String) As Variant
-    Dim iCol As Long: iCol = Find_Column(AColumnName)
-    
-    Column_Max = Null
-    If iCol <> -1 Then
-        Column_Max = Application.WorksheetFunction.max(Columns(iCol))
-    End If
-End Function
-
-Public Function Column_Min(AColumnName As String) As Variant
-    Dim iCol As Long: iCol = Find_Column(AColumnName)
-    
-    Column_Min = Null
-    If iCol <> -1 Then
-        Column_Min = Application.WorksheetFunction.min(Columns(iCol))
     End If
 End Function

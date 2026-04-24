@@ -83,7 +83,7 @@ Private Sub btnDMWTCHack_Click()
 End Sub
 
 Private Sub btnQCChecks_Click()
-    Dim i As Integer
+    Dim i As Long
     
     ' Populate the Arrays used in the QC Checks
     ReDim FDuplicateEventCodeChecks(lbEventCodes.ListCount)

@@ -130,7 +130,7 @@ Public Function QuickValueSingle(sQuery As String, sReturnField As String) As Va
         Exit Function
     End If
 
-    Dim iCount As Integer: iCount = 0
+    Dim iCount As Long: iCount = 0
     db_Records.MoveFirst
 
     Do While Not db_Records.EOF

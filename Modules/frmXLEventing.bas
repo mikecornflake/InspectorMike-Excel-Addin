@@ -382,13 +382,13 @@ Private Sub PopulateListForField(ByVal pFieldName As String, ByVal pPreserveValu
     End If
     
     If pPreserveValue Then
-        If ComboContains(cbo, oldValue) Then
+        If ComboBox_Contains(cbo, oldValue) Then
             cbo.Value = oldValue
         Else
             cbo.ListIndex = -1
         End If
     Else
-        If ComboContains(cbo, oldValue) Then
+        If ComboBox_Contains(cbo, oldValue) Then
             cbo.Value = oldValue
         Else
             cbo.ListIndex = -1
@@ -527,7 +527,7 @@ Private Sub LoadRowValues(ByVal pLoadDependentFields As Boolean)
                     lCol = FindColumnInSheet(wsTarget, sFieldName)
                     If lCol > 0 Then
                         vValue = wsTarget.Cells(mActiveRow, lCol).Value
-                        SetControlValue ctl, vValue
+                        Control_SetValue ctl, vValue
                     End If
                 End If
             End If
@@ -821,7 +821,7 @@ End Function
 
 Private Sub ConfigureInputControl(ByVal pCtl As MSForms.control, ByVal pControlType As String, ByVal pDataType As String)
 
-    If Not IsSupportedControlType(pControlType) Then
+    If Not Control_IsSupportedType(pControlType) Then
         MsgBox "Control Type " & pControlType & " is not yet supported", vbExclamation, "xlEventing"
         Exit Sub
     End If
@@ -922,7 +922,7 @@ Private Sub WriteFormValuesToSheet(ByVal pWS As Worksheet, ByVal pTargetRow As L
             Exit Sub
         End If
         
-        vValue = GetControlValue(ctl)
+        vValue = Control_GetValue(ctl)
         pWS.Cells(pTargetRow, lCol).Value = vValue
     Next vFieldName
 End Sub

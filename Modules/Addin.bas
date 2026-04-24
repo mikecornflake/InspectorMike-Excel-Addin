@@ -7,7 +7,7 @@ End Sub
 
 'Callback for btnTidyEventExport onAction
 Sub Tidy_Nexus_Event_Export_Callback(control As IRibbonControl)
-    Tidy_Event_Export
+    Nexus5_Tidy_Event_Export
 End Sub
 
 'Callback for btnTidyNexus6EventExport onAction
@@ -51,20 +51,20 @@ Sub SaveAs_PDF_Callback(control As IRibbonControl)
     SaveAsPDF
 End Sub
 
-Sub ConvertSelectedToTitleCase_Callback(control As IRibbonControl)
-    ConvertSelectedToTitleCase
+Sub Text_TitleCase_Selection_Callback(control As IRibbonControl)
+    Text_TitleCase_Selection
 End Sub
 
-Sub ConvertSelectedToSentenceCase_Callback(control As IRibbonControl)
-    ConvertSelectedToSentenceCase
+Sub Text_SentenceCase_Selection_Callback(control As IRibbonControl)
+    Text_SentenceCase_Selection
 End Sub
 
-Sub ConvertSelectedToUpperCase_Callback(control As IRibbonControl)
-    ConvertSelectedToUpperCase
+Sub Text_Upper_Selection_Callback(control As IRibbonControl)
+    Text_Upper_Selection
 End Sub
 
-Sub ConvertSelectedToLowerCase_Callback(control As IRibbonControl)
-    ConvertSelectedToLowerCase
+Sub Text_Lower_Selection_Callback(control As IRibbonControl)
+    Text_Lower_Selection
 End Sub
 
 Sub SaveAndBackup_Callback(control As IRibbonControl)

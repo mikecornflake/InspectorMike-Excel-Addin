@@ -1,4 +1,4 @@
-Attribute VB_Name = "mod_Z_TestFramework"
+Attribute VB_Name = "tst_Framework"
 ' 2025 08 15 - Added unit.  Framework and unit tests developed by copilot/Mike Thompson
 '
 ' Interface :-)
@@ -11,6 +11,7 @@ Attribute VB_Name = "mod_Z_TestFramework"
 ' Sub DeleteTestSheet(sheetName As String)
 
 Option Explicit
+Option Private Module
 
 Private Type TestResult
     Module As String
@@ -33,7 +34,7 @@ Public Sub RunAllTests()
     Call Test_LibraryString
     Call Test_LibraryMath
     Call Test_LibraryArray
-    ' Call Test_LibraryClipboard
+    Call Test_LibraryClipboard
     Call Test_LibraryDate
     Call Test_LibraryFiles
     Call Test_LibraryControls

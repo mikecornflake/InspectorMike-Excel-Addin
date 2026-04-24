@@ -58,7 +58,7 @@ Sub ProcessMicrosftPlannerExport()
     ' Now sort the data appropriately
     Dim iBucketCol As Long, iProgressCol As Long, iCreatedCol As Long, iCompletedCol As Long, iLabelsCol As Long
     Dim iChecklistCol As Long, iChecklistProgCol As Long
-    Dim iComplete As Integer, iTotal As Integer
+    Dim iComplete As Long, iTotal As Long
     
     iBucketCol = FindColumn("Bucket Name")
     iProgressCol = FindColumn("Progress")
@@ -145,8 +145,8 @@ Sub ProcessMicrosftPlannerExport()
             iComplete = 0
             iTotal = 0
         Else
-            iComplete = Val(StringBetween(sTemp, "", "/"))
-            iTotal = Val(StringBetween(sTemp, "/", ""))
+            iComplete = Val(Text_Between(sTemp, "", "/"))
+            iTotal = Val(Text_Between(sTemp, "/", ""))
         End If
         
         Cells(iRow, iChecklistCol).Select

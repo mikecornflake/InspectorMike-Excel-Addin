@@ -11,6 +11,7 @@ Public Sub FormatIEWorkpackDataSheet()
     Dim oSheet As Worksheet
     Dim iCol As Long, iRow As Long, iMaxRow As Long
     Dim sColumn As String, sValue As String
+    Dim sCaption As String
     Dim Value
     
     For Each oSheet In ActiveWorkbook.Sheets
@@ -158,7 +159,7 @@ Private Sub PopulateAnomalyReferences()
     Dim asset As String
     Dim anomalyRef As String
     Dim sourceSheets As Variant
-    Dim ws As Worksheet
+    Dim ws As Worksheet, sheetName
     Dim lastRow As Long
     
     ' Sheets containing anomalies
@@ -278,10 +279,10 @@ Private Sub Find_MissingFiles()
         ' Now we have a sorted list of all files in this folder, lets find the first & last file in the set...
         sFirstFile = Cells(iRow, iFirstFileCol).Value
         
-        sTemp = ExtractFilenameOnly(sFirstFile)
-        sExt = Trim(ExtractFilenameExt(sFirstFile))
+        sTemp = Path_GetFileNameNoExt(sFirstFile)
+        sExt = Trim(Path_GetExtension(sFirstFile))
         If sExt = "" Then sExt = ".mp4"
-        iTemp = Find_Last(sFirstFile, "_")
+        iTemp = Text_FindLast(sFirstFile, "_")
         sFileSet = Mid(sTemp, 1, iTemp - 1)
         
         Cells(iRow, iLastFileCol).Select
@@ -301,19 +302,19 @@ Private Function PrepareFileCollection(AFiles As Collection) As Collection
     
     For iFile = AFiles.Count To 1 Step -1
         sFile = AFiles(iFile)
-        sExt = LCase(ExtractFilenameExt(sFile))
+        sExt = LCase(Path_GetExtension(sFile))
         
         If Not ((sExt = ".mp4") Or (sExt = ".wmv")) Then
             AFiles.Remove (iFile)
         Else
-            sTemp = ExtractFilename(sFile)
+            sTemp = Path_GetFileName(sFile)
             
             AFiles.Remove (iFile)
             AFiles.Add (sTemp)
         End If
     Next iFile
     
-    ' Set oFiles = CollectionBubbleSort(oFiles)
+    ' Set oFiles = Collection_Sort(oFiles)
 
     Set PrepareFileCollection = AFiles
 End Function

@@ -93,7 +93,7 @@ Sub Interpolate_Nav_To_3_Sec()
                     For iCol = 1 To FLastColumn
                         If (iCol <> iDateTimeCol) And (iCol <> iDateCol) And (iCol <> iTimeCol) Then
                             sTemp = Cells(iStartRow, iCol).Value
-                            If IsNumber(sTemp) Then
+                            If Text_IsNumber(sTemp) Then
                                 dStart = Cells(iStartRow, iCol).Value
                                 dEnd = Cells(iEndRow, iCol).Value
                                 

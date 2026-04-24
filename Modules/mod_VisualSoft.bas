@@ -11,7 +11,7 @@ Public Type IncidentPair
    StartCode As String
    EndCode As String
    StartKP As Double
-   StartRow As Integer
+   StartRow As Long
 End Type
 
 Public FAscendingInspection As Boolean
@@ -79,7 +79,7 @@ Sub TidyVWExcelExport()
 End Sub
 
 Sub ProcessAnomalies()
-    Dim iSheetEvent, iSheetAnomaly, i, iAnom, iAnomCol As Integer
+    Dim iSheetEvent, iSheetAnomaly, i, iAnom, iAnomCol As Long
     
     ' Create the Anomaly Tab Sheet
     iSheetEvent = ActiveSheet.Index
@@ -139,8 +139,8 @@ Sub ProcessAnomalies()
 End Sub
 
 Sub QCChecks()
-    Dim i, i1, i2, i3 As Integer
-    Dim iDupCheck As Integer
+    Dim i, i1, i2, i3 As Long
+    Dim iDupCheck As Long
     
     ' Current Values
     Dim sIncidentType, sIncident As String
@@ -148,16 +148,16 @@ Sub QCChecks()
     Dim sLocation, sComment, sAnomalyComment As String
     
     ' Columns
-    Dim iIncidentType, iIncident As Integer
-    Dim iLastSpan, iLastRockDump, iLastMattress, iLastTrench, iLastBurial, iLastInsp As Integer
-    Dim iHeight, iWidth, iLength As Integer
-    Dim iContactCP, iCPCalibration, iAnomaly, iComment, iAnomalyComment As Integer
-    Dim iLocation, iClockPosition, iDistanceOff As Integer
-    Dim iDateCol, iTimeCol, iKPCol, iEventCodeCol As Integer
-    Dim iDuplicatesCol As Integer
+    Dim iIncidentType, iIncident As Long
+    Dim iLastSpan, iLastRockDump, iLastMattress, iLastTrench, iLastBurial, iLastInsp As Long
+    Dim iHeight, iWidth, iLength As Long
+    Dim iContactCP, iCPCalibration, iAnomaly, iComment, iAnomalyComment As Long
+    Dim iLocation, iClockPosition, iDistanceOff As Long
+    Dim iDateCol, iTimeCol, iKPCol, iEventCodeCol As Long
+    Dim iDuplicatesCol As Long
     Dim dCurrKP As Double
-    Dim iDimCount As Integer
-    Dim iPass As Integer
+    Dim iDimCount As Long
+    Dim iPass As Long
     
     ' Ensure the Autofilter is turned on...
     If ActiveSheet.AutoFilterMode = False Then
@@ -479,13 +479,13 @@ Sub QCChecks()
         End If
         
         ' Any wierd unicode?
-        If (Not IsLatin(sComment)) Then
+        If (Not Text_IsLatin(sComment)) Then
             Cells(i, iComment).Select
             MarkSelectedAsIssue
         End If
         
         ' Any wierd unicode?
-        If Not IsLatin(sAnomalyComment) Then
+        If Not Text_IsLatin(sAnomalyComment) Then
             Cells(i, iAnomalyComment).Select
             MarkSelectedAsIssue
         End If
@@ -676,7 +676,7 @@ Sub MarkSelectedAsIssue()
 End Sub
 
 Sub FormatActiveSheet()
-    Dim i As Integer
+    Dim i As Long
     
     ' Use the Basic Tidy as a base...
     Call BasicTidy(ActiveSheet)
@@ -748,9 +748,9 @@ Sub FormatActiveSheet()
 End Sub
 
 Sub SetCommentsForBurialEvents()
-    Dim i As Integer
+    Dim i As Long
     Dim bInRockDump As Boolean
-    Dim iIncidentCol, iCommentCol As Integer
+    Dim iIncidentCol, iCommentCol As Long
     Dim sIncident, sComment As String
    
     ' Set the Header row
@@ -787,7 +787,7 @@ Sub SetCommentsForBurialEvents()
     Range("A2").Select
 End Sub
 
-Sub InterpolateColumn(iCol As Integer, iStartRow As Integer, iEndRow As Integer, iCurrRow As Integer, dPercent As Double)
+Sub InterpolateColumn(iCol As Long, iStartRow As Long, iEndRow As Long, iCurrRow As Long, dPercent As Double)
     Dim d1 As Double, d2 As Double
     
     Cells(iCurrRow, iCol).Select
@@ -800,16 +800,16 @@ Sub InterpolateColumn(iCol As Integer, iStartRow As Integer, iEndRow As Integer,
 End Sub
 
 Sub InterpolatePositionFromMBES()
-    Dim iDateCol As Integer
-    Dim iTimeCol As Integer
-    Dim iIncidentCol As Integer, iFixedCol As Integer
-    Dim iEastingCol As Integer
-    Dim iNorthingCol As Integer
-    Dim iDepthCol As Integer
-    Dim iDCCCol As Integer
-    Dim iKPCol As Integer
-    Dim iMBESKPCol As Integer
-    Dim iRow As Integer, iCurrRow As Integer, iStartRow As Integer, iEndRow As Integer
+    Dim iDateCol As Long
+    Dim iTimeCol As Long
+    Dim iIncidentCol As Long, iFixedCol As Long
+    Dim iEastingCol As Long
+    Dim iNorthingCol As Long
+    Dim iDepthCol As Long
+    Dim iDCCCol As Long
+    Dim iKPCol As Long
+    Dim iMBESKPCol As Long
+    Dim iRow As Long, iCurrRow As Long, iStartRow As Long, iEndRow As Long
     Dim dPercent As Double
     Dim sIncidentCode As String, sFixed As String
     Dim dtStart As Date, dtEnd As Date, dtCurr As Date
@@ -864,15 +864,15 @@ Sub InterpolatePositionFromMBES()
 End Sub
 
 Sub SetInspectionEndPosToNextInspectionStart()
-    Dim iIncidentCol As Integer
-    Dim iKPCol As Integer, iDateCol As Integer, iTimeCol As Integer, iContCP As Integer
-    Dim iRow As Integer
+    Dim iIncidentCol As Long
+    Dim iKPCol As Long, iDateCol As Long, iTimeCol As Long, iContCP As Long
+    Dim iRow As Long
     Dim sIncidentCode As String
-    Dim iLastEndRow As Integer
+    Dim iLastEndRow As Long
     Dim sLastCode As String
     Dim bDirection As Boolean
     Dim sCodeTo As String
-    Dim iColumn As Integer
+    Dim iColumn As Long
     Dim dOffset As Double
     
     
@@ -977,7 +977,7 @@ End Sub
 
 Sub FixInspectionEndTime()
     Dim iRow As Long
-    Dim iDateCol As Integer, iTimeCol As Integer
+    Dim iDateCol As Long, iTimeCol As Long
     
      ' Set the Header row
     ForceFindExtents
@@ -995,12 +995,12 @@ Sub FixInspectionEndTime()
 End Sub
 
 Sub InterpolateTimeFromKP()
-    Dim iDateCol As Integer
-    Dim iTimeCol As Integer
-    Dim iIncidentCol As Integer, iFixedCol As Integer
-    Dim iDCCCol As Integer
-    Dim iKPCol As Integer
-    Dim iRow As Integer, iCurrRow As Integer, iStartRow As Integer, iEndRow As Integer
+    Dim iDateCol As Long
+    Dim iTimeCol As Long
+    Dim iIncidentCol As Long, iFixedCol As Long
+    Dim iDCCCol As Long
+    Dim iKPCol As Long
+    Dim iRow As Long, iCurrRow As Long, iStartRow As Long, iEndRow As Long
     Dim dPercent As Double
     Dim sIncidentCode As String, sFixed As String
     Dim dtStart As Date, dtEnd As Date, dtCurr As Date
@@ -1071,17 +1071,17 @@ Sub InterpolateTimeFromKP()
 End Sub
 
 Sub ApplyDM_WTC_Hack()
-    Dim iEventCodeCol As Integer
-    Dim iHeight, iWidth, iLength As Integer
-    Dim iClockPosition As Integer
-    Dim iComment As Integer
+    Dim iEventCodeCol As Long
+    Dim iHeight, iWidth, iLength As Long
+    Dim iClockPosition As Long
+    Dim iComment As Long
     
     Dim sClockPosition As String, sComment As String
     Dim sStart As String, sEnd As String
     
     Dim dOneClockLength As Double, dClockLength As Double
     Dim dStart As Double, dEnd As Double
-    Dim i As Integer
+    Dim i As Long
     
     
     ' One clock position on a 1m diameter pipeline is approx 250mm
@@ -1107,11 +1107,11 @@ Sub ApplyDM_WTC_Hack()
                 sClockPosition = Trim(LCase(Cells(i, iClockPosition).Value))
                 
                 If ((sComment = "-") Or (sComment = "")) And (Trim(Cells(i, iClockPosition).Value <> "")) Then
-                    sStart = Trim(StringBetween(sClockPosition, "", " to"))
-                    sEnd = Trim(StringBetween(sClockPosition, "to", ""))
+                    sStart = Trim(Text_Between(sClockPosition, "", " to"))
+                    sEnd = Trim(Text_Between(sClockPosition, "to", ""))
                     
                     If InStr(" ", sEnd) Then
-                        sEnd = Trim(StringBetween(sEnd, "", " "))
+                        sEnd = Trim(Text_Between(sEnd, "", " "))
                     End If
                     
                     dStart = Val(sStart)
@@ -1143,10 +1143,10 @@ Sub ApplyDM_WTC_Hack()
 End Sub
 
 Sub UpdateKPLength()
-    Dim iIncidentCol As Integer
-    Dim iKPCol As Integer, iKPLengthCol As Integer
-    Dim iRow As Integer, iCode As Integer
-    Dim iDateCol As Integer, iTimeCol As Integer
+    Dim iIncidentCol As Long
+    Dim iKPCol As Long, iKPLengthCol As Long
+    Dim iRow As Long, iCode As Long
+    Dim iDateCol As Long, iTimeCol As Long
     Dim sIncidentCode As String
     Dim dKPLength As Double
     
@@ -1317,8 +1317,8 @@ Sub UpdateKPLength()
 End Sub
 
 Sub CalculateNumberOfRBPerSpan()
-    Dim iIncidentCol As Integer, iRBCountCol As Integer
-    Dim iRow As Integer, iStartRow As Integer, iRBCount As Integer
+    Dim iIncidentCol As Long, iRBCountCol As Long
+    Dim iRow As Long, iStartRow As Long, iRBCount As Long
     Dim sIncidentCode As String
     
     ' Set the Header row
@@ -1363,7 +1363,7 @@ Sub CalculateNumberOfRBPerSpan()
 End Sub
 
 Public Sub ProcessVWCoabisExport()
-    Dim i As Integer
+    Dim i As Long
     Dim dTemp As Date
     Dim sTemp As String
     
@@ -1416,7 +1416,7 @@ Public Sub ProcessVWCoabisExport()
     Cells(2, 1).Select
     
     Application.DisplayAlerts = False
-    ActiveWorkbook.SaveAs filename:=SwapString(ActiveWorkbookLocalFilename, ".xlsx", ".xls"), FileFormat:=xlExcel8, Local:=True
+    ActiveWorkbook.SaveAs filename:=Text_Replace(ActiveWorkbookLocalFilename, ".xlsx", ".xls"), FileFormat:=xlExcel8, Local:=True
     ActiveWorkbook.CheckCompatibility = False
     ActiveWorkbook.Save
     Application.DisplayAlerts = True

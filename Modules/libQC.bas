@@ -31,8 +31,8 @@ Public Sub CompareSheets(sSheet1 As String, sSheet2 As String, sQCSheet As Strin
     oSheet1.Select
     
     ForceFindExtents
-    iMaxRow = max(iMaxRow, FLastRow)
-    iMaxColumn = max(iMaxColumn, FLastColumn)
+    iMaxRow = Math_Max(iMaxRow, FLastRow)
+    iMaxColumn = Math_Max(iMaxColumn, FLastColumn)
     
     Rows("1:1").Select
     Selection.Copy

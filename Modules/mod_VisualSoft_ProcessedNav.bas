@@ -40,19 +40,19 @@ Sub MergeEvents()
 '
     Dim sBaseFolder As String, sHistoricalName As String, sNewName As String, sTrackName As String, sCurrentName As String
     
-    Dim sIncidentTypeCode As String, sIncidentCode As String, iIncidentTypeCol As Integer
+    Dim sIncidentTypeCode As String, sIncidentCode As String, iIncidentTypeCol As Long
     
-    Dim iWorkingCol1 As Integer, iWorkingCol2 As Integer, iWorkingCol3 As Integer
-    Dim iWorkingCol4 As Integer, iWorkingCol5 As Integer, iWorkingCol6 As Integer
-    Dim iWorkingCol7 As Integer, iWorkingCol8 As Integer, iWorkingCol9 As Integer
-    Dim iWorkingCol10 As Integer, iWorkingCol11 As Integer, iWorkingCol12 As Integer
-    Dim iWorkingCol13 As Integer
+    Dim iWorkingCol1 As Long, iWorkingCol2 As Long, iWorkingCol3 As Long
+    Dim iWorkingCol4 As Long, iWorkingCol5 As Long, iWorkingCol6 As Long
+    Dim iWorkingCol7 As Long, iWorkingCol8 As Long, iWorkingCol9 As Long
+    Dim iWorkingCol10 As Long, iWorkingCol11 As Long, iWorkingCol12 As Long
+    Dim iWorkingCol13 As Long
     
-    Dim iHistoricalCol1 As Integer, iHistoricalCol2 As Integer, iHistoricalCol3 As Integer
+    Dim iHistoricalCol1 As Long, iHistoricalCol2 As Long, iHistoricalCol3 As Long
     
-    Dim iKPCol As Integer
+    Dim iKPCol As Long
     
-    Dim iWorkingLastColumn As Integer
+    Dim iWorkingLastColumn As Long
     Dim iWorkingLastRow As Long, iEventsLastRow As Long, iTrackLastRow As Long
     
     Dim dThisKP As Double, dOtherKP As Double
@@ -77,7 +77,7 @@ Sub MergeEvents()
     sHistoricalName = FBaseFolder & FHistorical
     sIncidentTypeCode = FCode
     
-    sNewName = SwapString(sCurrentName, ".csv", "- " & sIncidentTypeCode & " - " & Format(Date, "yyyy-mm-ss") & " " & Format(Time, "hhmmss") & ".xlsx")
+    sNewName = Text_Replace(sCurrentName, ".csv", "- " & sIncidentTypeCode & " - " & Format(Date, "yyyy-mm-ss") & " " & Format(Time, "hhmmss") & ".xlsx")
     
     Workbooks.Open filename:=sCurrentName, Format:=xlDelimited, Local:=True
     ActiveWorkbook.SaveAs filename:=sNewName, FileFormat:=xlWorkbookDefault
@@ -315,7 +315,7 @@ Sub MergeEvents()
     
     wbCurrent.Save
     wsWorking.Activate
-    wsWorking.SaveAs filename:=SwapString(sHistoricalName, ".xlsx", " - For Import.csv"), FileFormat:=xlCSV, Local:=True
+    wsWorking.SaveAs filename:=Text_Replace(sHistoricalName, ".xlsx", " - For Import.csv"), FileFormat:=xlCSV, Local:=True
     
     Application.DisplayAlerts = False
     wbCurrent.SaveAs filename:=sNewName, FileFormat:=xlWorkbookDefault, Local:=True
@@ -324,7 +324,7 @@ Sub MergeEvents()
     MsgBox "Done.  Please check the QC tabsheet for possible errors before importing the csv file into VisualWorks"
 End Sub
 
-Sub LookupDateTimeFromTrack(AMatchTime As Integer)
+Sub LookupDateTimeFromTrack(AMatchTime As Long)
 '
 '   Requires a separate Sheet exists called "Track"
 '   Requires that current Sheet has first two columns for Date and Time and 7th column is KP
@@ -333,7 +333,7 @@ Sub LookupDateTimeFromTrack(AMatchTime As Integer)
 '  AMatchTime = -1 - Use data from Last Pass
 '
     Dim wsCurrent As Worksheet
-    Dim iDateCol As Integer, iTimeCol As Integer
+    Dim iDateCol As Long, iTimeCol As Long
     
     Set wsCurrent = ActiveWorkbook.ActiveSheet
     
@@ -390,8 +390,8 @@ Function Incident(AIncidentTypeCode As String, AIncidentCode As String) As Strin
 End Function
 
 Sub TidyProcessedNav()
-    Dim iDateCol As Integer
-    Dim iTimeCol As Integer
+    Dim iDateCol As Long
+    Dim iTimeCol As Long
     
     Call BasicTidy(ActiveSheet)
     

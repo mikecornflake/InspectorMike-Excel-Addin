@@ -1,5 +1,7 @@
 Attribute VB_Name = "libNexus6"
-Private Function AddRow(iRow As Long, AOriginal As String, ANew As String, Optional ADefault As String = "") As Integer
+' TODO This looks largely project specific code.  If so, delete it
+
+Private Function AddRow(iRow As Long, AOriginal As String, ANew As String, Optional ADefault As String = "") As Long
     Cells(iRow, 1).Value = AOriginal
     Cells(iRow, 2).Value = ANew
     Cells(iRow, 3).Value = ADefault
@@ -243,8 +245,8 @@ Public Function EnforcePipelineDepthPolarity(ADepthPositive As Boolean)
         dRSB = Abs(Cells(iRow, iRSBCol).Value)
         
         If ADepthPositive Then
-            Cells(iRow, iTOPCol).Value = min(dTOP, dBoP)
-            Cells(iRow, iBOPCol).Value = max(dTOP, dBoP)
+            Cells(iRow, iTOPCol).Value = Math_Min(dTOP, dBoP)
+            Cells(iRow, iBOPCol).Value = Math_Max(dTOP, dBoP)
             
             Cells(iRow, iLSBCol).Value = dLSB
             Cells(iRow, iRSBCol).Value = dRSB
@@ -252,8 +254,8 @@ Public Function EnforcePipelineDepthPolarity(ADepthPositive As Boolean)
             dTOP = -1 * dTOP
             dBoP = -1 * dBoP
             
-            Cells(iRow, iTOPCol).Value = max(dTOP, dBoP)
-            Cells(iRow, iBOPCol).Value = min(dTOP, dBoP)
+            Cells(iRow, iTOPCol).Value = Math_Max(dTOP, dBoP)
+            Cells(iRow, iBOPCol).Value = Math_Min(dTOP, dBoP)
             
             Cells(iRow, iLSBCol).Value = -1 * dLSB
             Cells(iRow, iRSBCol).Value = -1 * dRSB

@@ -358,8 +358,8 @@ End Type
 #If Windows Then
     Private Type GUID
         data1 As Long
-        data2 As Integer
-        data3 As Integer
+        data2 As Long
+        data3 As Long
         data4(0 To 7) As Byte
     End Type
     '
@@ -379,8 +379,8 @@ End Type
         lpstrInitialDir As LongPtr
         lpstrTitle As LongPtr
         flags As Long
-        nFileOffset As Integer
-        nFileExtension As Integer
+        nFileOffset As Long
+        nFileExtension As Long
         lpstrDefExt As LongPtr
         lCustData As LongPtr
         lpfnHook As LongPtr

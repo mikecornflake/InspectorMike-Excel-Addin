@@ -36,18 +36,26 @@
 	<body>
 		<h1>Inspector Mike 2.0 Excel Addin</h1>
 		<p>
-			<strong>Author:</strong> Mike Thompson (<a href="mailto:mike.cornflake@gmail.com">mike.cornflake@gmail.com</a>)
+			<strong>Author:</strong>Mike Thompson (<a href="mailto:mike.cornflake@gmail.com">mike.cornflake@gmail.com</a>)
 		</p>
 		<h2>Contributions</h2>
 		<ul>
 			<li>Chris Merrick (2004)</li>
-			<li>MSDN, <a href="https://stackoverflow.com/" target="_blank" rel="noopener noreferrer">StackOverflow</a> (attributes in code)</li>
-			<li>Ion Cristian Buse (2012): <a href="https://github.com/cristianbuse/VBA-FileTools" target="_blank" rel="noopener noreferrer">VBA FileTools</a> (OneDrive/SharePoint support)</li>
+			<li>MSDN,<a href="https://stackoverflow.com/" target="_blank" rel="noopener noreferrer">StackOverflow</a>(attributes in code)</li>
+			<li>Ion Cristian Buse (2012):<a href="https://github.com/cristianbuse/VBA-FileTools" target="_blank" rel="noopener noreferrer">VBA FileTools</a>(OneDrive/SharePoint support)</li>
 			<li>
-				<a href="https://copilot.microsoft.com" target="_blank" rel="noopener noreferrer">Copilot/ChatGPT-5</a> (2025+): Unit Test framework, code review and inline documentation</li>
+				<a href="https://copilot.microsoft.com" target="_blank" rel="noopener noreferrer">Copilot/ChatGPT-5</a>(2025+): Unit Test framework, code review and inline documentation</li>
 		</ul>
 		<h2>Recent Changes</h2>
 		<ul>
+			<li>
+				<span class="date">24/04/2026:</span>
+				<ul>
+					<li>Continue Excel Eventing</li>
+					<li>Major refactor: standardised naming across libs (Text, Date, Array, File, Controls), added unit tests, removed dead code</li>
+					<li>Discovered Debug - Compile.  Fixed all issues and resolved missing dependencies after DOF extraction</li>
+				</ul>
+			</li>
 			<li>
 				<span class="date">20/04/2026:</span>
 				<ul>
@@ -77,7 +85,7 @@
 		</p>
 		<h2>TODO</h2>
 		<ul>
-			<li>Database routines have been entirely worked over, need testing.  I'm concerned about the removal of multiple <b>On Error Resume Next</b>
+			<li>Database routines have been entirely worked over, need testing.  I'm concerned about the removal of multiple<b>On Error Resume Next</b>
 			</li>
 			<li>Complete code review and Unit Tests</li>
 			<li>Complete Integrity Elements merging - add Ribbon Entries</li>
@@ -90,7 +98,7 @@
 		<h2>History</h2>
 		<ul>
 			<li>
-				<span class="date">2025+:</span> Inspector Mike 2.0 Pty Ltd
+				<span class="date">2025+:</span>Inspector Mike 2.0 Pty Ltd
 				<details>
 					<summary>The journey continues...</summary>
 					<ul>
@@ -120,79 +128,79 @@
 				</details>
 			</li>
 			<li>
-				<span class="date">2014 to 2022:</span> DOF Subsea Pty Ltd (Perth)
+				<span class="date">2014 to 2022:</span>DOF Subsea Pty Ltd (Perth)
 				<details>
 					<summary>Summary of changes made while employed full time by DOF Australia...</summary>
 					<ul>
 						<li>
-							<span class="date">06/06/2024:</span> Updates for 2023 AUV Re-reprocessing</li>
+							<span class="date">06/06/2024:</span>Updates for 2023 AUV Re-reprocessing</li>
 						<li>
-							<span class="date">11/04/2024:</span> Updated LibraryFileTools to latest VBA-FileTools</li>
+							<span class="date">11/04/2024:</span>Updated LibraryFileTools to latest VBA-FileTools</li>
 						<li>
-							<span class="date">09/04/2024:</span> Updates to 2023 AUV Routines</li>
+							<span class="date">09/04/2024:</span>Updates to 2023 AUV Routines</li>
 						<li>
-							<span class="date">19/12/2023:</span> Minor update (format Clock Column)</li>
+							<span class="date">19/12/2023:</span>Minor update (format Clock Column)</li>
 						<li>
-							<span class="date">09/11/2023:</span> Updates to 2023 AUV Routines (to 22/11/2023)</li>
+							<span class="date">09/11/2023:</span>Updates to 2023 AUV Routines (to 22/11/2023)</li>
 						<li>
-							<span class="date">06/10/2023:</span> Commenced IntegrityElements Support</li>
+							<span class="date">06/10/2023:</span>Commenced IntegrityElements Support</li>
 						<li>
-							<span class="date">27/09/2023:</span> Commenced LibraryGantt</li>
+							<span class="date">27/09/2023:</span>Commenced LibraryGantt</li>
 						<li>
-							<span class="date">01/09/2023:</span> Added routines for 2023 ABU AUV Processing</li>
+							<span class="date">01/09/2023:</span>Added routines for 2023 ABU AUV Processing</li>
 						<li>
-							<span class="date">30/08/2023:</span> Removed conflicts between OneDrive/Sharepoint routines and existing (default to OneDrive version)</li>
+							<span class="date">30/08/2023:</span>Removed conflicts between OneDrive/Sharepoint routines and existing (default to OneDrive version)</li>
 						<li>
-							<span class="date">30/08/2023:</span> Added handler for No Finding ID in Nexus6 Event Export</li>
+							<span class="date">30/08/2023:</span>Added handler for No Finding ID in Nexus6 Event Export</li>
 						<li>
-							<span class="date">22/08/2023:</span> Added LibraryDate, SaveAndBackup, LibraryFileTools and limited support for OneDrive/Sharepoint</li>
+							<span class="date">22/08/2023:</span>Added LibraryDate, SaveAndBackup, LibraryFileTools and limited support for OneDrive/Sharepoint</li>
 						<li>
-							<span class="date">12/06/2023:</span> Minor fixes to ADO connection</li>
+							<span class="date">12/06/2023:</span>Minor fixes to ADO connection</li>
 						<li>
-							<span class="date">09/05/2023:</span> Fixed Excel 2019 compatibility (no formula2)</li>
+							<span class="date">09/05/2023:</span>Fixed Excel 2019 compatibility (no formula2)</li>
 						<li>
-							<span class="date">03/05/2023:</span> Minor fixes to ADO connection</li>
+							<span class="date">03/05/2023:</span>Minor fixes to ADO connection</li>
 						<li>
-							<span class="date">16/02/2023:</span> Added Support for Nexus 6 event export (Structure)</li>
+							<span class="date">16/02/2023:</span>Added Support for Nexus 6 event export (Structure)</li>
 						<li>
-							<span class="date">09/01/2023:</span> Initial Support for Nexus 6 event export (Pipeline)</li>
+							<span class="date">09/01/2023:</span>Initial Support for Nexus 6 event export (Pipeline)</li>
 						<li>
-							<span class="date">07/12/2022:</span> Added initial Compare Sheets support</li>
+							<span class="date">07/12/2022:</span>Added initial Compare Sheets support</li>
 						<li>
-							<span class="date">31/08/2022:</span> Unified workflow for Nexus 6/Malampaya Survey Processing</li>
+							<span class="date">31/08/2022:</span>Unified workflow for Nexus 6/Malampaya Survey Processing</li>
 						<li>
-							<span class="date">26/08/2022:</span> Improved RibbonUI - including adding String Case Formatting</li>
+							<span class="date">26/08/2022:</span>Improved RibbonUI - including adding String Case Formatting</li>
 						<li>
-							<span class="date">18/08/2022:</span> Additions for Nexus 6/Malampaya Survey Processing</li>
+							<span class="date">18/08/2022:</span>Additions for Nexus 6/Malampaya Survey Processing</li>
 						<li>
-							<span class="date">07/12/2021:</span> Fixed and improved run time for List Files In Folder</li>
+							<span class="date">07/12/2021:</span>Fixed and improved run time for List Files In Folder</li>
 						<li>
-							<span class="date">19/10/2020:</span> Added Microsoft Planner Export tidy</li>
+							<span class="date">19/10/2020:</span>Added Microsoft Planner Export tidy</li>
 						<li>
-							<span class="date">10/10/2019:</span> Added draft support for Conditional Formatting (no menu)</li>
+							<span class="date">10/10/2019:</span>Added draft support for Conditional Formatting (no menu)</li>
 						<li>
-							<span class="date">07/01/2019:</span> Nexus 5 Export: Ignore files that are reporting an off "File Not Found". These will need to be manually processed.</li>
+							<span class="date">07/01/2019:</span>Nexus 5 Export: Ignore files that are reporting an off "File Not Found". These will need to be manually processed.</li>
 						<li>
-							<span class="date">06/06/2018:</span> Expanded Nexus Export Multimedia renaming to handle files not being moved</li>
+							<span class="date">06/06/2018:</span>Expanded Nexus Export Multimedia renaming to handle files not being moved</li>
 						<li>
-							<span class="date">26/04/2018:</span> Added String Case handling (TODO - Expand RibbonBar)</li>
+							<span class="date">26/04/2018:</span>Added String Case handling (TODO - Expand RibbonBar)</li>
 						<li>
-							<span class="date">19/04/2018:</span> Added ListFilesInFolder handling (TODO - Expand RibbonBar)</li>
+							<span class="date">19/04/2018:</span>Added ListFilesInFolder handling (TODO - Expand RibbonBar)</li>
 						<li>
-							<span class="date">03/03/2018:</span> Remove all Conditional Formatting from Nexus Exports</li>
+							<span class="date">03/03/2018:</span>Remove all Conditional Formatting from Nexus Exports</li>
 						<li>
-							<span class="date">03/03/2018:</span> Stop crashing when no Findings exist</li>
+							<span class="date">03/03/2018:</span>Stop crashing when no Findings exist</li>
 						<li>
-							<span class="date">12/02/2018:</span> Optionally Rename and Move all multimedia in Nexus Exports</li>
+							<span class="date">12/02/2018:</span>Optionally Rename and Move all multimedia in Nexus Exports</li>
 						<li>
-							<span class="date">14/12/2017:</span> Added DOF branding as a courtesy</li>
+							<span class="date">14/12/2017:</span>Added DOF branding as a courtesy</li>
 						<li>
-							<span class="date">14/12/2017:</span> Added Ribbon, installers and initial documentation</li>
+							<span class="date">14/12/2017:</span>Added Ribbon, installers and initial documentation</li>
 					</ul>
 				</details>
 			</li>
 			<li>
-				<span class="date">2007 to 2014:</span> Inspector Mike Pty Ltd
+				<span class="date">2007 to 2014:</span>Inspector Mike Pty Ltd
 				<details>
 					<summary>Summary of changes made while freelancing...</summary>
 					<ul>
@@ -203,20 +211,20 @@
 				</details>
 			</li>
 			<li>
-				<span class="date">2004 to 2007:</span> Netlink Inspection Services (NIS)
+				<span class="date">2004 to 2007:</span>Netlink Inspection Services (NIS)
 				<details>
 					<summary>Summary of changes made while employed full time by NIS...</summary>
 					<ul>
 						<li>
-							<span class="date">2005 to 2007:</span> Multiple library enhancements to support offshore operations with assorted Netlink modules (pre version control)</li>
+							<span class="date">2005 to 2007:</span>Multiple library enhancements to support offshore operations with assorted Netlink modules (pre version control)</li>
 						<li>
-							<span class="date">06/2005:</span> Event Exporter enhancements for Talisman Malaysia and Maersk Denmark operations and reporting</li>
+							<span class="date">06/2005:</span>Event Exporter enhancements for Talisman Malaysia and Maersk Denmark operations and reporting</li>
 						<li>
-							<span class="date">04/2004:</span> Event Exporter enhancements for Nexen and Maersk Oil UK reporting</li>
+							<span class="date">04/2004:</span>Event Exporter enhancements for Nexen and Maersk Oil UK reporting</li>
 						<li>
-							<span class="date">02/2004:</span> Initial Event Export Processor in support of Shell Malampaya</li>
+							<span class="date">02/2004:</span>Initial Event Export Processor in support of Shell Malampaya</li>
 						<li>
-							<span class="date">04/2004:</span> Created initial library to support video conversion and log imports for China National Oil Company</li>
+							<span class="date">04/2004:</span>Created initial library to support video conversion and log imports for China National Oil Company</li>
 					</ul>
 				</details>
 			</li>

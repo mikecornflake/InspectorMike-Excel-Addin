@@ -11,16 +11,16 @@ Public Function Duplicate_ActiveBook(AFullname As String) As Workbook
     
     
     sFilename = ActiveWorkbookLocalFilename
-    sSourcePath = AddTrailingDelimiter(ExtractFolder(sFilename))
-    sSourceFilename = ExtractFilenameOnly(sFilename)
+    sSourcePath = Path_AddTrailingDelimiter(Path_GetFolder(sFilename))
+    sSourceFilename = Path_GetFileNameNoExt(sFilename)
     sSourceImageDir = sSourceFilename + "_Images"
     
-    sNewPath = AddTrailingDelimiter(ExtractFolder(AFullname))
-    sNewImageDir = ExtractFilenameOnly(AFullname) + "_Images"
+    sNewPath = Path_AddTrailingDelimiter(Path_GetFolder(AFullname))
+    sNewImageDir = Path_GetFileNameNoExt(AFullname) + "_Images"
     
-    bHasImages = FolderExists(sSourcePath + sSourceImageDir)
+    bHasImages = Folder_Exists(sSourcePath + sSourceImageDir)
     
-    ForceDirectories (sNewPath)
+    File_EnsureFolder (sNewPath)
     ActiveWorkbook.SaveCopyAs (AFullname)
     
     Set oBook = Workbooks.Open(AFullname)

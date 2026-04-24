@@ -21,7 +21,7 @@ Private Sub btnProcess_Click()
     SaveSettings
     frmNexus6EventExport.Hide
     
-    Call ProcessNexus6EventExport("")
+    Call Nexus6_ProcessEventExport("")
 End Sub
 
 Private Sub UserForm_Activate()
@@ -38,7 +38,7 @@ Private Sub UserForm_Activate()
         cboUser.Text = RegistryRead("DOF_Addin", "Nexus 6", "User", "")
         cboPassword.Text = RegistryRead("DOF_Addin", "Nexus 6", "Password", "")
             
-        cbPipeline.Value = StringBool(RegistryRead("DOF_Addin", "Nexus 6", "Pipeline", "True"))
+        cbPipeline.Value = Text_ToBool(RegistryRead("DOF_Addin", "Nexus 6", "Pipeline", "True"))
         
         FInitialised = "True"
     End If
@@ -49,6 +49,6 @@ Private Sub SaveSettings()
     Call RegistryWrite("DOF_Addin", "Nexus 6", "Database", Trim(cboDatabase.Text))
     Call RegistryWrite("DOF_Addin", "Nexus 6", "User", Trim(cboUser.Text))
     Call RegistryWrite("DOF_Addin", "Nexus 6", "Password", Trim(cboPassword.Text))
-    Call RegistryWrite("DOF_Addin", "Nexus 6", "Pipeline", BoolString(cbPipeline.Value))
+    Call RegistryWrite("DOF_Addin", "Nexus 6", "Pipeline", Bool_ToText(cbPipeline.Value))
 End Sub
 

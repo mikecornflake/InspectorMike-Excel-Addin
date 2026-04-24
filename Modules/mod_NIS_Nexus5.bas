@@ -2,7 +2,81 @@ Attribute VB_Name = "mod_NIS_Nexus5"
 Dim FMultimedia As Worksheet
 Dim FmmFilenameCol As Long, FmmNewFilenameCol As Long, FmmFolderCol As Long
 
-Public Sub Tidy_Event_Export()
+
+Sub Nexus5_Build_Full_Name()
+' Attribute Build_Full_Name.VB_Description = "Macro recorded 31/05/2007 by hutchida"
+    Dim iLastRow As Integer
+    Dim iLastColumn As Integer
+    Dim i, iCol As Integer
+    Dim sFormula As String
+    
+    ' Find the last Component.Location Column
+    iCol = Find_Column("Workpack.Name") - 2
+    
+    ' Delete the Nexen / Buzzard Columns
+    ' Columns("A:B").Select
+    ' Range("B1").Activate
+    ' Selection.Delete Shift:=xlToLeft
+    ' Range("A2").Select
+    
+    ' Find last row
+    Range("A1").Select
+    Selection.End(xlDown).Select
+    iLastRow = ActiveCell.Row
+    
+    ' Find Last Column
+    Range("A1").Select
+    Selection.End(xlToRight).Select
+    iLastColumn = ActiveCell.Column
+    
+    Application.CutCopyMode = False
+    Columns("A:A").Select
+    Selection.Insert Shift:=xlToRight
+    
+    ' Build up the formula
+    sFormula = "="
+    For i = 1 To iCol - 1
+      sFormula = sFormula & "RC[" & i & "]&"" / ""&"
+    Next i
+    sFormula = sFormula & "RC[" & iCol & "]"
+    
+    Range("A2").Select
+    ActiveCell.FormulaR1C1 = sFormula
+    
+    Range("A2").Select
+    Selection.Copy
+    
+    Range("A" & iLastRow).Select
+    Range(Selection, Selection.End(xlUp)).Select
+    ActiveSheet.Paste
+    
+    ' Populate the header
+    Cells(1, 1).Value = "Location"
+    
+    ' Stop Col A from being a formula
+    Columns("A:A").Select
+    Application.CutCopyMode = False
+    Selection.Copy
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
+    
+    Columns("A:A").Select
+    Selection.Replace What:="/  /  /  /  /  /  /  /  /", Replacement:="", LookAt:=xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+    Selection.Replace What:="/  /  /  /  /  /  /  /", Replacement:="", LookAt:=xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+    Selection.Replace What:="/  /  /  /  /  /  /", Replacement:="", LookAt:=xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+    Selection.Replace What:="/  /  /  /  /  /", Replacement:="", LookAt:=xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+    Selection.Replace What:="/  /  /  /  /", Replacement:="", LookAt:=xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+    Selection.Replace What:="/  /  /  /", Replacement:="", LookAt:=xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+    Selection.Replace What:="/  /  /", Replacement:="", LookAt:=xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+    Selection.Replace What:="/  /", Replacement:="", LookAt:=xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+    
+    ' Shell Philippines
+    Selection.Replace What:="Shell Philippines Exploration / Malampaya / ", Replacement:="", LookAt:=xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+    
+    Range("A2").Select
+    Application.CutCopyMode = False
+End Sub
+
+Public Sub Nexus5_Tidy_Event_Export()
     Dim iSheet As Long
     
     Call SortSheetsAlphabetically(ActiveWorkbook)
@@ -27,7 +101,7 @@ Public Sub Tidy_Event_Export()
                 Tidy_Header
                 
                 If Sheets(iSheet).Name <> "Findings" Then
-                    Build_Full_Name
+                    Nexus5_Build_Full_Name
                 Else
                     Rename_Column "Component.Location", "Location"
                 End If
@@ -52,7 +126,7 @@ Public Sub Tidy_Event_Export()
     Leave_Sheets_Tidy
 End Sub
 
-Sub Process_Multimedia()
+Private Sub Process_Multimedia()
     Dim oCurrent As Worksheet
     Dim iMediaCol As Long, iColAdd As Long
     Dim sRootFolder As String, sImagesFolder As String
@@ -72,7 +146,7 @@ Sub Process_Multimedia()
     Set oCurrent = ActiveWorkbook.ActiveSheet
     iMediaCol = Find_Column("Event.Multimedia")
     
-    sImagesFolder = ExtractFilenameOnly(ActiveWorkbookLocalFilename) & "_Images\"
+    sImagesFolder = Path_GetFileNameNoExt(ActiveWorkbookLocalFilename) & "_Images\"
     sRootFolder = ActiveWorkbookPath & sImagesFolder
     
     If iMediaCol <= 0 Then
@@ -93,38 +167,38 @@ Sub Process_Multimedia()
             If immRow > 0 Then
                 sNewFolder = Trim(FMultimedia.Cells(immRow, FmmFolderCol).Value)
                 
-                sNewFilename = Format(immRow - 1, "0000") & " - " & ValidateFilename(Trim(FMultimedia.Cells(immRow, FmmNewFilenameCol).Value))
+                sNewFilename = Format(immRow - 1, "0000") & " - " & File_SanitizeName(Trim(FMultimedia.Cells(immRow, FmmNewFilenameCol).Value))
                 
                 If sNewFolder = "DO NOT MOVE" Then
                     sNewLink = Replace(sImagesFolder & sNewFilename, " ", "%20")
-                    If FileExists(sRootFolder & sOrigFilename) Then
-                        ' ForceDirectories (AddTrailingDelimiter(sRootFolder & sNewFolder))
+                    If File_Exists(sRootFolder & sOrigFilename) Then
+                        ' File_EnsureFolder (Path_AddTrailingDelimiter(sRootFolder & sNewFolder))
                         
                         Call FileCopy(sRootFolder & sOrigFilename, sRootFolder & sNewFilename)
-                        If FileExists(sRootFolder & sNewFilename) Then
+                        If File_Exists(sRootFolder & sNewFilename) Then
                             Kill (sRootFolder & sOrigFilename)
                         End If
                     End If
                     
                     ' It's possible the image was already processed on a different tab, if so, this hyperlink still needs updating
-                    If FileExists(sRootFolder & sNewFilename) Then
+                    If File_Exists(sRootFolder & sNewFilename) Then
                         oCurrent.Cells(iRow, iMediaCol + iColAdd).Select
                         Selection.Hyperlinks(1).Address = sNewLink
                         Selection.Hyperlinks(1).TextToDisplay = sNewFilename
                     End If
                 Else
-                    sNewLink = Replace(sImagesFolder & AddTrailingDelimiter(sNewFolder) & sNewFilename, " ", "%20")
-                    If FileExists(sRootFolder & sOrigFilename) Then
-                        ForceDirectories (AddTrailingDelimiter(sRootFolder & sNewFolder))
+                    sNewLink = Replace(sImagesFolder & Path_AddTrailingDelimiter(sNewFolder) & sNewFilename, " ", "%20")
+                    If File_Exists(sRootFolder & sOrigFilename) Then
+                        File_EnsureFolder (Path_AddTrailingDelimiter(sRootFolder & sNewFolder))
                         
-                        Call FileCopy(sRootFolder & sOrigFilename, sRootFolder & AddTrailingDelimiter(sNewFolder) & sNewFilename)
-                        If FileExists(sRootFolder & AddTrailingDelimiter(sNewFolder) & sNewFilename) Then
+                        Call FileCopy(sRootFolder & sOrigFilename, sRootFolder & Path_AddTrailingDelimiter(sNewFolder) & sNewFilename)
+                        If File_Exists(sRootFolder & Path_AddTrailingDelimiter(sNewFolder) & sNewFilename) Then
                             Kill (sRootFolder & sOrigFilename)
                         End If
                     End If
                     
                     ' It's possible the image was already processed on a different tab, if so, this hyperlink still needs updating
-                    If FileExists(sRootFolder & AddTrailingDelimiter(sNewFolder) & sNewFilename) Then
+                    If File_Exists(sRootFolder & Path_AddTrailingDelimiter(sNewFolder) & sNewFilename) Then
                         oCurrent.Cells(iRow, iMediaCol + iColAdd).Select
                         Selection.Hyperlinks(1).Address = sNewLink
                         Selection.Hyperlinks(1).TextToDisplay = sNewFilename
@@ -143,7 +217,7 @@ Sub Process_Multimedia()
     Application.ScreenUpdating = True
 End Sub
 
-Sub Find_Multimedia()
+Private Sub Find_Multimedia()
     Dim iSheet As Long
     
     Set FMultimedia = Nothing
@@ -161,7 +235,7 @@ Sub Find_Multimedia()
     Next iSheet
 End Sub
 
-Sub Delete_Lookup_Tabs()
+Private Sub Delete_Lookup_Tabs()
     Dim iSheets As Long
     
     Application.DisplayAlerts = False
@@ -243,7 +317,7 @@ Private Sub Hyperlink_Findings()
                 Sheets("Findings").Select
                 
                 sFullEvent = Cells(iFinding, iFindingEventCol)
-                sEvent = Left(sFullEvent, Find_Last(sFullEvent, " ") - 1)
+                sEvent = Left(sFullEvent, Text_FindLast(sFullEvent, " ") - 1)
                 
                 If WorksheetExists(sEvent) Then
                     Sheets(sEvent).Select
@@ -459,7 +533,7 @@ Private Sub Tidy_Columns()
     Application.ScreenUpdating = True
 End Sub
 
-Sub Remove_Formatting()
+Private Sub Remove_Formatting()
     Cells.Select
     With Selection.Interior
         .Pattern = xlNone
@@ -470,7 +544,7 @@ Sub Remove_Formatting()
     Selection.Font.Bold = False
 End Sub
 
-Sub Remove_Conditional_Formatting()
+Private Sub Remove_Conditional_Formatting()
     Cells.Select
     Cells.FormatConditions.Delete
 End Sub

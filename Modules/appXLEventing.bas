@@ -347,7 +347,7 @@ Public Sub CreateSheetHeadersFromFields(ByVal pWS As Worksheet, ByVal pFormID As
         End If
     Next iRow
     
-    Set colHeaders = CollectionBubbleSort(colHeaders, True)
+    Set colHeaders = Collection_Sort(colHeaders, True)
     
     iCol = 1
     For Each vItem In colHeaders
