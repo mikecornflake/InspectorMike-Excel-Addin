@@ -1,22 +1,21 @@
 # Inspector Mike - Excel Addin 
 
-## Background
-
 ![](./media/image1.png)
 
-The routines contained within InspectorMike_Addin.xlam have been
-developed over time, being started in 2004.
+Inspector Mike is an Excel add-in containing utility routines developed over many years, originally dating back to 2004.
 
-They are designed to:
+It is designed to streamline repetitive inspection/reporting tasks, standardise worksheet formatting, support event/logging workflows, and provide a framework for client-specific data processing tools.
 
-- Streamline repetitive tasks
 
-- Ensure consistent formatting for deliverables
+## Repository Contents
 
-- Provide enhanced functionality over that possible in the original
-  application.
+GitHub includes:
 
-## Installation
+- Extracted VBA module listings for convenience: `./Modules`
+- Extracted XLAM contents for tracking Ribbon XML and custom images: `./InspectorMike_Addin`
+- End-user documentation that may be deployed with the XLAM: `./InspectorMike_Addin_docs`
+
+## .xlam Installation
 
 - Close Excel, and use Task Manager to ensure there isn\'t a frozen
   instance of Excel still present
@@ -39,9 +38,6 @@ They are designed to:
 
 ## Upgrade
 
-- Use the "About" add-in to confirm the "last update" date for the
-  installed INSPECTORMIKE add-ins
-
 - Close Excel
 
 - Locate the updated file "InspectorMike_Addin.xlam"
@@ -56,24 +52,13 @@ They are designed to:
 
 ## Operation
 
-### Warnings
+## Warnings
 
-- Assume the worst, backup often
+- Assume the worst; back up often.
+- Error checking is limited.
+- Some routines are designed for specific worksheet layouts. Running them on an unsupported sheet may produce unexpected results.
+- This is especially true for the Nexus and VisualSoft tools.
 
-- There is minimal error checking within these routines
-
-- Assume the worst, backup often
-
-- If a routine is used on a sheet it wasn't designed for, then, well,
-  let's just say there may not be a happy ending. This is more true for
-  the Nexus and VisualSoft Tools.
-
-- Assume the worst, backup often
-
-- The following documentation is more to ensure the Use-Case for each
-  routine is understood
-
-- Assume the worst, backup often
 
 ### About
 
@@ -136,23 +121,14 @@ ahead and allow it to open this page.
   Proprietry Code, added unit tests, added routines for Fugro software,
   refactoring
 
-There's been no version management of this code. I don't want to talk
-about how many changes I've lost or mismanaged over the years... (2026
-started prep for addition to github)
+Historically, this code had no formal version management. Too many changes were lost or mismanaged over the years. In 2026, preparation began to bring the project under GitHub source control.
 
 ## TODO
 
-- Continue adding unit Tests (only 5 modules to date)
-
-- Eliminate ActiveSheet assumptions. Explicitly call worksheet etc
-
-- Only allow each Macro to be run in correct case
-
-- Offer the user settings (as per VisualSoft export)
-
-- Persist user settings
-
-- Version/Change Management
+- Continue adding unit tests
+- Remove `ActiveSheet` assumptions and explicitly pass worksheet references
+- Restrict macros so they only run in supported contexts
+- Add and persist user settings
 
 # Development Notes
 
