@@ -29,7 +29,7 @@ GitHub includes:
   - (Just paste %appdata%\\Microsoft\\Addins into the address bar in
     Windows explorer and hit enter)
 
-  - <img src="./media/image2.png" width="400">
+  <img src="./media/image2.png" width="300">
 
 - Once InspectorMike_Addin.xlam is installed in the correct folder, Open
   Excel, then navigate to File -- Options -- Add-ins -- "Go..."
