@@ -24,10 +24,11 @@ GitHub includes:
 - Destination folder has to be: **%appdata%\\Microsoft\\Addins**
   - (Just paste %appdata%\\Microsoft\\Addins into the address bar in
     Windows explorer and hit enter)
-<img src="./media/image2.png" style="width:300px;">
+<img src="./media/image2.png" style="width:400px;">
+
 - Once InspectorMike_Addin.xlam is installed in the correct folder, Open
   Excel, then navigate to File -- Options -- Add-ins -- "Go..."
-  - ![](./media/image3.png)
+<img src="./media/image3.png" style="width:400px;">
 
 ## Upgrade
 
