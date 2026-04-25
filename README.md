@@ -55,55 +55,36 @@ GitHub includes:
 
 # History
 
-- Initial routines developed by Mike Thompson (while employed by
-  Netlink, but subcontracted to Covus) in March 2003 on Malampaya.
-- Framework formalised by Chris Merrick on CNOOC inspection in Aug 2004.
-  Expansion of framework planned by Chris, implemented by Mike. Mike and
-  Chris employed by Netlink, but subcontracted to CalDive
-- Decision made by Netlink Inspection to release these routines free for
-  use with no documentation and no support.
-- 2004 -- 2007: Minor improvements during subsequent Malampaya
-  inspections.
-- 2005: Significant expansion of routines into assisting database import
-  and export between various client databases and Nexus
-- 2007: Mike Thompson departs Netlink and becomes Freelance (addin
-  renamed)
-- 2008: Final form of routines for Malampaya inspection
-- 2007 -- 2009: Continued use and minor modifications by Mike Thompson.
-  Copies of routines left on various client systems across the world.
-- 2014: Mike Thompson employed by DOF (addin renamed)
-- 2015: Commenced re-development of routines to assist with data
-  exported from Coabis and to and from VisualSoft during Chevron
-  campaigns
-- 2016: Ongoing development of VisualSoft routines
-- 2017: Deleted many modules not applicable to INSPECTORMIKE and
-  transition from "Unmanaged Macros" to "Official Addin", and the
-  generation of this documentation. (Talisman EventExport module left in
-  case improvements from that job are requested elsewhere)
-- 2018-03: Updates to Nexus Export to assist with Prelude Reporting (new
-  module -- LibraryFiles)
-- 2022 -- Updates to assist processing on Malampaya campaign following
-  disastrous upgrade to Nexus 6. (Added LibrarySurvey and
-  LibraryInterpolation, and migrated some existing routines to these
-  locations)
-- 2025 Mike Thompson back to freelance. Addin renamed. Removed DOF
-  Proprietry Code, added unit tests, added routines for Fugro software,
-  refactoring
-Historically, this code had no formal version management. Too many changes were lost or mismanaged over the years. In 2026, preparation began to bring the project under GitHub source control.
+- **2003** Initial routines developed by Mike Thompson (while employed by Netlink, but subcontracted to Covus) in March 2003 on Malampaya.
+- **2004** Framework formalised by Chris Merrick on CNOOC inspection in Aug 2004.
+  Expansion of framework planned by Chris, implemented by Mike. Mike and Chris employed by Netlink, but subcontracted to CalDive at the time.
+- Decision made by Netlink Inspection to release these routines free for use with no documentation and no support.
+- **2004-2007**: Minor improvements during subsequent Malampaya inspections.
+- **2005**: Significant expansion of routines into assisting database import and export between various client databases and Nexus
+- **2007**: Mike Thompson departs Netlink and becomes Freelance (addin renamed)
+- **2008**: Stable form of routines for Malampaya inspection for Nexus 5, unchanged until Nexus 6
+- **2007-2009**: Continued use and minor modifications by Mike Thompson.  Copies of routines left on various client systems across the world.
+- **2014**: Mike Thompson employed by DOF (addin renamed)
+- **2015**: Commenced re-development of routines to assist with data exported from Coabis and to and from VisualSoft during Chevron campaigns
+- **2016**: Ongoing development of VisualSoft routines
+- **2017**: Deleted many modules not applicable to DOF, transition from "Unmanaged Macros" to "Official Addin", and the generation of this documentation. (Talisman EventExport module left in case improvements from that job are requested elsewhere)
+- **2018**: Updates to Nexus Export to assist with Prelude Reporting (new module - LibraryFiles)
+- **2022**: Updates to assist processing on Malampaya campaign following disastrous upgrade to Nexus 6. (Added LibrarySurvey and LibraryInterpolation, and migrated some existing routines to these locations)
+- **2025**: Mike Thompson back to freelance. Addin renamed. Removed DOF Proprietry Code, added unit tests, added routines for Fugro software, refactoring
+- **2026**: Moved to GitHub.  Added Excel Eventing and Logging functionality, continued to extend unit testing.   
+Historically, this code had no formal version management. Too many changes were lost or mismanaged over the years. GitHub source control finally implemented in April 2026
 
 ## TODO
 
 - Continue adding unit tests
 - Remove `ActiveSheet` assumptions and explicitly pass worksheet references
-- Restrict macros so they only run in supported contexts
 - Add and persist user settings
 
 # Development Notes
 
-2018: Ribbon UI handled through OfficeCustomUIEditorSetup.msi
-2022 -- Ribbon UI management moved to forked project following Microsoft dropping support for the original
+**2018**: Ribbon UI handled through OfficeCustomUIEditorSetup.msi
+**2022**: Ribbon UI management moved to forked project following Microsoft dropping support for the original
 > <https://github.com/fernandreu/office-ribbonx-editor>
->
 > Updated build stored in same locations as above, but no longer needs
 > to be installed
 
@@ -113,5 +94,4 @@ Documentation for OfficeCustomUIEditorSetup:
 
 - <https://gregmaxey.com/word_tip_pages/ribbon_custom_icons.html>
 - <https://stackoverflow.com/questions/15409457/vba-error-wrong-number-of-arguments-or-invalid-property-assignments-when-runni>
-
 - <https://msdn.microsoft.com/en-us/library/cc508991(office.11).aspx#UsingtheCustomUIEditor2_AddingTemplatestotheCustomUIEditor>
