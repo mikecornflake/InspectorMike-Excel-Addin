@@ -22,6 +22,10 @@ Private mControlMap As Object ' Links a dynamically created control for each fie
 Private mEventHandlers As Collection ' EventHandlers for ComboBoxes so related ComboBoxes can be refreshed
 Private mIsLoading As Boolean
 
+Private Sub UserForm_Activate()
+    CentreFormOverExcel Me
+End Sub
+
 Public Sub SetupForm(ByVal pFormID As String, ByVal pActiveRow As Long)
     mIsLoading = True
     On Error GoTo ErrHandler
@@ -52,6 +56,10 @@ ErrHandler:
     Resume CleanExit
 End Sub
 
+Private Sub cmdUpdateDateTime_Click()
+    UpdateDateTimeControls Now()
+End Sub
+
 Private Sub cmdCancel_Click()
   Unload Me
 End Sub
@@ -63,6 +71,7 @@ End Sub
 Public Function IsLoading() As Boolean
     IsLoading = mIsLoading
 End Function
+
 
 Private Sub UserForm_Resize()
     LayoutForm
@@ -78,7 +87,7 @@ Private Sub LayoutForm()
     lblTitle.Top = margin
     lblTitle.Width = Me.InsideWidth - margin * 2
 
-    buttonTop = Me.InsideHeight - 36 - margin
+    buttonTop = Me.InsideHeight - cmdSave.Height - margin
 
     fraHost.Left = margin
     fraHost.Top = lblTitle.Top + lblTitle.Height + 6
@@ -87,9 +96,11 @@ Private Sub LayoutForm()
 
     cmdCancel.Top = buttonTop
     cmdSave.Top = buttonTop
+    cmdUpdateDateTime.Top = buttonTop
 
     cmdCancel.Left = Me.InsideWidth - cmdCancel.Width - margin
     cmdSave.Left = cmdCancel.Left - cmdSave.Width - 6
+    cmdUpdateDateTime.Left = cmdSave.Left - cmdUpdateDateTime.Width - 12
 End Sub
 
 Private Sub ClearDynamicControls()
@@ -242,6 +253,7 @@ End Sub
 
 Private Function AddInputControl(ByVal pControlType As String, ByVal pControlSuffix As String, ByVal pFieldName As String) As MSForms.control
     Dim sControlType As String
+    Dim handler As clsComboHandler
     
     sControlType = LCase$(Trim$(pControlType))
     
@@ -252,7 +264,6 @@ Private Function AddInputControl(ByVal pControlType As String, ByVal pControlSuf
         Case "combobox"
             Set AddInputControl = fraHost.Controls.Add("Forms.ComboBox.1", "cbo_" & pControlSuffix, True)
             
-            Dim handler As clsComboHandler
             Set handler = New clsComboHandler
             handler.Init AddInputControl, pFieldName, Me
             
@@ -260,6 +271,15 @@ Private Function AddInputControl(ByVal pControlType As String, ByVal pControlSuf
 
         Case "checkbox"
             Set AddInputControl = fraHost.Controls.Add("Forms.CheckBox.1", "chk_" & pControlSuffix, True)
+
+        Case "date"
+            Set AddInputControl = fraHost.Controls.Add("Forms.TextBox.1", "dat_" & pControlSuffix, True)
+
+        Case "time"
+            Set AddInputControl = fraHost.Controls.Add("Forms.TextBox.1", "tim_" & pControlSuffix, True)
+
+        Case "datetime"
+            Set AddInputControl = fraHost.Controls.Add("Forms.TextBox.1", "dtm_" & pControlSuffix, True)
 
         Case Else
             Set AddInputControl = fraHost.Controls.Add("Forms.TextBox.1", "txt_" & pControlSuffix, True)
@@ -925,4 +945,66 @@ Private Sub WriteFormValuesToSheet(ByVal pWS As Worksheet, ByVal pTargetRow As L
         vValue = Control_GetValue(ctl)
         pWS.Cells(pTargetRow, lCol).Value = vValue
     Next vFieldName
+End Sub
+
+Private Function Control_FieldName(ByVal pCtl As MSForms.control) As String
+    Dim sTag As String
+    Dim lPos As Long
+    
+    sTag = CStr(pCtl.Tag)
+    lPos = InStr(1, sTag, "|", vbTextCompare)
+    
+    If lPos > 0 Then
+        Control_FieldName = Left$(sTag, lPos - 1)
+    Else
+        Control_FieldName = sTag
+    End If
+End Function
+
+Private Sub UpdateDateTimeControls(ByVal pValue As Date)
+    Dim ctl As MSForms.control
+    Dim sType As String
+    Dim sFieldName As String
+    Dim bStartAlreadySet As Boolean
+    
+    ' First pass: was any Start date/time field already populated?
+    For Each ctl In fraHost.Controls
+        sType = Control_GetLogicalType(ctl)
+        
+        Select Case sType
+            Case "date", "time", "datetime"
+                sFieldName = LCase$(Control_FieldName(ctl))
+                
+                If InStr(1, sFieldName, "start", vbTextCompare) > 0 Then
+                    If Not Control_IsBlank(ctl) Then
+                        bStartAlreadySet = True
+                        Exit For
+                    End If
+                End If
+        End Select
+    Next ctl
+    
+    ' Second pass: update appropriate date/time fields
+    For Each ctl In fraHost.Controls
+        sType = Control_GetLogicalType(ctl)
+        
+        Select Case sType
+            Case "date", "time", "datetime"
+                sFieldName = LCase$(Control_FieldName(ctl))
+                
+                If InStr(1, sFieldName, "start", vbTextCompare) > 0 Then
+                    If Control_IsBlank(ctl) Then
+                        Control_SetValue ctl, pValue
+                    End If
+                
+                ElseIf InStr(1, sFieldName, "end", vbTextCompare) > 0 Then
+                    If Control_IsBlank(ctl) And bStartAlreadySet Then
+                        Control_SetValue ctl, pValue
+                    End If
+                
+                Else
+                    Control_SetValue ctl, pValue
+                End If
+        End Select
+    Next ctl
 End Sub

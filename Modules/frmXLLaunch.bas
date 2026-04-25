@@ -21,6 +21,10 @@ Private Sub UserForm_Initialize()
     SetupForm
 End Sub
 
+Private Sub UserForm_Activate()
+    CentreFormOverExcel Me
+End Sub
+
 Public Sub SetupForm()
     Set mButtonHandlers = New Collection
     

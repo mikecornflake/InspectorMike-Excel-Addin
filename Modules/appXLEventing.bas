@@ -66,6 +66,23 @@ Public Sub ShowXlEventingForm_EditOrAppendFromActiveSheet()
     End Select
 End Sub
 
+Public Sub CentreFormOverExcel(ByVal pForm As Object)
+    Dim appLeft As Double
+    Dim appTop As Double
+    Dim appWidth As Double
+    Dim appHeight As Double
+    
+    appLeft = Application.Left
+    appTop = Application.Top
+    appWidth = Application.Width
+    appHeight = Application.Height
+    
+    pForm.StartUpPosition = 0
+    
+    pForm.Left = appLeft + ((appWidth - pForm.Width) / 2)
+    pForm.Top = appTop + ((appHeight - pForm.Height) / 2)
+End Sub
+
 Public Function GetFormTypeForForm(ByVal pFormID As String) As String
     Const SHEET_FORMS As String = "xe.forms"
     
@@ -126,7 +143,7 @@ Public Function SafeControlSuffix(ByVal pFieldName As String, ByVal pRow As Long
 End Function
 
 ' Thanks Copilot 8/4/2026
-Sub IntelligentlyInsertDateTime()
+Public Sub IntelligentlyInsertDateTime()
 
     Dim ws As Worksheet
     Set ws = ActiveSheet
