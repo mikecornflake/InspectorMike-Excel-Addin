@@ -2,7 +2,7 @@
 
 ![](./media/image1.png)
 
-Inspector Mike is an Excel add-in containing utility routines developed over many years, originally dating back to 2004.
+Inspector Mike is an Excel add-in containing utility routines developed over many years, originally dating back to 2003.
 
 It is designed to streamline repetitive inspection/reporting tasks, standardise worksheet formatting, support event/logging workflows, and provide a framework for client-specific data processing tools.
 
