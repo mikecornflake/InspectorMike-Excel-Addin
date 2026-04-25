@@ -2,6 +2,7 @@ Attribute VB_Name = "mod_IntegrityElements"
 ' 2025 08 16 - Merged code written for Fugro/Apache code written for DOF/Chevron
 
 Option Explicit
+Option Private Module
 
 '
 '  Input is the Workpack worksheet exported by IntegrityElements

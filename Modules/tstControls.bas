@@ -1,4 +1,5 @@
 Attribute VB_Name = "tstControls"
+Option Explicit
 Option Private Module
 
 Public Sub Test_LibraryControls()

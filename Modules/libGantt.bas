@@ -1,5 +1,6 @@
 Attribute VB_Name = "libGantt"
 Option Explicit
+Option Private Module
 
 Public Sub SetGanttColor()
     Dim iRow As Long

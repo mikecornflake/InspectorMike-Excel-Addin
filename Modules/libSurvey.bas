@@ -1,8 +1,9 @@
 Attribute VB_Name = "libSurvey"
-
+Option Explicit
+Option Private Module
 
 ' Uses LibraryInterpolation.InterpolateByDate
-Sub Interpolate_Nav_To_3_Sec()
+Public Sub Interpolate_Nav_To_3_Sec()
     Dim iDateCol As Long, iTimeCol As Long, iDateTimeCol As Long
     
     Dim dtStart As Date, dtEnd As Date
@@ -154,3 +155,147 @@ Public Sub BasicTidyAndFormatColumns()
     
     Cells(2, 1).Select
 End Sub
+
+Private Function AddRow(iRow As Long, AOriginal As String, ANew As String, Optional ADefault As String = "") As Long
+    Cells(iRow, 1).Value = AOriginal
+    Cells(iRow, 2).Value = ANew
+    Cells(iRow, 3).Value = ADefault
+    AddRow = iRow + 1
+End Function
+
+Public Sub AddColumnNamesLookup()
+    Dim oSheet As Worksheet
+    Dim iRow As Long
+    
+    If Not WorksheetExists("ColumnNames") Then
+        ActiveWorkbook.Sheets.Add.Name = "ColumnNames"
+    End If
+    
+    Set oSheet = FindSheet(ActiveWorkbook, "ColumnNames")
+    oSheet.Move After:=Sheets(Sheets.Count)
+
+    oSheet.Activate
+    
+    '-----------  SURVEY FILE
+    'Date Time
+    'Easting
+    'Northing
+    'Kp
+    'Dol
+    'Heading
+    'Pitch
+    'Roll
+    'CP Reading
+    'TOP
+    'BOP
+    'LSB
+    'RSB
+    'Temperature
+    'Salinity
+    'Velocity
+    'Depth
+    'LSH
+    'RSH
+    'DVLDist
+    
+    If Cells(1, 1).Value = "" Then
+        iRow = 1
+        
+        iRow = AddRow(iRow, "Original", "New", "Default Value")
+        
+        iRow = AddRow(iRow, "Date Time", "Survey Data.Clock")
+        
+        iRow = AddRow(iRow, "Easting", "Survey - Standard.Easting")
+        iRow = AddRow(iRow, "Northing", "Survey - Standard.Northing")
+        iRow = AddRow(iRow, "Depth", "Survey - Standard.Depth")
+        iRow = AddRow(iRow, "LSH", "Survey - Standard.Elevation")
+        
+        iRow = AddRow(iRow, "Heading", "Other Fields.Heading")
+        iRow = AddRow(iRow, "Temperature", "Other Fields.Temperature")
+        iRow = AddRow(iRow, "CP reading", "Other Fields.Spare1")
+        iRow = AddRow(iRow, "Pitch", "Other Fields.Spare2")
+        iRow = AddRow(iRow, "Roll", "Other Fields.Spare3")
+        iRow = AddRow(iRow, "Salinity", "Other Fields.Spare4")
+        
+        iRow = AddRow(iRow, "KP", "Survey - Pipeline.KP")
+        iRow = AddRow(iRow, "DOL", "Survey - Pipeline.Offset")
+        iRow = AddRow(iRow, "BOP", "Survey - Pipeline.BoP")
+        iRow = AddRow(iRow, "TOP", "Survey - Pipeline.ToP")
+        iRow = AddRow(iRow, "LSB", "Survey - Pipeline.Left")
+        iRow = AddRow(iRow, "RSB", "Survey - Pipeline.Right")
+        iRow = AddRow(iRow, "DVLDist", "Survey - Pipeline.Distance")
+        
+        iRow = AddRow(iRow, "Survey Data.Survey Set", "Survey Data.Survey Set", "2022 Q2 Processed")
+        iRow = AddRow(iRow, "Event.Workpack", "Event.Workpack", "2022 Malampaya IRM P1")
+        iRow = AddRow(iRow, "Asset Location.Full Location", "Asset Location.Full Location", "Shell Philippines Exploration / Malampaya / 24GEP OU / P/line SSIV - 100msw Contour / 24GEP")
+        
+        Call BasicTidy(ActiveSheet)
+    End If
+End Sub
+
+Public Sub RenameColumns(AToNew As Boolean)
+    Dim oNames As Worksheet
+    Dim oData As Worksheet
+    Dim oSheet As Worksheet
+    Dim sOriginal As String
+    Dim sNew As String
+    Dim sDefault As String
+    
+    Dim iNameCount As Long
+    Dim iRow As Long
+    Dim iCol As Long
+
+    Set oNames = FindSheet(ActiveWorkbook, "ColumnNames")
+    
+    If (IsNull(oSheet) Or (oSheet Is Nothing)) Then
+        MsgBox ("Tabsheet 'ColumnNames' not found")
+    Else
+        If ActiveSheet.Name = "ColumnNames" Then
+            MsgBox ("Please switch to the TabSheet with data before running this routine")
+        Else
+            ' Yay, we can run
+            Set oData = ActiveSheet
+            
+            oNames.Activate
+            ForceFindExtents
+            
+            iNameCount = FLastRow
+            
+            oData.Activate
+            ForceFindExtents
+            
+            ' Search over the table in oNames, but make changes in oData (which is selected & visible)
+            For iRow = 2 To iNameCount
+                If AToNew Then
+                    sOriginal = oNames.Cells(iRow, 1).Value
+                    sNew = oNames.Cells(iRow, 2).Value
+                Else
+                    sNew = oNames.Cells(iRow, 1).Value
+                    sOriginal = oNames.Cells(iRow, 2).Value
+                End If
+                
+                If Not Rename_Column(sOriginal, sNew) Then
+                    ' If neither the old, nor the new exist, then add a new column called sNew
+                    If (Find_Column(sOriginal) = -1) And (Find_Column(sNew) = -1) Then
+                        iCol = Add_Column(sNew)
+                        
+                        sDefault = Trim(oNames.Cells(iRow, 3).Value)
+                        
+                        If sDefault <> "" Then
+                            Cells(2, iCol).Value = sDefault
+                            Cells(2, iCol).Select
+                            Selection.Copy
+                            Range(Cells(2, iCol), Cells(FLastRow, iCol)).Select
+                            ActiveSheet.Paste
+                        End If
+                    End If
+                End If
+            Next iRow
+            
+            Call BasicTidy(ActiveSheet)
+        End If
+    End If
+    
+    frmRenameColumns.Hide
+End Sub
+

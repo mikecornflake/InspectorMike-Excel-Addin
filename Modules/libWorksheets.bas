@@ -1,4 +1,7 @@
 Attribute VB_Name = "libWorksheets"
+Option Explicit
+Option Private Module
+
 Public Sub FreezeTopRow(ByVal pWS As Worksheet)
     pWS.Activate
     With ActiveWindow

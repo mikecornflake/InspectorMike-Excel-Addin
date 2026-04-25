@@ -1,5 +1,6 @@
 Attribute VB_Name = "libTable"
 Option Explicit
+Option Private Module
 
 Public FLastRow As Long
 Public FLastColumn As Long

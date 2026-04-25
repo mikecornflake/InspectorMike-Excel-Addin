@@ -4,6 +4,7 @@ Attribute VB_Name = "libArray"
 '            -     IndexOf modified to handle the differences
 
 Option Explicit
+Option Private Module
 
 Private Const INSERTIONSORT_THRESHOLD As Long = 7
 

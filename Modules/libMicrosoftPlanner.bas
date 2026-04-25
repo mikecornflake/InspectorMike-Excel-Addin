@@ -1,5 +1,8 @@
 Attribute VB_Name = "libMicrosoftPlanner"
-Sub ProcessMicrosftPlannerExport()
+Option Explicit
+Option Private Module
+
+Private Sub ProcessMicrosftPlannerExport()
 '
 ' Macro1 Macro
 '
@@ -197,7 +200,7 @@ Sub ProcessMicrosftPlannerExport()
     Cells(2, 1).Select
 End Sub
 
-Sub PlannerFixDateColumnByName(AColumn As String)
+Private Sub PlannerFixDateColumnByName(AColumn As String)
     Dim iCol As Long
     
     iCol = FindColumn(AColumn)
@@ -207,8 +210,7 @@ Sub PlannerFixDateColumnByName(AColumn As String)
     End If
 End Sub
 
-
-Sub PlannerFixDateColumn(AColumn As Long)
+Private Sub PlannerFixDateColumn(AColumn As Long)
     ' Microsoft Teams exports dates in "MM/DD/YYYY".
     ' Microsoft Excel doesn't always correctly guess this format, so we're going to have to sort this out manually
     
@@ -242,5 +244,3 @@ Sub PlannerFixDateColumn(AColumn As Long)
     Application.CutCopyMode = False
     Selection.Delete Shift:=xlToLeft
 End Sub
-
-

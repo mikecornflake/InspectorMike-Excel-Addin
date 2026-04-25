@@ -1,4 +1,7 @@
 Attribute VB_Name = "mod_NIS_Nexus5"
+Option Explicit
+Option Private Module
+
 Dim FMultimedia As Worksheet
 Dim FmmFilenameCol As Long, FmmNewFilenameCol As Long, FmmFolderCol As Long
 
@@ -134,6 +137,7 @@ Private Sub Process_Multimedia()
     Dim sOrigFilename As String
     Dim sNewFilename As String, sNewFolder As String
     Dim immRow As Long
+    Dim iRow As Long
     
     ' Got an oddity with some files being reported as "Not Found" when they're clearly there.
     ' This will allow those files to be manually processed
@@ -236,7 +240,7 @@ Private Sub Find_Multimedia()
 End Sub
 
 Private Sub Delete_Lookup_Tabs()
-    Dim iSheets As Long
+    Dim iSheet As Long
     
     Application.DisplayAlerts = False
     For iSheet = Sheets.Count To 1 Step -1

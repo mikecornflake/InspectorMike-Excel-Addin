@@ -4,8 +4,8 @@ Attribute VB_Name = "mod_Fugro_SenseStructures"
 ' Purpose: Process event data, normalize sheets,
 '          link anomalies and multimedia
 ' Entry Points:
-'     Public Sub ProcessSheet()        ## This is for most use cases
-'     Public Sub HyperlinkImages(...)  ## Preparing for future use cases
+'     Public Sub Fugro_SS_ProcessSheet()        ## This is for most use cases
+'     Public Sub Fugro_SS_HyperlinkImages(...)  ## Preparing for future use cases
 '
 ' All other routines are Private
 '
@@ -53,7 +53,10 @@ Attribute VB_Name = "mod_Fugro_SenseStructures"
 '
 ' ============================================================================
 
-Public Sub ProcessSheet()
+Option Explicit
+Option Private Module
+
+Public Sub Fugro_SS_ProcessSheet()
     If ActiveSheet.Cells(1, 1).Value <> "Workpack" Or ActiveSheet.Cells(1, 2).Value <> "Component" Then
         MsgBox ("Ensure you have the correct workbook loaded")
         Exit Sub
@@ -95,7 +98,7 @@ Public Sub ProcessSheet()
     Application.StatusBar = "Hyperlinking multimedia..."
     mediaFolder = PickFolder(ActiveWorkbook.path, "Select the project folder containing multimedia...")
     If mediaFolder <> "" Then
-        Call HyperlinkImages(mediaFolder, True)
+        Call Fugro_SS_HyperlinkImages(mediaFolder, True)
     Else
         MsgBox "No folder selected. Multimedia linking skipped.", vbInformation
     End If
@@ -113,12 +116,90 @@ Public Sub ProcessSheet()
     Application.StatusBar = False
 End Sub
 
+Public Sub Fugro_SS_HyperlinkImages(baseFolder As String, Optional forceRelative As Boolean = False)
+    Dim fso As Object, fileDict As Object
+    Dim wbPath As String, useRelative As Boolean
+    Dim file As Object, folder As Object
+    Dim ws As Worksheet, rng As Range
+    Dim cell As Range, rowRange As Range
+    Dim targetCols As Variant, colIndex As Long
+    Dim filePath As String, relPath As String
+    Dim filename As String
+    Dim wbDrive As String, mediaDrive As String
+    Dim FontSize As Single
+
+    ' Initialize
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    Set fileDict = CreateObject("Scripting.Dictionary")
+    
+    wbPath = ActiveWorkbook.FullName
+    wbDrive = Left(wbPath, 2)
+    mediaDrive = Left(baseFolder, 2)
+
+    ' Determine hyperlinking mode
+    If forceRelative Then
+        useRelative = (wbDrive = mediaDrive)
+    Else
+        useRelative = (InStr(1, baseFolder, ActiveWorkbook.path, vbTextCompare) = 1)
+    End If
+
+    ' Recursively collect files
+    Call CollectMediaFiles(fso.GetFolder(baseFolder), fileDict)
+
+    ' Target columns to hyperlink
+    targetCols = Array("Image1", "Image2", "Image3", "Video", _
+                       "Anomaly_Image1", "Anomaly_Image2", "Anomaly_Image3", "Anomaly_Video")
+
+    ' Loop through worksheets
+    For Each ws In ActiveWorkbook.Worksheets
+        Application.StatusBar = "Hyperlinking multimedia in " & ws.Name & "..."
+        
+        ' First, delete any existing external links
+        Call RemoveExternalHyperlinks
+        
+        ws.Activate
+    
+        ' Find header row (assumes headers in row 1)
+        Set rng = ws.Rows(1)
+        For Each cell In rng.Cells
+            For colIndex = LBound(targetCols) To UBound(targetCols)
+                If Trim(cell.Value) = targetCols(colIndex) Then
+                    ' Loop through data rows
+                    For Each rowRange In ws.Range(cell.Offset(1, 0), ws.Cells(ws.Rows.Count, cell.Column).End(xlUp)).Rows
+                        Dim dataCell As Range
+                        Set dataCell = ws.Cells(rowRange.Row, cell.Column)
+    
+                        If Len(dataCell.Value) > 0 Then
+                            filename = Trim(dataCell.Value)
+                            If fileDict.Exists(filename) Then
+                                filePath = fileDict(filename)
+                                FontSize = dataCell.Font.size
+                                If useRelative Then
+                                    relPath = GetRelativePath(wbPath, filePath)
+                                    dataCell.Hyperlinks.Add Anchor:=dataCell, Address:=relPath, TextToDisplay:=filename
+                                Else
+                                    dataCell.Hyperlinks.Add Anchor:=dataCell, Address:=filePath, TextToDisplay:=filename
+                                End If
+                                ' Setting a hyperlink appears to reset the font size.  This should preserve it
+                                dataCell.Font.size = FontSize
+                            End If
+                        End If
+                    Next rowRange
+                End If
+            Next colIndex
+        Next cell
+    Next ws
+    
+    Application.StatusBar = False
+End Sub
+
 Private Sub FormatTable()
 '
 ' FormatTable Macro
 '
 '
     Dim colIndex As Long
+    Dim ws As Worksheet
     
     Range("A1").Select
     
@@ -295,6 +376,8 @@ Private Sub SplitByEventCode()
     Dim targetRow As Long
     Dim fieldList As Variant
     Dim f As Variant
+    Dim cell As Range
+    Dim i As Long
 
     Set wsSource = ActiveSheet
     Set headerRow = wsSource.Rows(1)
@@ -382,7 +465,9 @@ Private Sub FormatAllSheets()
 End Sub
 
 Private Sub DeleteSheet(sheetName As String)
+    Dim wb As Workbook ' Hack...
     Set wb = ActiveWorkbook
+    
     ' Delete existing sheet if it exists
     On Error Resume Next
     Application.DisplayAlerts = False
@@ -507,6 +592,7 @@ Private Function GetRelativePath(fromPath As String, toPath As String) As String
     Dim fromParts() As String, toParts() As String
     Dim i As Long, commonIndex As Long
     Dim relPath As String
+    Dim fso
     
     Set fso = CreateObject("Scripting.FileSystemObject")
 
@@ -534,89 +620,6 @@ Private Function GetRelativePath(fromPath As String, toPath As String) As String
 
     GetRelativePath = relPath
 End Function
-
-Private Sub Test()
-    Call HyperlinkImages("Z:\505922_INEOS_FPS\Deliverable\GVI_DVI_WT_ACFM", True)
-    ' Call HyperlinkImages("Z:\505922_INEOS_FPS\Deliverable\FMD", True)
-    
-End Sub
-
-Public Sub HyperlinkImages(baseFolder As String, Optional forceRelative As Boolean = False)
-    Dim fso As Object, fileDict As Object
-    Dim wbPath As String, useRelative As Boolean
-    Dim file As Object, folder As Object
-    Dim ws As Worksheet, rng As Range
-    Dim cell As Range, rowRange As Range
-    Dim targetCols As Variant, colIndex As Long
-    Dim filePath As String, relPath As String
-    Dim filename As String
-    Dim wbDrive As String, mediaDrive As String
-    Dim FontSize As Single
-
-    ' Initialize
-    Set fso = CreateObject("Scripting.FileSystemObject")
-    Set fileDict = CreateObject("Scripting.Dictionary")
-    
-    wbPath = ActiveWorkbook.FullName
-    wbDrive = Left(wbPath, 2)
-    mediaDrive = Left(baseFolder, 2)
-
-    ' Determine hyperlinking mode
-    If forceRelative Then
-        useRelative = (wbDrive = mediaDrive)
-    Else
-        useRelative = (InStr(1, baseFolder, ActiveWorkbook.path, vbTextCompare) = 1)
-    End If
-
-    ' Recursively collect files
-    Call CollectMediaFiles(fso.GetFolder(baseFolder), fileDict)
-
-    ' Target columns to hyperlink
-    targetCols = Array("Image1", "Image2", "Image3", "Video", _
-                       "Anomaly_Image1", "Anomaly_Image2", "Anomaly_Image3", "Anomaly_Video")
-
-    ' Loop through worksheets
-    For Each ws In ActiveWorkbook.Worksheets
-        Application.StatusBar = "Hyperlinking multimedia in " & ws.Name & "..."
-        
-        ' First, delete any existing external links
-        Call RemoveExternalHyperlinks
-        
-        ws.Activate
-    
-        ' Find header row (assumes headers in row 1)
-        Set rng = ws.Rows(1)
-        For Each cell In rng.Cells
-            For colIndex = LBound(targetCols) To UBound(targetCols)
-                If Trim(cell.Value) = targetCols(colIndex) Then
-                    ' Loop through data rows
-                    For Each rowRange In ws.Range(cell.Offset(1, 0), ws.Cells(ws.Rows.Count, cell.Column).End(xlUp)).Rows
-                        Dim dataCell As Range
-                        Set dataCell = ws.Cells(rowRange.Row, cell.Column)
-    
-                        If Len(dataCell.Value) > 0 Then
-                            filename = Trim(dataCell.Value)
-                            If fileDict.Exists(filename) Then
-                                filePath = fileDict(filename)
-                                FontSize = dataCell.Font.size
-                                If useRelative Then
-                                    relPath = GetRelativePath(wbPath, filePath)
-                                    dataCell.Hyperlinks.Add Anchor:=dataCell, Address:=relPath, TextToDisplay:=filename
-                                Else
-                                    dataCell.Hyperlinks.Add Anchor:=dataCell, Address:=filePath, TextToDisplay:=filename
-                                End If
-                                ' Setting a hyperlink appears to reset the font size.  This should preserve it
-                                dataCell.Font.size = FontSize
-                            End If
-                        End If
-                    Next rowRange
-                End If
-            Next colIndex
-        Next cell
-    Next ws
-    
-    Application.StatusBar = False
-End Sub
 
 Private Sub CollectMediaFiles(folder As Object, fileDict As Object)
     Dim fso As Object

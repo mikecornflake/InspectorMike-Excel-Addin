@@ -1,4 +1,6 @@
 Attribute VB_Name = "Addin"
+Option Explicit
+Option Private Module
 
 'Callback for btnAbout onAction
 Sub About_Callback(control As IRibbonControl)

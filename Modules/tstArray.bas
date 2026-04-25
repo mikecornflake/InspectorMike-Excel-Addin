@@ -2,6 +2,7 @@ Attribute VB_Name = "tstArray"
 ' 2025 08 15 - Tests added.  Err, then routines fixed.  All tests now pass
 '            - Tests and corrections by copilot/ChatGPT-5
 
+Option Explicit
 Option Private Module
 
 Public Sub Test_LibraryArray()

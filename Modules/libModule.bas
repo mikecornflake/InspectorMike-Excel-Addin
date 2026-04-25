@@ -1,5 +1,6 @@
 Attribute VB_Name = "libModule"
 Option Explicit
+Option Private Module
 
 Private Sub Test()
     Call ExportModules(Workbooks("InspectorMike_Addin.xlam"), "B:\Code\Office Macros\InspectorMike Excel Addin\Modules")

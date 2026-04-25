@@ -1,4 +1,6 @@
 Attribute VB_Name = "libFiles"
+Option Explicit
+
 ' Adds a trailing backslash to a folder path
 Public Function Path_AddTrailingDelimiter(ByVal pPath As String) As String
     If Right(pPath, 1) <> "\" Then

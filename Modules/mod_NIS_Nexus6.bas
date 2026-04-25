@@ -1,4 +1,7 @@
 Attribute VB_Name = "mod_NIS_Nexus6"
+Option Explicit
+Option Private Module
+
 Private FPipeline As Boolean
 Private FMaxFindingCols As Long
 Dim FMultimedia As Worksheet
@@ -15,6 +18,7 @@ Private Sub DoProcessNexus6EventExport(ALocation As String)
     Dim bStruct As Boolean
     Dim sServer As String, sDatabase As String
     Dim sUser As String, sPassword As String
+    Dim bPipeline As Boolean
     
     sServer = RegistryRead("DOF_Addin", "Nexus 6", "Server", "INS-SQL-NIC01\SQLEXPRESS")
     sDatabase = RegistryRead("DOF_Addin", "Nexus 6", "Database", "Esso_Master")
@@ -139,6 +143,7 @@ Private Sub AddFindingID()
     Dim iEventNumCol As Long, iEventTypeCol As Long, iWorkpackCol As Long, iFindingCol As Long
     Dim sEventType As String, sEventNum As String, sCode As String, sWorkpack As String
     Dim sFindingID As String
+    Dim iRow As Long
 
     If Not ConnectedToDb Then
         Exit Sub
@@ -738,6 +743,7 @@ Private Sub Reprocess_Multimedia_By_MM_Tab()
     Dim sName As String, sTemp As String, sExt As String
     Dim sSearchFilename As String
     Dim sDisplay As String
+    Dim iRow As Long
     
     ' Got an oddity with some files being reported as "Not Found" when they're clearly there.
     ' This will allow those files to be manually processed
@@ -860,4 +866,266 @@ Private Sub FormatColumns()
     Cells.EntireRow.AutoFit
     
     Cells(2, 1).Select
+End Sub
+
+
+'
+' The below three routines are preparing the input sheets for Malampaya, and is for specific DOF project
+' Keeping them in as I might be called to extend them
+'
+Public Sub PrepareNexusImportFromCurrentSheet()
+    If WorksheetExists("Survey Import") Then
+        MsgBox "Sheet called 'Survey Import' already exists"
+        Exit Sub
+    End If
+    
+    ' Rename this sheet to "Original"
+    If Not WorksheetExists("Original") Then
+        If (ActiveSheet.Name <> "Original") And (ActiveSheet.Name <> "ColumnNames") And (ActiveSheet.Name <> "PL _ Profile") Then
+            ActiveSheet.Name = "Original"
+        End If
+        ActiveSheet.Move Before:=Sheets(1)
+    End If
+    
+    If Not WorksheetExists("ColumnNames") Then
+        AddColumnNamesLookup
+        
+        MsgBox "A sheet called 'ColumnNames' has just been added. " & vbCrLf & _
+               "Please ensure the lookups and 'Survey Set' are correct before proceeding."
+          
+        Exit Sub
+    End If
+    
+    If WorksheetExists("Original") Then
+        Sheets("Original").Select
+    ElseIf ActiveSheet.Name = "ColumnNames" Then
+        MsgBox "Please switch to the Excel worksheet with the original survey values first"
+        
+        Exit Sub
+    End If
+    
+    If MsgBox("This will save the current file as an Excel workbook, " & vbCrLf & _
+              "then rename & copy the current sheet. " & vbCrLf & vbCrLf & _
+              "The new sheet will be processed to ensure a Survey " & vbCrLf & _
+              "record exists at least every 3 seconds" & vbCrLf & vbCrLf & _
+              "Are you sure you wish to continue", vbOKCancel) <> vbOK Then
+        Exit Sub
+    End If
+      
+    ' First save, this file as .xlsx
+    SaveAsXLSX
+    
+    ActiveSheet.Copy After:=Sheets(1)
+    Sheets(2).Select
+    Sheets(2).Name = "Survey Import"
+    
+    EnforcePipelineDepthPolarity (False)
+    
+    Interpolate_Nav_To_3_Sec
+    
+    RenameColumns (True) ' This adds the missing columns
+    
+    ' But we don't want all the missing columns here
+    Delete_Column ("Event.Workpack")
+    Delete_Column ("Asset Location.Full Location")
+    
+    BasicTidyAndFormatColumns
+    
+    Sheets("Survey Import").Select
+    ExportCurrentWorkSheetAsCSV
+    
+    Prepare_PL_Profile_Import
+    
+    Sheets("PL - Profile").Select
+    ExportCurrentWorkSheetAsCSV
+    
+    MsgBox "Processing complete:" & vbCrLf & _
+           "  - 'Survey Import' exported as CSV," & vbCrLf & _
+           "  - 'PL - Profile' exported as CSV. " & vbCrLf & vbCrLf & _
+           " CSV Files ready for importing into Nexus 6"
+End Sub
+
+Public Function EnforcePipelineDepthPolarity(ADepthPositive As Boolean)
+    Dim iTOPCol As Long
+    Dim iBOPCol As Long
+    Dim iLSBCol As Long
+    Dim iRSBCol As Long
+    
+    Dim iRow As Long
+    Dim dTemp As Double
+    Dim dTOP As Double
+    Dim dBoP As Double
+    Dim dLSB As Double
+    Dim dRSB As Double
+    
+    ForceFindExtents
+    
+    iTOPCol = FindFirstColumn(Array("TOP", "Survey - Pipeline.ToP", "PL - Profile.Top of Pipe"))
+    iBOPCol = FindFirstColumn(Array("BOP", "Survey - Pipeline.BoP", "PL - Profile.Bottom of Pipe"))
+    iLSBCol = FindFirstColumn(Array("LSB", "Survey - Pipeline.Left", "PL - Profile.Left Seabed"))
+    iRSBCol = FindFirstColumn(Array("RSB", "Survey - Pipeline.Right", "PL - Profile.Right Seabed"))
+    
+    For iRow = 2 To FLastRow
+        Application.StatusBar = iRow & " of " & FLastRow
+        Cells(iRow, 1).Select
+        
+        dTOP = Abs(Cells(iRow, iTOPCol).Value)
+        dBoP = Abs(Cells(iRow, iBOPCol).Value)
+        dLSB = Abs(Cells(iRow, iLSBCol).Value)
+        dRSB = Abs(Cells(iRow, iRSBCol).Value)
+        
+        If ADepthPositive Then
+            Cells(iRow, iTOPCol).Value = Math_Min(dTOP, dBoP)
+            Cells(iRow, iBOPCol).Value = Math_Max(dTOP, dBoP)
+            
+            Cells(iRow, iLSBCol).Value = dLSB
+            Cells(iRow, iRSBCol).Value = dRSB
+        Else
+            dTOP = -1 * dTOP
+            dBoP = -1 * dBoP
+            
+            Cells(iRow, iTOPCol).Value = Math_Max(dTOP, dBoP)
+            Cells(iRow, iBOPCol).Value = Math_Min(dTOP, dBoP)
+            
+            Cells(iRow, iLSBCol).Value = -1 * dLSB
+            Cells(iRow, iRSBCol).Value = -1 * dRSB
+        End If
+    Next iRow
+    
+    Cells(2, 1).Select
+    Application.StatusBar = ""
+End Function
+
+Public Sub Prepare_PL_Profile_Import()
+    Dim oSheet As Worksheet
+    
+    Dim iCol As Long
+    Dim sTemp As String
+    Dim oPLProfile As Worksheet
+    Dim oOriginal As Worksheet
+    Dim oColumnNames As Worksheet
+    
+    ' This works from the Original Data
+    If WorksheetExists("Original") Then
+        Sheets("Original").Select
+    End If
+    
+    Set oOriginal = ActiveSheet
+    
+    ActiveSheet.Move Before:=Sheets(1)
+    ActiveSheet.Copy After:=Sheets(1)
+    Sheets(2).Select
+    Sheets(2).Name = "PL - Profile"
+    Set oPLProfile = ActiveSheet
+    
+    Set oColumnNames = Sheets("ColumnNames")
+
+    '----------Required Columns-------------------
+    ' Event.Workpack
+    ' Event.Event Type
+    ' Asset Location.Full Location
+    ' Event.Survey Set
+    ' Event.Start Clock
+    ' Event.End Clock
+    ' PL - Profile.Top of Pipe
+    ' PL - Profile.Bottom of Pipe
+    ' PL - Profile.Left Seabed
+    ' PL - Profile.Right Seabed
+
+    ForceFindExtents
+    
+    iCol = FindFirstColumn(Array("TOP", "Survey - Pipeline.ToP", "PL - Profile.Top of Pipe"))
+    Cells(1, iCol).Value = "PL - Profile.Top of Pipe"
+    
+    iCol = FindFirstColumn(Array("BOP", "Survey - Pipeline.BoP", "PL - Profile.Bottom of Pipe"))
+    Cells(1, iCol).Value = "PL - Profile.Bottom of Pipe"
+    
+    iCol = FindFirstColumn(Array("LSB", "Survey - Pipeline.Left", "PL - Profile.Left Seabed"))
+    Cells(1, iCol).Value = "PL - Profile.Left Seabed"
+    
+    iCol = FindFirstColumn(Array("RSB", "Survey - Pipeline.Right", "PL - Profile.Right Seabed"))
+    Cells(1, iCol).Value = "PL - Profile.Right Seabed"
+    
+    iCol = FindFirstColumn(Array("Date Time", "Survey Data.Clock", "Event.Start Clock"))
+    Cells(1, iCol).Value = "Event.Start Clock"
+    
+    Call Copy_Column("Event.Start Clock", "Event.End Clock")
+    
+    oPLProfile.Select
+    ForceFindExtents ' used for Populate
+    
+    Ensure_Column ("Event.Workpack")
+    oColumnNames.Select
+    sTemp = Lookup("Original", "Event.Workpack", "Default Value")
+    oPLProfile.Select
+    Call PopulateColumn("Event.Workpack", sTemp)
+    
+    Ensure_Column ("Asset Location.Full Location")
+    oColumnNames.Select
+    sTemp = Lookup("Original", "Asset Location.Full Location", "Default Value")
+    oPLProfile.Select
+    Call PopulateColumn("Asset Location.Full Location", sTemp)
+    
+    Ensure_Column ("Event.Workpack")
+    oColumnNames.Select
+    sTemp = Lookup("Original", "Event.Workpack", "Default Value")
+    oPLProfile.Select
+    Call PopulateColumn("Event.Workpack", sTemp)
+    
+    Ensure_Column ("Event.Survey Set")
+    oColumnNames.Select
+    sTemp = Lookup("Original", "Survey Data.Survey Set", "Default Value")
+    If sTemp = "" Then
+        sTemp = Lookup("Original", "Event.Survey Set", "Default Value")
+    End If
+    oPLProfile.Select
+    Call PopulateColumn("Event.Survey Set", sTemp)
+    
+    Ensure_Column ("Event.Event Type")
+    Call PopulateColumn("Event.Event Type", "PL - Profile")
+
+    Call Move_Column("Event.Workpack", 1)
+    Call Move_Column("Event.Event Type", 2)
+    Call Move_Column("Asset Location.Full Location", 3)
+    Call Move_Column("Event.Survey Set", 4)
+    Call Move_Column("Event.Start Clock", 5)
+    Call Move_Column("Event.End Clock", 6)
+    Call Move_Column("PL - Profile.Top of Pipe", 7)
+    Call Move_Column("PL - Profile.Bottom of Pipe", 8)
+    Call Move_Column("PL - Profile.Left Seabed", 9)
+    Call Move_Column("PL - Profile.Right Seabed", 10)
+    
+    Call Delete_Column("Easting")
+    Call Delete_Column("Northing")
+    Call Delete_Column("Kp")
+    Call Delete_Column("Dol")
+    Call Delete_Column("Heading")
+    Call Delete_Column("Pitch")
+    Call Delete_Column("Roll")
+    Call Delete_Column("CP Reading")
+    Call Delete_Column("Temperature")
+    Call Delete_Column("Salinity")
+    Call Delete_Column("Velocity")
+    Call Delete_Column("Depth")
+    Call Delete_Column("LSH")
+    Call Delete_Column("RSH")
+    Call Delete_Column("DVLDist")
+    
+    Call Delete_Column("Survey - Standard.Easting")
+    Call Delete_Column("Survey - Standard.Northing")
+    Call Delete_Column("Survey - Pipeline.KP")
+    Call Delete_Column("Survey - Pipeline.Offset")
+    Call Delete_Column("Other Fields.Heading")
+    Call Delete_Column("Other Fields.Spare1")
+    Call Delete_Column("Other Fields.Spare2")
+    Call Delete_Column("Other Fields.Spare3")
+    Call Delete_Column("Other Fields.Spare4")
+    Call Delete_Column("Other Fields.Temperature")
+    Call Delete_Column("Survey - Standard.Depth")
+    Call Delete_Column("Survey - Standard.Elevation")
+    Call Delete_Column("Survey - Pipeline.Distance")
+    Call Delete_Column("Survey Data.Survey Set")
+    
+    EnforcePipelineDepthPolarity (False)
+    BasicTidyAndFormatColumns
 End Sub

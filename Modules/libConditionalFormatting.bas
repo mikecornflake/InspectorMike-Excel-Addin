@@ -1,5 +1,7 @@
 Attribute VB_Name = "libConditionalFormatting"
 ' None of this code is generic.  Leaving here as reference for when I do implement a Conditional Formatting library
+Option Explicit
+Option Private Module
 
 Public Sub Fix_Planner()
     Clear_Conditional

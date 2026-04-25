@@ -1,5 +1,6 @@
 Attribute VB_Name = "libQC"
 Option Explicit
+Option Private Module
 
 Private Sub TestCompareSheets()
     Call CompareSheets("MA", "ABU MA", "QC MA")

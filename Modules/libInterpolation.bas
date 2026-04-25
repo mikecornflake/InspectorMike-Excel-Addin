@@ -1,5 +1,8 @@
 Attribute VB_Name = "libInterpolation"
-Function InterpolateByDate(dtStart As Date, dtEnd As Date, dtCurr As Date, dY1 As Double, dY2 As Double) As Double
+Option Explicit
+Option Private Module
+
+Public Function InterpolateByDate(dtStart As Date, dtEnd As Date, dtCurr As Date, dY1 As Double, dY2 As Double) As Double
     Dim dPercent As Double
     
 '    If dtEnd < dtStart Then
@@ -10,7 +13,7 @@ Function InterpolateByDate(dtStart As Date, dtEnd As Date, dtCurr As Date, dY1 A
     InterpolateByDate = dY1 + (dPercent * (dY2 - dY1))
 End Function
 
-Function InterpolateByDouble(dStart As Double, dEnd As Double, dCurr As Double, dY1 As Double, dY2 As Double) As Double
+Public Function InterpolateByDouble(dStart As Double, dEnd As Double, dCurr As Double, dY1 As Double, dY2 As Double) As Double
     Dim dPercent As Double
     
     dPercent = (dCurr - dStart) / (dEnd - dStart)

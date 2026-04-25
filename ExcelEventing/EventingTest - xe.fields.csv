@@ -1,0 +1,22 @@
+Formid,Displayorder,Fieldname,Label,Controltype,Datatype,Required,Listid,Parentfield1,Parentfield2
+Workpack,1,Name,Workpack Name,textbox,text,Y,,,
+Workpack,2,Code,Workpack Code,textbox,text,N,,,
+Component,1,Installation,Installation,combobox,text,Y,,,
+Component,2,Substructure,Substructure,combobox,text,Y,,,
+Component,3,Component,Component,combobox,text,Y,,,
+Burial,1,Workpack,Workpack,combobox,text,Y,WorkpackList,,
+Burial,2,Installation,Installation,combobox,text,Y,InstallationList,,
+Burial,3,Substructure,Substructure,combobox,text,Y,SubstructureList,Installation,
+Burial,4,Component,Component,combobox,text,Y,ComponentList,Installation,Substructure
+Burial,5,LeftBurialPct,Left Burial %,textbox,float,N,,,
+Burial,6,RightBurialPct,Right Burial %,textbox,float,N,,,
+GVI,1,Workpack,Workpack,combobox,text,Y,WorkpackList,,
+GVI,2,Installation,Installation,combobox,text,Y,InstallationList,,
+GVI,3,Substructure,Substructure,combobox,text,Y,SubstructureList,Installation,
+GVI,4,Component,Component,combobox,text,Y,ComponentList,Installation,Substructure
+GVI,5,GoodCondition,Found in good condition?,checkbox,bool,Y,,,
+GVI,6,Cleaned,Any cleaning performed?,checkbox,bool,Y,,,
+GVI,7,Notes,Notes,textbox,text,N,,,
+Log,1,Date,Date,date,date,Y,,,
+Log,2,Time,Time,time,time,y,,,
+Log,3,Notes,Notes,textbox,text,N,,,

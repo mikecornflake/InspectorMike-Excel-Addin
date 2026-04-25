@@ -2,6 +2,7 @@ Attribute VB_Name = "tstDate"
 ' 2025 08 15 - Tests added.  Err, then routines fixed.  All tests now pass
 '            - Tests by copilot/ChatGPT-5
 
+Option Explicit
 Option Private Module
 
 ' Runs a suite of assertions to validate date/time conversion functions

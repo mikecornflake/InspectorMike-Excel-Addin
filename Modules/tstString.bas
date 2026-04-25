@@ -1,4 +1,5 @@
 Attribute VB_Name = "tstString"
+Option Explicit
 Option Private Module
 
 Private Sub Test_Text_ToBool_Invalid(ByVal pInput As String, ByVal pTestName As String)

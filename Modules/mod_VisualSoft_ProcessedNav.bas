@@ -1,5 +1,6 @@
 Attribute VB_Name = "mod_VisualSoft_ProcessedNav"
 Option Explicit
+Option Private Module
 
 Public FBaseFolder As String
 Public fCurrent As String
@@ -10,7 +11,7 @@ Public FMatchCode As String
 
 Private sInitialisationHack As String
 
-Sub InitialiseGlobalVars()
+Private Sub InitialiseGlobalVars()
 '
 ' This can be called multiple times, it'll only do the main code once
 '
@@ -28,13 +29,13 @@ Sub InitialiseGlobalVars()
     End If
 End Sub
 
-Sub ShowMerge()
+Public Sub VW_ShowMerge()
     InitialiseGlobalVars
     
     frmEventMerge.Show
 End Sub
 
-Sub MergeEvents()
+Public Sub VW_MergeEvents()
 '
 '  Very much prototype code
 '

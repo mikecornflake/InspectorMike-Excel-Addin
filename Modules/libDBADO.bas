@@ -2,6 +2,7 @@ Attribute VB_Name = "libDBADO"
 ' 2025 08 16 - Code review by Copilot/ChatGPT-5 and Mike T
 
 Option Explicit
+Option Private Module
 
 ' Connection string examples:
 ' "Initial Catalog=" & sDatabase & ";Data Source=" & sServer & ";Integrated Security=SSPI;"

@@ -1,5 +1,6 @@
 Attribute VB_Name = "libWorkbook"
 Option Explicit
+Option Private Module
 
 Public Function Duplicate_ActiveBook(AFullname As String) As Workbook
     Dim oBook As Workbook

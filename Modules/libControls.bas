@@ -1,5 +1,6 @@
 Attribute VB_Name = "libControls"
 Option Explicit
+Option Private Module
 
 '
 ' All routines in here for use with Excel VBA Forms

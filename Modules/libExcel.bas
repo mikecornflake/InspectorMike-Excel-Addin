@@ -2,6 +2,9 @@ Attribute VB_Name = "libExcel"
 ' 24 Apr 2026 - refactored from libFiles
 '            - Stopped using OneDrive/Sharepoint URL safe code.  MS Broke the API too many times
 
+Option Explicit
+Option Private Module
+
 ' Opens the standard Save As dialog
 Public Sub Original_Save_As_Dialog()
     Application.Dialogs(xlDialogSaveAs).Show
@@ -175,5 +178,65 @@ Public Sub SaveAsXLSX()
 
 ErrHandler:
     MsgBox "Error during SaveAsXLSX: " & Err.Description, vbExclamation
+End Sub
+
+Public Sub Text_TitleCase_Selection()
+    Dim txtOnly As Range
+    Dim cell As Range
+
+    On Error Resume Next
+    Set txtOnly = Selection.SpecialCells(xlCellTypeConstants, xlTextValues)
+    On Error GoTo 0
+
+    If txtOnly Is Nothing Then Exit Sub
+
+    For Each cell In txtOnly.Cells
+        cell.Value = StrConv(CStr(cell.Value), vbProperCase)
+    Next cell
+End Sub
+
+Public Sub Text_SentenceCase_Selection()
+    Dim txtOnly As Range
+    Dim cell As Range
+
+    On Error Resume Next
+    Set txtOnly = Selection.SpecialCells(xlCellTypeConstants, xlTextValues)
+    On Error GoTo 0
+
+    If txtOnly Is Nothing Then Exit Sub
+
+    For Each cell In txtOnly.Cells
+        cell.Value = Text_ToSentenceCase(CStr(cell.Value))
+    Next cell
+End Sub
+
+Public Sub Text_Upper_Selection()
+    Dim txtOnly As Range
+    Dim cell As Range
+
+    On Error Resume Next
+    Set txtOnly = Selection.SpecialCells(xlCellTypeConstants, xlTextValues)
+    On Error GoTo 0
+
+    If txtOnly Is Nothing Then Exit Sub
+
+    For Each cell In txtOnly.Cells
+        cell.Value = UCase$(CStr(cell.Value))
+    Next cell
+End Sub
+
+Public Sub Text_Lower_Selection()
+    Dim txtOnly As Range
+    Dim cell As Range
+
+    On Error Resume Next
+    Set txtOnly = Selection.SpecialCells(xlCellTypeConstants, xlTextValues)
+    On Error GoTo 0
+
+    If txtOnly Is Nothing Then Exit Sub
+
+    For Each cell In txtOnly.Cells
+        cell.Value = LCase$(CStr(cell.Value))
+    Next cell
 End Sub
 

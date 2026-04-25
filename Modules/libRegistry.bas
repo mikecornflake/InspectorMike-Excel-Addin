@@ -1,6 +1,6 @@
 Attribute VB_Name = "libRegistry"
 Option Explicit
-
+Option Private Module
 
 'Computer\HKEY_CURRENT_USER\Software\VB and VBA Program Settings
 

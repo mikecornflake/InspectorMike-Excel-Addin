@@ -8,6 +8,7 @@ Attribute VB_Name = "libClipboard"
 '            - Defensive coding added to all routines
 
 Option Explicit
+Option Private Module
 
 Public Sub Test_LibraryClipboard()
     ActiveTestModule = "LibraryClipboard"

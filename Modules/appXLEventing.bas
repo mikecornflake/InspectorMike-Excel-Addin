@@ -1,6 +1,6 @@
 Attribute VB_Name = "appXLEventing"
-
 Option Explicit
+Option Private Module
 
 Public Sub ShowXlEventingForm(ByVal pFormID As String, ByVal pActiveRow As Long)
     Unload frmXLEventing

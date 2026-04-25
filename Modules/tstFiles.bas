@@ -1,8 +1,8 @@
 Attribute VB_Name = "tstFiles"
 ' 2025 08 16 - Code review by Copilot/ChatGPT-5 and Mike T
 
-Option Private Module
 Option Explicit
+Option Private Module
 
 Public Sub Test_LibraryFiles()
     ActiveTestModule = "libFiles"

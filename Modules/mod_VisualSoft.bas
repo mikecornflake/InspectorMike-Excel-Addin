@@ -1,5 +1,6 @@
 Attribute VB_Name = "mod_VisualSoft"
 Option Explicit
+Option Private Module
 
 Public Type DuplicateChecks
    Code As String

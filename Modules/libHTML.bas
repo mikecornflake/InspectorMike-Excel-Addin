@@ -1,4 +1,7 @@
 Attribute VB_Name = "libHTML"
+Option Explicit
+Option Private Module
+
 Public Sub ShowHelp(ByVal page As String)
     Dim path As String
     

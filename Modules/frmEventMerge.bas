@@ -41,7 +41,7 @@ Private Sub btnGo_Click()
     FCode = cboCode.Text
     FMatchCode = cboMatchCode.Text
     
-    MergeEvents
+    VW_MergeEvents
 End Sub
 
 
