@@ -21,22 +21,6 @@ Private mNextRow As Long  ' Cache the next row
 Private mUpdateDepth As Long
 Private mRows As Collection
 
-
-'===========================================================
-' Increase indentation by 2 spaces
-'===========================================================
-Public Sub debug_IncIndent()
-    mIndent = mIndent + 2
-End Sub
-
-'===========================================================
-' Decrease indentation by 2 spaces (not below zero)
-'===========================================================
-Public Sub debug_DecIndent()
-    mIndent = mIndent - 2
-    If mIndent < 0 Then mIndent = 0
-End Sub
-
 '===========================================================
 ' Main Debug Logger
 '===========================================================
@@ -68,6 +52,21 @@ Public Sub debug_Log(wsName As String, msg As String)
     End With
 
     mNextRow = mNextRow + 1
+End Sub
+
+'===========================================================
+' Increase indentation by 2 spaces
+'===========================================================
+Public Sub debug_IncIndent()
+    mIndent = mIndent + 2
+End Sub
+
+'===========================================================
+' Decrease indentation by 2 spaces (not below zero)
+'===========================================================
+Public Sub debug_DecIndent()
+    mIndent = mIndent - 2
+    If mIndent < 0 Then mIndent = 0
 End Sub
 
 '===========================================================
@@ -114,6 +113,9 @@ Public Sub debug_EndUpdate()
     End If
 End Sub
 
+'===========================================================
+' Helper: Output Collection of Rows to WorkSheet
+'===========================================================
 Private Sub FlushCollectionBuffer()
     If mRows Is Nothing Or mRows.Count = 0 Then Exit Sub
 
