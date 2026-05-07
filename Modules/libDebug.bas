@@ -54,6 +54,20 @@ Public Sub debug_Log(wsName As String, msg As String)
     End If
 
     ' normal immediate write...
+    Dim ws As Worksheet
+    Set ws = GetDebugSheet()
+
+    If mNextRow = 0 Then
+        mNextRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).row + 1
+    End If
+
+    With ws
+        .Cells(mNextRow, 1).Value = Now
+        .Cells(mNextRow, 2).Value = pWorksheetName
+        .Cells(mNextRow, 3).Value = indentText & pDebug
+    End With
+
+    mNextRow = mNextRow + 1
 End Sub
 
 '===========================================================
