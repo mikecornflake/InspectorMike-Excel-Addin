@@ -630,9 +630,12 @@ Private Sub Normalise_Event_By_Colour()
     
     If (bHasDuplicateAssets Or bHasReview) And (iEventCol > 0) And (Not bHasOther) Then
         ForceFindExtents
-        Call SelectTable("A1", FLastRow, FLastColumn)
+        Dim rngTable As Range
+        
+        Set rngTable = TableRange(pWS, "A1")
+        
         Application.DisplayAlerts = False
-        Selection.RemoveDuplicates Columns:=iEventCol, Header:=xlYes
+        rngTable.RemoveDuplicates Columns:=iEventCol, Header:=xlYes
         Application.DisplayAlerts = True
         
         For iRow = 2 To FLastRow

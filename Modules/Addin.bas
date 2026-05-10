@@ -25,6 +25,7 @@ End Sub
 'Callback for btnBasicTableTidy onAction
 Sub Basic_Table_Tidy_Callback(control As IRibbonControl)
     Call BasicTidy(ActiveSheet)
+    ActiveSheet.Range("A2").Select
 End Sub
 
 ' Callback

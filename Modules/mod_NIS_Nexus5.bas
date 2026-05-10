@@ -14,7 +14,7 @@ Sub Nexus5_Build_Full_Name()
     Dim sFormula As String
     
     ' Find the last Component.Location Column
-    iCol = Find_Column("Workpack.Name") - 2
+    iCol = FindColumn("Workpack.Name") - 2
     
     ' Delete the Nexen / Buzzard Columns
     ' Columns("A:B").Select
@@ -96,7 +96,7 @@ Public Sub Nexus5_Tidy_Event_Export()
         Sheets(iSheet).Select
         
         If Sheets(iSheet).Name <> "Multimedia" Then
-            If Find_Column("Component.Location") > 0 Then
+            If FindColumn("Component.Location") > 0 Then
                 ActiveSheet.Tab.ColorIndex = 43
                 
                 Remove_Formatting
@@ -106,7 +106,7 @@ Public Sub Nexus5_Tidy_Event_Export()
                 If Sheets(iSheet).Name <> "Findings" Then
                     Nexus5_Build_Full_Name
                 Else
-                    Rename_Column "Component.Location", "Location"
+                    RenameColumn "Component.Location", "Location"
                 End If
             
                 Populate_Event_Name

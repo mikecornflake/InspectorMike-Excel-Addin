@@ -73,11 +73,14 @@ Private Sub ProcessMicrosftPlannerExport()
     iChecklistProgCol = FindColumn("Completed Checklist Items")
     
     ' Sort the Rows appropriately
-    SelectTable "A1", FLastRow, FLastColumn
-    Selection.Sort Key1:=Cells(1, iCreatedCol), Order1:=xlAscending, Header:=xlYes
-    Selection.Sort Key1:=Cells(1, iCompletedCol), Order1:=xlAscending, Header:=xlYes
-    Selection.Sort Key1:=Cells(1, iProgressCol), Order1:=xlAscending, Header:=xlYes
-    Selection.Sort Key1:=Cells(1, iBucketCol), Order1:=xlAscending, Header:=xlYes
+    Dim rngTable As Range
+
+    Set rngTable = TableRange(pWS, "A1")
+    
+    rngTable.Sort Key1:=pWS.Cells(1, iCreatedCol), Order1:=xlAscending, Header:=xlYes
+    rngTable.Sort Key1:=pWS.Cells(1, iCompletedCol), Order1:=xlAscending, Header:=xlYes
+    rngTable.Sort Key1:=pWS.Cells(1, iProgressCol), Order1:=xlAscending, Header:=xlYes
+    rngTable.Sort Key1:=pWS.Cells(1, iBucketCol), Order1:=xlAscending, Header:=xlYes
     
     ' Show the Checklist Items correctly (split "ChecklistItem1;ChecklistItem2" into lines)
     Columns(iChecklistCol).Select
