@@ -670,8 +670,8 @@ End Sub
 Sub MarkSelectedAsIssue()
     ColorSelected
     
-    Cells(ActiveCell.Row, 1).Value = "Yes"
-    Cells(ActiveCell.Row, 1).Select
+    Cells(ActiveCell.row, 1).Value = "Yes"
+    Cells(ActiveCell.row, 1).Select
     
     ColorSelected
 End Sub
@@ -1409,7 +1409,7 @@ Public Sub ProcessVWCoabisExport()
     Selection.NumberFormat = "yyyy/mm/dd"
     
     ActiveCell.SpecialCells(xlLastCell).Select
-    For i = ActiveCell.Row To FLastRow + 1 Step -1
+    For i = ActiveCell.row To FLastRow + 1 Step -1
         Rows(i).Select
         Rows(i).Delete
     Next i
@@ -1438,9 +1438,9 @@ Sub InterpolateMiddleRow()
       Exit Sub
     End If
     
-    iStartRow = Selection.Rows(1).Row
-    iNewRow = Selection.Rows(2).Row
-    iEndRow = Selection.Rows(3).Row
+    iStartRow = Selection.Rows(1).row
+    iNewRow = Selection.Rows(2).row
+    iEndRow = Selection.Rows(3).row
     
     Rows(iStartRow).Select
     Selection.Interior.Pattern = xlNone

@@ -3,9 +3,6 @@ Attribute VB_Name = "libString"
 
 Option Explicit
 
-Private Const ERR_BASE_LIBRARY_STRING As Long = vbObjectError + 1024
-Private Const ERR_INVALID_STRING_BOOL As Long = ERR_BASE_LIBRARY_STRING + 1
-
 Public Function Text_ToBool(ByVal AInput As String) As Boolean
     Dim sInput As String
     
@@ -21,7 +18,7 @@ Public Function Text_ToBool(ByVal AInput As String) As Boolean
         Case Else
             Err.Raise _
                 Number:=ERR_INVALID_STRING_BOOL, _
-                source:="LibraryString.Text_ToBool", _
+                source:="libString.Text_ToBool", _
                 Description:="Invalid boolean string: [" & AInput & "]"
     End Select
 End Function

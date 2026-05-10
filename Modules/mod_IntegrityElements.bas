@@ -176,7 +176,7 @@ Private Sub PopulateAnomalyReferences()
     For Each sheetName In sourceSheets
         Set ws = ActiveWorkbook.Sheets(sheetName)
         If ws.AutoFilterMode Then ws.AutoFilterMode = False
-        lastRow = ws.Cells(ws.Rows.Count, "A").End(xlUp).Row
+        lastRow = ws.Cells(ws.Rows.Count, "A").End(xlUp).row
     
         ' Adjust asset column dynamically based on sheet name
         Dim assetCol As String
@@ -204,7 +204,7 @@ Private Sub PopulateAnomalyReferences()
     Next sheetName
 
     ' Populate Completion Report
-    lastRowCompletion = wsCompletion.Cells(wsCompletion.Rows.Count, "E").End(xlUp).Row
+    lastRowCompletion = wsCompletion.Cells(wsCompletion.Rows.Count, "E").End(xlUp).row
     For i = 2 To lastRowCompletion
         If i = 79 Then
             Debug.Print "test"

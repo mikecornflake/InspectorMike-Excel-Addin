@@ -7,8 +7,9 @@ Attribute VB_Name = "tst_Framework"
 ' Public Sub AssertEqual(TestName As String, Expected As Variant, Actual As Variant)
 ' Public Sub AssertTrue(TestName As String, Actual As Boolean)
 ' Public Sub AssertFalse(TestName As String, Actual As Boolean)
-' Function CreateTestSheet(sheetName As String) As Worksheet
-' Sub DeleteTestSheet(sheetName As String)
+' Public Sub AssertRaises(TestName As String, ExpectedErrNumber As Long, ActualErrNumber As Long)
+' Public Function CreateTestSheet(sheetName As String) As Worksheet
+' Public Sub DeleteTestSheet(sheetName As String)
 
 Option Explicit
 Option Private Module
@@ -31,13 +32,14 @@ Public Sub RunAllTests()
     ActiveTestModule = ""
 
     ' Determine which tests to run
-    Call Test_LibraryString
-    Call Test_LibraryMath
-    Call Test_LibraryArray
-    Call Test_LibraryClipboard
-    Call Test_LibraryDate
-    Call Test_LibraryFiles
-    Call Test_LibraryControls
+    Call Test_libString
+    Call Test_libMath
+    Call Test_libArray
+    Call Test_libClipboard
+    Call Test_libDate
+    Call Test_libFiles
+    Call Test_libControls
+    Call Test_libInterpolation
 
     ' Report results
     Dim i As Long
@@ -99,6 +101,28 @@ Public Sub AssertFalse(TestName As String, actual As Boolean)
     Call AssertEqual(TestName, False, actual)
 End Sub
 
+Public Sub AssertRaises( _
+    ByVal TestName As String, _
+    ByVal ExpectedErrNumber As Long, _
+    ByVal ActualErrNumber As Long)
+
+    Call AssertEqual(TestName, ExpectedErrNumber, ActualErrNumber)
+End Sub
+
+Public Function CreateTestSheet(sheetName As String) As Worksheet
+    Set CreateTestSheet = ThisWorkbook.Sheets.Add
+    CreateTestSheet.Name = sheetName
+    CreateTestSheet.Activate
+End Function
+
+Public Sub DeleteTestSheet(sheetName As String)
+    On Error Resume Next
+    Application.DisplayAlerts = False
+    ThisWorkbook.Sheets(sheetName).Delete
+    Application.DisplayAlerts = True
+    On Error GoTo 0
+End Sub
+
 Private Function FormatVariant(v As Variant) As String
     If IsError(v) Then
         FormatVariant = "Error #" & CStr(v)
@@ -111,19 +135,6 @@ Private Function FormatVariant(v As Variant) As String
     End If
 End Function
 
-Function CreateTestSheet(sheetName As String) As Worksheet
-    Set CreateTestSheet = ThisWorkbook.Sheets.Add
-    CreateTestSheet.Name = sheetName
-    CreateTestSheet.Activate
-End Function
-
-Sub DeleteTestSheet(sheetName As String)
-    On Error Resume Next
-    Application.DisplayAlerts = False
-    ThisWorkbook.Sheets(sheetName).Delete
-    Application.DisplayAlerts = True
-    On Error GoTo 0
-End Sub
 
 
 

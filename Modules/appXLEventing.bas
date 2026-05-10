@@ -48,7 +48,7 @@ Public Sub ShowXlEventingForm_EditOrAppendFromActiveSheet()
             Exit Sub
             
         Case "event"
-            lRow = ActiveCell.Row
+            lRow = ActiveCell.row
             
             If lRow < 2 Then
                 ShowXlEventingForm sFormID, -1
@@ -149,7 +149,7 @@ Public Sub IntelligentlyInsertDateTime()
     Set ws = ActiveSheet
     
     Dim activeRow As Long
-    activeRow = ActiveCell.Row
+    activeRow = ActiveCell.row
     
     ' Do nothing if user is on header row
     If activeRow = 1 Then Exit Sub

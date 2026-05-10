@@ -2,7 +2,7 @@ Attribute VB_Name = "tstControls"
 Option Explicit
 Option Private Module
 
-Public Sub Test_LibraryControls()
+Public Sub Test_libControls()
     ActiveTestModule = "libControls"
     
     Test_Control_IsSupportedType

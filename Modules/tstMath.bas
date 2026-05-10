@@ -2,7 +2,7 @@ Attribute VB_Name = "tstMath"
 Option Explicit
 Option Private Module
 
-Public Sub Test_LibraryMath()
+Public Sub Test_libMath()
     ActiveTestModule = "libMath"
     
     ' ===== Basic min/max function tests =====

@@ -47,8 +47,8 @@ Public Sub debug_Log(wsName As String, msg As String)
 
     With ws
         .Cells(mNextRow, 1).Value = Now
-        .Cells(mNextRow, 2).Value = pWorksheetName
-        .Cells(mNextRow, 3).Value = indentText & pDebug
+        .Cells(mNextRow, 2).Value = wsName
+        .Cells(mNextRow, 3).Value = indentText & msg
     End With
 
     mNextRow = mNextRow + 1
@@ -216,7 +216,7 @@ Private Function GetDebugSheet() As Worksheet
         mNextRow = 2   ' next write starts at row 2
         
         ' Format the sheet
-        Debug_Format
+        debug_Format
     End If
     
     ' Unhide if hidden

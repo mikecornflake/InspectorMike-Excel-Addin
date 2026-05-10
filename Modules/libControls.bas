@@ -9,17 +9,15 @@ Option Private Module
 ' If you extend one function, you likely need to extend the others
 '
 
-Private Const ERR_BASE_LIBRARY_FORMS As Long = vbObjectError + 2048
-Private Const ERR_UNSUPPORTED_CONTROL As Long = ERR_BASE_LIBRARY_FORMS + 1
-
 Private Const DATE_FORMAT As String = "yyyy-mm-dd"
 Private Const TIME_FORMAT As String = "HH:nn:ss"
 Private Const DATETIME_FORMAT As String = "yyyy-mm-dd HH:nn:ss"
 
+' Error codes in libErr
 Private Sub Control_RaiseUnsupportedError(ByVal pCtl As MSForms.control, ByVal pRoutineName As String)
     Err.Raise _
         Number:=ERR_UNSUPPORTED_CONTROL, _
-        source:="LibraryForms." & pRoutineName, _
+        source:="libControls." & pRoutineName, _
         Description:="Unsupported control type: " & TypeName(pCtl)
 End Sub
 

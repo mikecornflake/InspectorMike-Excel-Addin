@@ -167,7 +167,7 @@ Public Sub Fugro_SS_HyperlinkImages(baseFolder As String, Optional forceRelative
                     ' Loop through data rows
                     For Each rowRange In ws.Range(cell.Offset(1, 0), ws.Cells(ws.Rows.Count, cell.Column).End(xlUp)).Rows
                         Dim dataCell As Range
-                        Set dataCell = ws.Cells(rowRange.Row, cell.Column)
+                        Set dataCell = ws.Cells(rowRange.row, cell.Column)
     
                         If Len(dataCell.Value) > 0 Then
                             filename = Trim(dataCell.Value)
@@ -381,7 +381,7 @@ Private Sub SplitByEventCode()
 
     Set wsSource = ActiveSheet
     Set headerRow = wsSource.Rows(1)
-    lastRow = wsSource.Cells(wsSource.Rows.Count, 1).End(xlUp).Row
+    lastRow = wsSource.Cells(wsSource.Rows.Count, 1).End(xlUp).row
     lastCol = wsSource.Cells(1, wsSource.Columns.Count).End(xlToLeft).Column
 
     ' Map column headers to their column numbers
@@ -434,7 +434,7 @@ Private Sub SplitByEventCode()
         End If
 
         ' Write data
-        targetRow = targetSheet.Cells(targetSheet.Rows.Count, 1).End(xlUp).Row + 1
+        targetRow = targetSheet.Cells(targetSheet.Rows.Count, 1).End(xlUp).row + 1
         fieldList = coreFields
         If eventFields.Exists(eventCode) Then
             fieldList = JoinArrays(coreFields, eventFields(eventCode))
@@ -538,7 +538,7 @@ Private Sub BuildAnomalySheet()
             ' Skip if "Anomaly" column doesn't exist
             If Not colMap.Exists("anomaly") Then GoTo NextSheet
 
-            lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+            lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).row
 
             ' Loop through rows
             For r = 2 To lastRow
@@ -653,7 +653,7 @@ Private Sub DeleteEmptyColumns()
         With ws
             ' Start from last column and move left to avoid shifting issues
             For col = .Cells(1, .Columns.Count).End(xlToLeft).Column To 1 Step -1
-                lastRow = .Cells(.Rows.Count, col).End(xlUp).Row
+                lastRow = .Cells(.Rows.Count, col).End(xlUp).row
                 If lastRow = 1 And Len(.Cells(1, col).Value) > 0 Then
                     .Columns(col).Delete
                 End If

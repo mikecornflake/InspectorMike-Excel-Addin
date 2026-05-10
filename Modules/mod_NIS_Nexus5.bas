@@ -25,7 +25,7 @@ Sub Nexus5_Build_Full_Name()
     ' Find last row
     Range("A1").Select
     Selection.End(xlDown).Select
-    iLastRow = ActiveCell.Row
+    iLastRow = ActiveCell.row
     
     ' Find Last Column
     Range("A1").Select
@@ -416,7 +416,7 @@ Private Sub Populate_Event_Name()
     
     If Trim(Cells(2, 1).Value) <> "" Then
         Selection.End(xlDown).Select
-        iLastRow = ActiveCell.Row
+        iLastRow = ActiveCell.row
     
         If (iEventName <> -1) And (iEventNumber <> -1) Then
             For i = 2 To iLastRow
@@ -485,7 +485,7 @@ Private Sub Tidy_Columns()
     If Trim(Cells(2, 1).Value) <> "" Then
         Range("A1").Select
         Selection.End(xlDown).Select
-        iLastRow = ActiveCell.Row
+        iLastRow = ActiveCell.row
         
         ' Find Last Column
         Range("A1").Select

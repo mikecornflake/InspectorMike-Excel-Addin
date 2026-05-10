@@ -4,7 +4,7 @@ Attribute VB_Name = "tstFiles"
 Option Explicit
 Option Private Module
 
-Public Sub Test_LibraryFiles()
+Public Sub Test_libFiles()
     ActiveTestModule = "libFiles"
 
     ' Path_AddTrailingDelimiter

@@ -13,7 +13,7 @@ Private Sub Test_Text_ToBool_Invalid(ByVal pInput As String, ByVal pTestName As 
     On Error GoTo 0
 End Sub
 
-Public Sub Test_LibraryString()
+Public Sub Test_libString()
     ActiveTestModule = "libString"
 
     ' =========================

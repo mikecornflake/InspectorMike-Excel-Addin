@@ -10,8 +10,8 @@ Attribute VB_Name = "libClipboard"
 Option Explicit
 Option Private Module
 
-Public Sub Test_LibraryClipboard()
-    ActiveTestModule = "LibraryClipboard"
+Public Sub Test_libClipboard()
+    ActiveTestModule = "libClipboard"
 
     Dim result As String
     

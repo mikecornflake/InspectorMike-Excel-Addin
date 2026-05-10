@@ -105,10 +105,10 @@ Public Sub PasteTable()
     Range("A1").Select
     Selection.End(xlDown).Select
     
-    If ActiveCell.Row = 65536 Then
+    If ActiveCell.row = 65536 Then
         Range("A2").Select
     Else
-        Range("A" & ActiveCell.Row + 1).Select
+        Range("A" & ActiveCell.row + 1).Select
     End If
     
     ActiveSheet.Paste
@@ -193,7 +193,7 @@ Public Sub FindExtents()
         Else
             Range("A1").Select
             Selection.End(xlDown).Select
-            FLastRow = ActiveCell.Row
+            FLastRow = ActiveCell.row
         End If
     End If
     
@@ -254,7 +254,7 @@ Public Function FindInColumn(ByVal pWS As Worksheet, _
     If foundCell Is Nothing Then
         FindInColumn = 0
     Else
-        FindInColumn = foundCell.Row
+        FindInColumn = foundCell.row
     End If
 End Function
 
@@ -593,7 +593,7 @@ Public Function LastUsedRow(ByVal pWS As Worksheet) As Long
     If lastCell Is Nothing Then
         LastUsedRow = 1
     Else
-        LastUsedRow = lastCell.Row
+        LastUsedRow = lastCell.row
     End If
 End Function
 

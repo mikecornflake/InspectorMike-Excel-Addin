@@ -6,7 +6,7 @@ Option Explicit
 Option Private Module
 
 ' Runs a suite of assertions to validate date/time conversion functions
-Public Sub Test_LibraryDate()
+Public Sub Test_libDate()
     ActiveTestModule = "libDate"
     
     ' Expected date/time value for comparison

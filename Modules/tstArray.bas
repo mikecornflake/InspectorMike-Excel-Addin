@@ -5,7 +5,7 @@ Attribute VB_Name = "tstArray"
 Option Explicit
 Option Private Module
 
-Public Sub Test_LibraryArray()
+Public Sub Test_libArray()
     ActiveTestModule = "libArray"
 
     ' ===== Array_IndexOf tests =====

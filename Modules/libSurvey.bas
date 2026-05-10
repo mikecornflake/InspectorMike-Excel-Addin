@@ -2,7 +2,7 @@ Attribute VB_Name = "libSurvey"
 Option Explicit
 Option Private Module
 
-' Uses LibraryInterpolation.InterpolateByDate
+' Uses libInterpolation.InterpolateByDate
 Public Sub Interpolate_Nav_To_3_Sec()
     Dim iDateCol As Long, iTimeCol As Long, iDateTimeCol As Long
     
@@ -40,8 +40,9 @@ Public Sub Interpolate_Nav_To_3_Sec()
     iRow = FLastRow - 1
     iRowsAdded = 0
     
-    If MsgBox("About to commence interpolation of survey records" & vbCrLf & _
-              "to maximum interval of 3 seconds." & vbCrLf & vbCrLf & _
+    If MsgBox("About to commence checking survey records" & vbCrLf & _
+              "and ensuring there is a record at least once every 3 seconds." & vbCrLf & vbCrLf & _
+              "New interpolated records will be inserted where needed." & vbCrLf & vbCrLf & _
               "This may take a while." & vbCrLf & vbCrLf & _
               "Please do not use Excel while Macro is running.", vbOKCancel) = vbOK Then
         Application.ScreenUpdating = False
