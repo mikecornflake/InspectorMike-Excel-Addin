@@ -171,7 +171,7 @@ Public Sub AddColumnNamesLookup()
     Dim oSheet As Worksheet
     Dim iRow As Long
     
-    If Not WorksheetExists(SHEET_COLUMNNAMES) Then
+    If Not WorksheetExists(ActiveWorkbook, SHEET_COLUMNNAMES) Then
         ActiveWorkbook.Sheets.Add.Name = SHEET_COLUMNNAMES
     End If
     

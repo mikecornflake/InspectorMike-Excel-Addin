@@ -879,20 +879,20 @@ End Sub
 ' Keeping them in as I might be called to extend them
 '
 Public Sub PrepareNexusImportFromCurrentSheet()
-    If WorksheetExists("Survey Import") Then
+    If WorksheetExists(ActiveWorkbook, "Survey Import") Then
         MsgBox "Sheet called 'Survey Import' already exists"
         Exit Sub
     End If
     
     ' Rename this sheet to "Original"
-    If Not WorksheetExists("Original") Then
+    If Not WorksheetExists(ActiveWorkbook, "Original") Then
         If (ActiveSheet.Name <> "Original") And (ActiveSheet.Name <> "ColumnNames") And (ActiveSheet.Name <> "PL _ Profile") Then
             ActiveSheet.Name = "Original"
         End If
         ActiveSheet.Move Before:=Sheets(1)
     End If
     
-    If Not WorksheetExists("ColumnNames") Then
+    If Not WorksheetExists(ActiveWorkbook, "ColumnNames") Then
         AddColumnNamesLookup
         
         MsgBox "A sheet called 'ColumnNames' has just been added. " & vbCrLf & _
@@ -901,7 +901,7 @@ Public Sub PrepareNexusImportFromCurrentSheet()
         Exit Sub
     End If
     
-    If WorksheetExists("Original") Then
+    If WorksheetExists(ActiveWorkbook, "Original") Then
         Sheets("Original").Select
     ElseIf ActiveSheet.Name = "ColumnNames" Then
         MsgBox "Please switch to the Excel worksheet with the original survey values first"
@@ -1012,7 +1012,7 @@ Public Sub Prepare_PL_Profile_Import()
     Dim oColumnNames As Worksheet
     
     ' This works from the Original Data
-    If WorksheetExists("Original") Then
+    If WorksheetExists(ActiveWorkbook, "Original") Then
         Sheets("Original").Select
     End If
     

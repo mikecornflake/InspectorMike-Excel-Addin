@@ -2,6 +2,10 @@ Attribute VB_Name = "appXLEventing"
 Option Explicit
 Option Private Module
 
+Public Const SHEET_FORMS As String = "xe.forms"
+Public Const SHEET_FIELDS As String = "xe.fields"
+Public Const SHEET_LISTS As String = "xe.lists"
+
 Public Sub ShowXlEventingForm(ByVal pFormID As String, ByVal pActiveRow As Long)
     Unload frmXLEventing
     Load frmXLEventing
@@ -84,8 +88,6 @@ Public Sub CentreFormOverExcel(ByVal pForm As Object)
 End Sub
 
 Public Function GetFormTypeForForm(ByVal pFormID As String) As String
-    Const SHEET_FORMS As String = "xe.forms"
-    
     Dim wsForms As Worksheet
     Dim colFormID As Long
     Dim colType As Long
@@ -96,7 +98,7 @@ Public Function GetFormTypeForForm(ByVal pFormID As String) As String
     
     GetFormTypeForForm = ""
     
-    If Not WorksheetExists(SHEET_FORMS) Then Exit Function
+    If Not WorksheetExists(ActiveWorkbook, SHEET_FORMS) Then Exit Function
     
     Set wsForms = ActiveWorkbook.Worksheets(SHEET_FORMS)
     
@@ -237,7 +239,7 @@ Public Sub IntelligentlyInsertDateTime()
 End Sub
 
 Public Function GetTargetSheetForForm(ByVal pFormID As String) As String
-    Const SHEET_FORMS As String = "xe.forms"
+
     
     Dim wsForms As Worksheet
     Dim colFormID As Long
@@ -249,7 +251,7 @@ Public Function GetTargetSheetForForm(ByVal pFormID As String) As String
     
     GetTargetSheetForForm = ""
     
-    If Not WorksheetExists(SHEET_FORMS) Then Exit Function
+    If Not WorksheetExists(ActiveWorkbook, SHEET_FORMS) Then Exit Function
     
     Set wsForms = ActiveWorkbook.Worksheets(SHEET_FORMS)
     
@@ -273,7 +275,7 @@ End Function
 Public Function EnsureTargetSheetExists(ByVal pSheetName As String, ByVal pFormID As String) As Worksheet
     Dim ws As Worksheet
     
-    If WorksheetExists(pSheetName) Then
+    If WorksheetExists(ActiveWorkbook, pSheetName) Then
         Set ws = ActiveWorkbook.Worksheets(pSheetName)
         
         If ws.Visible <> xlSheetVisible Then
@@ -313,8 +315,6 @@ Public Sub ColourEventTab(ByVal pSheet As Worksheet)
 End Sub
 
 Public Sub CreateSheetHeadersFromFields(ByVal pWS As Worksheet, ByVal pFormID As String)
-    Const SHEET_FIELDS As String = "xe.fields"
-    
     Dim wsFields As Worksheet
     Dim colFormID As Long
     Dim colDisplayOrder As Long
@@ -329,7 +329,7 @@ Public Sub CreateSheetHeadersFromFields(ByVal pWS As Worksheet, ByVal pFormID As
     Dim vItem As Variant
     Dim iCol As Long
     
-    If Not WorksheetExists(SHEET_FIELDS) Then
+    If Not WorksheetExists(ActiveWorkbook, SHEET_FIELDS) Then
         MsgBox "xe.fields not found.", vbExclamation, "xlEventing"
         Exit Sub
     End If
@@ -383,8 +383,6 @@ End Sub
 
 
 Public Function GetFormIDForTargetSheet(ByVal pTargetSheet As String) As String
-    Const SHEET_FORMS As String = "xe.forms"
-    
     Dim wsForms As Worksheet
     Dim colFormID As Long
     Dim colTargetSheet As Long
@@ -396,7 +394,7 @@ Public Function GetFormIDForTargetSheet(ByVal pTargetSheet As String) As String
     
     GetFormIDForTargetSheet = ""
     
-    If Not WorksheetExists(SHEET_FORMS) Then Exit Function
+    If Not WorksheetExists(ActiveWorkbook, SHEET_FORMS) Then Exit Function
     
     Set wsForms = ActiveWorkbook.Worksheets(SHEET_FORMS)
     

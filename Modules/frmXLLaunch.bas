@@ -42,7 +42,6 @@ Private Sub ClearDynamicButtons()
 End Sub
 
 Private Sub BuildEventButtons()
-    Const SHEET_FORMS As String = "xe.forms"
     Const SCROLLBAR_WIDTH As Single = 18
         
     Dim wsForms As Worksheet
@@ -64,7 +63,7 @@ Private Sub BuildEventButtons()
     Dim buttonHeight As Single
     Dim buttonWidth As Single
     
-    If Not WorksheetExists(SHEET_FORMS) Then
+    If Not WorksheetExists(ActiveWorkbook, SHEET_FORMS) Then
         MsgBox "xe.forms not found.", vbExclamation, "xlEventing"
         Exit Sub
     End If

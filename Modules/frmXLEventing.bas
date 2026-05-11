@@ -114,7 +114,6 @@ Private Sub ClearDynamicControls()
 End Sub
 
 Private Sub BuildControls()
-    Const SHEET_FIELDS As String = "xe.fields"
     Const ROW_HEIGHT As Single = 18
     Const ROW_GAP As Single = 6
 
@@ -148,7 +147,7 @@ Private Sub BuildControls()
     Dim labelWidth As Single
     Dim inputWidth As Single
 
-    If Not WorksheetExists(SHEET_FIELDS) Then
+    If Not WorksheetExists(ActiveWorkbook, SHEET_FIELDS) Then
         MsgBox SHEET_FIELDS & " does not exist. Go speak to Mike.", vbExclamation, "xlEventing"
         Exit Sub
     End If
@@ -287,8 +286,6 @@ Private Function AddInputControl(ByVal pControlType As String, ByVal pControlSuf
 End Function
 
 Private Sub PopulateAllLists()
-    Const SHEET_FIELDS As String = "xe.fields"
-    
     Dim wsFields As Worksheet
     Dim colFormID As Long
     Dim colFieldName As Long
@@ -300,7 +297,7 @@ Private Sub PopulateAllLists()
     Dim sFieldName As String
     Dim sControlType As String
     
-    If Not WorksheetExists(SHEET_FIELDS) Then Exit Sub
+    If Not WorksheetExists(ActiveWorkbook, SHEET_FIELDS) Then Exit Sub
     
     Set wsFields = ActiveWorkbook.Worksheets(SHEET_FIELDS)
     
@@ -328,8 +325,6 @@ Private Sub PopulateAllLists()
 End Sub
 
 Private Sub PopulateListForField(ByVal pFieldName As String, ByVal pPreserveValue As Boolean)
-    Const SHEET_FIELDS As String = "xe.fields"
-    
     Dim wsFields As Worksheet
     Dim colFormID As Long
     Dim colFieldName As Long
@@ -351,7 +346,7 @@ Private Sub PopulateListForField(ByVal pFieldName As String, ByVal pPreserveValu
     Dim vItem As Variant
     Dim oldValue As String
     
-    If Not WorksheetExists(SHEET_FIELDS) Then Exit Sub
+    If Not WorksheetExists(ActiveWorkbook, SHEET_FIELDS) Then Exit Sub
     If mControlMap Is Nothing Then Exit Sub
     If Not mControlMap.Exists(pFieldName) Then Exit Sub
     
@@ -417,8 +412,6 @@ Private Sub PopulateListForField(ByVal pFieldName As String, ByVal pPreserveValu
 End Sub
 
 Public Sub RefreshChildLists(ByVal pParentFieldName As String)
-    Const SHEET_FIELDS As String = "xe.fields"
-    
     Dim wsFields As Worksheet
     Dim colFormID As Long
     Dim colFieldName As Long
@@ -434,7 +427,7 @@ Public Sub RefreshChildLists(ByVal pParentFieldName As String)
     Dim sParentField1 As String
     Dim sParentField2 As String
     
-    If Not WorksheetExists(SHEET_FIELDS) Then Exit Sub
+    If Not WorksheetExists(ActiveWorkbook, SHEET_FIELDS) Then Exit Sub
     
     Set wsFields = ActiveWorkbook.Worksheets(SHEET_FIELDS)
     
@@ -469,8 +462,6 @@ Public Sub RefreshChildLists(ByVal pParentFieldName As String)
 End Sub
 
 Private Sub LoadRowValues(ByVal pLoadDependentFields As Boolean)
-    Const SHEET_FIELDS As String = "xe.fields"
-    
     Dim wsTarget As Worksheet
     Dim wsFields As Worksheet
     
@@ -504,12 +495,12 @@ Private Sub LoadRowValues(ByVal pLoadDependentFields As Boolean)
         Exit Sub
     End If
     
-    If Not WorksheetExists(sTargetSheet) Then
+    If Not WorksheetExists(ActiveWorkbook, sTargetSheet) Then
         MsgBox "Target sheet '" & sTargetSheet & "' does not exist.", vbExclamation, "xlEventing"
         Exit Sub
     End If
     
-    If Not WorksheetExists(SHEET_FIELDS) Then
+    If Not WorksheetExists(ActiveWorkbook, SHEET_FIELDS) Then
         MsgBox "xe.fields does not exist.", vbExclamation, "xlEventing"
         Exit Sub
     End If
@@ -556,8 +547,6 @@ Private Sub LoadRowValues(ByVal pLoadDependentFields As Boolean)
 End Sub
 
 Private Function GetListValues(ByVal pListID As String) As Collection
-    Const SHEET_LISTS As String = "xe.lists"
-    
     Dim wsLists As Worksheet
     Dim wsSource As Worksheet
     
@@ -606,7 +595,7 @@ Private Function GetListValues(ByVal pListID As String) As Collection
     Dim outValues As Collection
     Dim dictDistinct As Object
     
-    If Not WorksheetExists(SHEET_LISTS) Then
+    If Not WorksheetExists(ActiveWorkbook, SHEET_LISTS) Then
         Set GetListValues = Nothing
         Exit Function
     End If
@@ -663,7 +652,7 @@ Private Function GetListValues(ByVal pListID As String) As Collection
         Exit Function
     End If
     
-    If Not WorksheetExists(sSourceSheet) Then
+    If Not WorksheetExists(ActiveWorkbook, sSourceSheet) Then
         Set GetListValues = Nothing
         Exit Function
     End If

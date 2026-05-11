@@ -13,6 +13,7 @@ Option Private Module
 '  Reset log entried with debug_Clear
 '===========================================================
 
+Public Const SHEET_DEBUG = "xe.debug"
 
 Private mIndent As Long   ' Tracks current indentation level (in spaces)
 Private mNextRow As Long  ' Cache the next row
@@ -77,7 +78,7 @@ Public Sub debug_Clear()
     Dim ws As Worksheet
     
     On Error Resume Next
-    Set ws = ActiveWorkbook.Worksheets("xe.debug")
+    Set ws = ActiveWorkbook.Worksheets(SHEET_DEBUG)
     On Error GoTo 0
     
     mNextRow = 0
@@ -151,7 +152,7 @@ Private Sub debug_Format()
     Dim bUpdating As Boolean, bEventsEnabled As Boolean
     
     On Error Resume Next
-    Set ws = ActiveWorkbook.Worksheets("xe.debug")
+    Set ws = ActiveWorkbook.Worksheets(SHEET_DEBUG)
     On Error GoTo 0
     
     If Not ws Is Nothing Then
@@ -198,13 +199,13 @@ Private Function GetDebugSheet() As Worksheet
     Dim ws As Worksheet
     
     On Error Resume Next
-    Set ws = ActiveWorkbook.Worksheets("xe.debug")
+    Set ws = ActiveWorkbook.Worksheets(SHEET_DEBUG)
     On Error GoTo 0
     
     ' Create if missing
     If ws Is Nothing Then
         Set ws = ActiveWorkbook.Worksheets.Add
-        ws.Name = "xe.debug"
+        ws.Name = SHEET_DEBUG
         
         ' Add headers
         ws.Range("A1").Value = "DateTime"

@@ -78,12 +78,12 @@ Public Sub SortSheetsAlphabetically(ByVal pWB As Workbook)
     Loop Until bSorted
 End Sub
 
-Public Function WorksheetExists(ByVal pSheetName As String) As Boolean
+Public Function WorksheetExists(ByVal pWB As Workbook, ByVal pSheetName As String) As Boolean
     Dim ws As Worksheet
 
     WorksheetExists = False
 
-    For Each ws In ActiveWorkbook.Worksheets
+    For Each ws In pWB.Worksheets
         If StrComp(ws.Name, pSheetName, vbTextCompare) = 0 Then
             WorksheetExists = True
             Exit Function

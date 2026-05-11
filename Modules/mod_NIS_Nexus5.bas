@@ -84,7 +84,7 @@ Public Sub Nexus5_Tidy_Event_Export()
     
     Call SortSheetsAlphabetically(ActiveWorkbook)
 
-    If WorksheetExists("Findings") Then
+    If WorksheetExists(ActiveWorkbook, "Findings") Then
         Sheets("Findings").Move Before:=Sheets(1)
     End If
     
@@ -306,7 +306,7 @@ Private Sub Hyperlink_Findings()
     Application.ScreenUpdating = False
     Application.CutCopyMode = False
     
-    If WorksheetExists("Findings") Then
+    If WorksheetExists(ActiveWorkbook, "Findings") Then
         Sheets("Findings").Select
         ActiveSheet.Tab.ColorIndex = 22
         
@@ -320,7 +320,7 @@ Private Sub Hyperlink_Findings()
                 sFullEvent = Cells(iFinding, iFindingEventCol)
                 sEvent = Left(sFullEvent, Text_FindLast(sFullEvent, " ") - 1)
                 
-                If WorksheetExists(sEvent) Then
+                If WorksheetExists(ActiveWorkbook, sEvent) Then
                     Sheets(sEvent).Select
                     ActiveSheet.Tab.ColorIndex = 22
                     
