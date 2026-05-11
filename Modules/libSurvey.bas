@@ -2,6 +2,8 @@ Attribute VB_Name = "libSurvey"
 Option Explicit
 Option Private Module
 
+Private Const SHEET_COLUMNNAMES As String = "xe.ColumnNames"
+
 ' Uses libInterpolation.InterpolateByDate
 Public Sub Interpolate_Nav_To_3_Sec()
     Dim iDateCol As Long, iTimeCol As Long, iDateTimeCol As Long
@@ -19,12 +21,13 @@ Public Sub Interpolate_Nav_To_3_Sec()
     
     Dim dStart As Double, dEnd As Double, dCurr As Double
     
-    ForceFindExtents
+    Dim iLastRow As Long, iLastColumn As Long
+    Call FindTableExtents(ActiveSheet, iLastRow, iLastColumn)
     
     'Find the Date/Time columns
-    iDateCol = Find_Column("Date")
-    iTimeCol = Find_Column("Time")
-    iDateTimeCol = FindFirstColumn(Array("Date Time", "Survey Data.Clock", "DateTime"))
+    iDateCol = FindColumn(ActiveSheet, "Date")
+    iTimeCol = FindColumn(ActiveSheet, "Time")
+    iDateTimeCol = FindFirstColumn(ActiveSheet, Array("Date Time", "Survey Data.Clock", "DateTime"))
     
     If (iDateTimeCol = -1) Then
         If (iDateCol = -1) Or (iTimeCol = -1) Then
@@ -37,7 +40,7 @@ Public Sub Interpolate_Nav_To_3_Sec()
     dtOneSec = #12:00:01 AM#
         
     ' Go to the end of the sheet, then work back towards the start
-    iRow = FLastRow - 1
+    iRow = iLastRow - 1
     iRowsAdded = 0
     
     If MsgBox("About to commence checking survey records" & vbCrLf & _
@@ -92,7 +95,7 @@ Public Sub Interpolate_Nav_To_3_Sec()
                         Cells(iRow + iNewRow, iTimeCol).Value = Format(dtCurr, "HH:MM:SS")
                     End If
                     
-                    For iCol = 1 To FLastColumn
+                    For iCol = 1 To iLastColumn
                         If (iCol <> iDateTimeCol) And (iCol <> iDateCol) And (iCol <> iTimeCol) Then
                             sTemp = Cells(iStartRow, iCol).Value
                             If Text_IsNumber(sTemp) Then
@@ -125,34 +128,34 @@ Public Sub BasicTidyAndFormatColumns()
     
     Call BasicTidy(ActiveSheet, False)
     
-    Call FormatColumnByNames(Array("Date", "#Date", "Start Date", "End Date"), "dd/mm/yyyy")
-    Call FormatColumnByNames(Array("Time", "#Time", "Start Time", "Start Time (Local)", "End Time", "End Time (Local)"), "HH:mm:ss")
-    Call FormatColumnByNames(Array("DateTime", "Date Time", "#Date Time", "#DateTime", "Survey Data.Clock", "Event.Start Clock", "Clock"), "dd/mm/yyyy HH:mm:ss")
-    Call FormatColumnByNames(Array("Event.End Clock", "Start DateTime", "Start DateTime (Local)", "End DateTime", "End DateTime (Local)"), "dd/mm/yyyy HH:mm:ss")
+    Call FormatColumnByNames(ActiveSheet, Array("Date", "#Date", "Start Date", "End Date"), "dd/mm/yyyy")
+    Call FormatColumnByNames(ActiveSheet, Array("Time", "#Time", "Start Time", "Start Time (Local)", "End Time", "End Time (Local)"), "HH:mm:ss")
+    Call FormatColumnByNames(ActiveSheet, Array("DateTime", "Date Time", "#Date Time", "#DateTime", "Survey Data.Clock", "Event.Start Clock", "Clock"), "dd/mm/yyyy HH:mm:ss")
+    Call FormatColumnByNames(ActiveSheet, Array("Event.End Clock", "Start DateTime", "Start DateTime (Local)", "End DateTime", "End DateTime (Local)"), "dd/mm/yyyy HH:mm:ss")
     
-    Call FormatColumnByNames(Array("KP", "Survey - Pipeline.KP"), "0.0000")
-    Call FormatColumnByNames(Array("Easting", "Eastings", "Survey - Standard.Easting"), "0.00")
-    Call FormatColumnByNames(Array("Northing", "Northings", "Survey - Standard.Northing"), "0.00")
-    Call FormatColumnByNames(Array("Depth", "Depth (m)", "Depth(m)", "Survey - Standard.Depth"), "0.0")
-    Call FormatColumnByNames(Array("Elevation", "Elevation (m)", "Elevation(m)", "Survey - Standard.Elevation"), "0.00")
+    Call FormatColumnByNames(ActiveSheet, Array("KP", "Survey - Pipeline.KP"), "0.0000")
+    Call FormatColumnByNames(ActiveSheet, Array("Easting", "Eastings", "Survey - Standard.Easting"), "0.00")
+    Call FormatColumnByNames(ActiveSheet, Array("Northing", "Northings", "Survey - Standard.Northing"), "0.00")
+    Call FormatColumnByNames(ActiveSheet, Array("Depth", "Depth (m)", "Depth(m)", "Survey - Standard.Depth"), "0.0")
+    Call FormatColumnByNames(ActiveSheet, Array("Elevation", "Elevation (m)", "Elevation(m)", "Survey - Standard.Elevation"), "0.00")
     
-    Call FormatColumnByNames(Array("Heading", "Other Fields.Heading"), "0.0")
+    Call FormatColumnByNames(ActiveSheet, Array("Heading", "Other Fields.Heading"), "0.0")
     
-    Call FormatColumnByName("Pitch", "0.0")
-    Call FormatColumnByName("Roll", "0.0")
-    Call FormatColumnByName("LSH", "0.00")
-    Call FormatColumnByName("RSH", "0.00")
-    Call FormatColumnByNames(Array("LSB", "Survey - Pipeline.Left", "PL - Profile.Left Seabed"), "0.0")
-    Call FormatColumnByNames(Array("RSB", "Survey - Pipeline.Right", "PL - Profile.Right Seabed"), "0.0")
-    Call FormatColumnByNames(Array("TOP", "Survey - Pipeline.ToP", "PL - Profile.Top of Pipe"), "0.0")
-    Call FormatColumnByNames(Array("BOP", "Survey - Pipeline.BoP", "PL - Profile.Bottom of Pipe"), "0.0")
-    Call FormatColumnByName("Salinity", "0.0")
-    Call FormatColumnByName("Velocity", "0.000")
+    Call FormatColumnByName(ActiveSheet, "Pitch", "0.0")
+    Call FormatColumnByName(ActiveSheet, "Roll", "0.0")
+    Call FormatColumnByName(ActiveSheet, "LSH", "0.00")
+    Call FormatColumnByName(ActiveSheet, "RSH", "0.00")
+    Call FormatColumnByNames(ActiveSheet, Array("LSB", "Survey - Pipeline.Left", "PL - Profile.Left Seabed"), "0.0")
+    Call FormatColumnByNames(ActiveSheet, Array("RSB", "Survey - Pipeline.Right", "PL - Profile.Right Seabed"), "0.0")
+    Call FormatColumnByNames(ActiveSheet, Array("TOP", "Survey - Pipeline.ToP", "PL - Profile.Top of Pipe"), "0.0")
+    Call FormatColumnByNames(ActiveSheet, Array("BOP", "Survey - Pipeline.BoP", "PL - Profile.Bottom of Pipe"), "0.0")
+    Call FormatColumnByName(ActiveSheet, "Salinity", "0.0")
+    Call FormatColumnByName(ActiveSheet, "Velocity", "0.000")
     
-    Call FormatColumnByNames(Array("CP", "CP reading", "CP Readings"), "0.000")
-    Call FormatColumnByNames(Array("Temperature", "Temp"), "0.0")
-    Call FormatColumnByNames(Array("DVLDist", "Distance", "Survey - Pipeline.Distance"), "0.000")
-    Call FormatColumnByNames(Array("DCC", "DOL", "Offset", "Survey - Pipeline.Offset"), "0.00")
+    Call FormatColumnByNames(ActiveSheet, Array("CP", "CP reading", "CP Readings"), "0.000")
+    Call FormatColumnByNames(ActiveSheet, Array("Temperature", "Temp"), "0.0")
+    Call FormatColumnByNames(ActiveSheet, Array("DVLDist", "Distance", "Survey - Pipeline.Distance"), "0.000")
+    Call FormatColumnByNames(ActiveSheet, Array("DCC", "DOL", "Offset", "Survey - Pipeline.Offset"), "0.00")
     
     Cells(2, 1).Select
 End Sub
@@ -168,36 +171,14 @@ Public Sub AddColumnNamesLookup()
     Dim oSheet As Worksheet
     Dim iRow As Long
     
-    If Not WorksheetExists("ColumnNames") Then
-        ActiveWorkbook.Sheets.Add.Name = "ColumnNames"
+    If Not WorksheetExists(SHEET_COLUMNNAMES) Then
+        ActiveWorkbook.Sheets.Add.Name = SHEET_COLUMNNAMES
     End If
     
-    Set oSheet = FindSheet(ActiveWorkbook, "ColumnNames")
+    Set oSheet = FindSheet(ActiveWorkbook, SHEET_COLUMNNAMES)
     oSheet.Move After:=Sheets(Sheets.Count)
 
     oSheet.Activate
-    
-    '-----------  SURVEY FILE
-    'Date Time
-    'Easting
-    'Northing
-    'Kp
-    'Dol
-    'Heading
-    'Pitch
-    'Roll
-    'CP Reading
-    'TOP
-    'BOP
-    'LSB
-    'RSB
-    'Temperature
-    'Salinity
-    'Velocity
-    'Depth
-    'LSH
-    'RSH
-    'DVLDist
     
     If Cells(1, 1).Value = "" Then
         iRow = 1
@@ -232,38 +213,42 @@ Public Sub AddColumnNamesLookup()
         
         Call BasicTidy(ActiveSheet)
     End If
+    
+    ' Colour the Tab yellow
+    With oSheet.Tab
+        .Color = 65535
+        .TintAndShade = 0
+    End With
 End Sub
 
 Public Sub RenameColumns(AToNew As Boolean)
     Dim oNames As Worksheet
     Dim oData As Worksheet
-    Dim oSheet As Worksheet
     Dim sOriginal As String
     Dim sNew As String
     Dim sDefault As String
     
     Dim iNameCount As Long
+    Dim iDataCount As Long
     Dim iRow As Long
     Dim iCol As Long
 
-    Set oNames = FindSheet(ActiveWorkbook, "ColumnNames")
+    Set oNames = FindSheet(ActiveWorkbook, SHEET_COLUMNNAMES)
     
-    If (IsNull(oSheet) Or (oSheet Is Nothing)) Then
-        MsgBox ("Tabsheet 'ColumnNames' not found")
+    If (IsNull(oNames) Or (oNames Is Nothing)) Then
+        MsgBox ("Tabsheet '" & SHEET_COLUMNNAMES & "' not found")
     Else
-        If ActiveSheet.Name = "ColumnNames" Then
+        If ActiveSheet.Name = SHEET_COLUMNNAMES Then
             MsgBox ("Please switch to the TabSheet with data before running this routine")
         Else
             ' Yay, we can run
             Set oData = ActiveSheet
             
             oNames.Activate
-            ForceFindExtents
-            
-            iNameCount = FLastRow
+            iNameCount = LastUsedRow(oNames)
             
             oData.Activate
-            ForceFindExtents
+            iDataCount = LastUsedRow(oData)
             
             ' Search over the table in oNames, but make changes in oData (which is selected & visible)
             For iRow = 2 To iNameCount
@@ -275,25 +260,23 @@ Public Sub RenameColumns(AToNew As Boolean)
                     sOriginal = oNames.Cells(iRow, 2).Value
                 End If
                 
-                If Not Rename_Column(sOriginal, sNew) Then
+                If Not RenameColumn(oData, sOriginal, sNew) Then
                     ' If neither the old, nor the new exist, then add a new column called sNew
-                    If (Find_Column(sOriginal) = -1) And (Find_Column(sNew) = -1) Then
-                        iCol = Add_Column(sNew)
+                    If (FindColumn(oData, sOriginal) = -1) And (FindColumn(oData, sNew) = -1) Then
+                        iCol = AppendColumn(oData, sNew)
                         
                         sDefault = Trim(oNames.Cells(iRow, 3).Value)
                         
                         If sDefault <> "" Then
-                            Cells(2, iCol).Value = sDefault
-                            Cells(2, iCol).Select
-                            Selection.Copy
-                            Range(Cells(2, iCol), Cells(FLastRow, iCol)).Select
-                            ActiveSheet.Paste
+                            oData.Cells(2, iCol).Value = sDefault
+                            oData.Cells(2, iCol).Copy
+                            oData.Range(Cells(2, iCol), Cells(iDataCount, iCol)).Paste
                         End If
                     End If
                 End If
             Next iRow
             
-            Call BasicTidy(ActiveSheet)
+            Call BasicTidy(oData)
         End If
     End If
     

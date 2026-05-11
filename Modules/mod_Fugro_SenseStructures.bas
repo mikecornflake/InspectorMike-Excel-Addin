@@ -194,64 +194,7 @@ Public Sub Fugro_SS_HyperlinkImages(baseFolder As String, Optional forceRelative
 End Sub
 
 Private Sub FormatTable()
-'
-' FormatTable Macro
-'
-'
-    Dim colIndex As Long
-    Dim ws As Worksheet
-    
-    Range("A1").Select
-    
-    ' Header
-    With ActiveWindow
-        .SplitColumn = 0
-        .SplitRow = 1
-    End With
-    ActiveWindow.FreezePanes = True
-    Range("A1").Select
-    Range(Selection, Selection.End(xlToRight)).Select
-    Selection.Font.Bold = True
-    With Selection.Interior
-        .Pattern = xlSolid
-        .PatternColorIndex = xlAutomatic
-        .ThemeColor = xlThemeColorDark1
-        .TintAndShade = -0.149998474074526
-        .PatternTintAndShade = 0
-    End With
-    
-    ' Filter
-    Range("A1").Select
-    If Not ActiveSheet.AutoFilterMode Then
-        Selection.AutoFilter
-    End If
-    
-    ' Get the font right
-    Cells.Select
-    With Selection.Font
-        .Name = "Calibri"
-        .size = 9
-    End With
-    With Selection
-        .VerticalAlignment = xlTop
-    End With
-    
-    ' Autosize
-    Cells.Select
-    Selection.ColumnWidth = 50
-    Cells.EntireColumn.AutoFit
-    Cells.EntireRow.AutoFit
-    
-    Set ws = ActiveSheet
-    colIndex = 1
-
-    ' Loop until the first row cell is empty
-    Do While Trim(ws.Cells(1, colIndex).Value) <> ""
-        If ws.Columns(colIndex).ColumnWidth > 65 Then
-            ws.Columns(colIndex).ColumnWidth = 65
-        End If
-        colIndex = colIndex + 1
-    Loop
+    Call BasicTidy(ActiveSheet)
     
     ' Home
     Range("A1").Select

@@ -23,13 +23,13 @@ Public FIncidentPairs() As IncidentPair
 
 Private sInitialisationHack As String
 
-Sub ShowOptions()
-    InitialiseGlobalVars
+Public Sub VW_ShowOptions()
+    VW_InitialiseGlobalVars
     
-    frmOptions.Show
+    frmVWOptions.Show
 End Sub
 
-Sub InitialiseGlobalVars()
+Public Sub VW_InitialiseGlobalVars()
 '
 ' This can be called multiple times, it'll only do the main code once
 '
@@ -43,83 +43,78 @@ Sub InitialiseGlobalVars()
     End If
 End Sub
 
-Function IsTidy() As Boolean
+Public Function IsTidy() As Boolean
     Range("A1").Select
     IsTidy = Selection.Font.Bold
 End Function
 
-Function IsQC() As Boolean
+Public Function IsQC() As Boolean
     IsQC = Cells(1, 1).Value = "Has Issue?"
 End Function
 
 Sub TidyVWExcelExport()
-    ForceFindExtents
+    Dim iLastRow As Long
+    Dim wsActive As Worksheet
 
+    wsActive = ActiveSheet
+    
     ' Convert all the malformed numbers back to actual numbers
+    iLastRow = LastUsedRow(wsActive)
     
     ' Stick a 1 on the clipboard
-    Cells(FLastRow + 1, 1).Value = 1
-    Cells(FLastRow + 1, 1).Select
-    Selection.Copy
+    wsActive.Cells(iLastRow + 1, 1).Value = 1
+    wsActive.Cells(iLastRow + 1, 1).Copy
     
-    ' Select Numbers, Paste Special, Multiple, Clear 1
-    Range(Cells(2, FindColumn("Easting")), Cells(FLastRow, FindColumn("KP Length"))).Select
-    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlMultiply, SkipBlanks:=False, Transpose:=False
+    ' Select Numbers, Paste Special - Multiply
+    wsActive.Range(wsActive.Cells(2, FindColumn(wsActive, "Easting")), wsActive.Cells(iLastRow, FindColumn(wsActive, "KP Length"))) _
+      .PasteSpecial Paste:=xlPasteValues, Operation:=xlMultiply, SkipBlanks:=False, Transpose:=False
     
-    Range(Cells(2, FindColumn("Contact CP")), Cells(FLastRow, FindColumn("ROV Heading"))).Select
-    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlMultiply, SkipBlanks:=False, Transpose:=False
+    wsActive.Range(wsActive.Cells(2, FindColumn(wsActive, "Contact CP")), wsActive.Cells(iLastRow, FindColumn(wsActive, "ROV Heading"))) _
+      .PasteSpecial Paste:=xlPasteValues, Operation:=xlMultiply, SkipBlanks:=False, Transpose:=False
     
     ' Delete the row we placed the 1 on...
-    Rows(FLastRow + 1).Delete
+    Rows(iLastRow + 1).Delete
 
     ' Make it all look good
-    FormatActiveSheet
+    Call FormatSheet(wsActive)
     
     ' Finish by selecting a sane default position
-    Range("A2").Select
+    wsActive.Activate
+    wsActive.Range("A2").Select
 End Sub
 
-Sub ProcessAnomalies()
+' Called from the Form
+Public Sub ProcessAnomalies()
     Dim iSheetEvent, iSheetAnomaly, i, iAnom, iAnomCol As Long
+    Dim wsEvents As Worksheet, wsAnomaly As Worksheet
     
     ' Create the Anomaly Tab Sheet
-    iSheetEvent = ActiveSheet.Index
+    Set wsEvents = ActiveSheet
+    iSheetEvent = wsEvents.Index
+    
     Sheets.Add After:=Sheets(Sheets.Count)
-    iSheetAnomaly = ActiveSheet.Index
-    Sheets(iSheetAnomaly).Name = "Anomalies"
+    Set wsAnomaly = ActiveSheet
+    iSheetAnomaly = wsAnomaly.Index
     
-    ' Set the Header row
-    Sheets(iSheetEvent).Select
-    ForceFindExtents
-    iAnomCol = FindColumn("Anomaly")
+    wsAnomaly.Name = "Anomalies"
     
-    Rows(1).Select
-    Selection.Copy
+    iAnomCol = FindColumn(wsEvents, "Anomaly")
     
-    Sheets(iSheetAnomaly).Select
-    Rows("1:1").Select
-    ActiveSheet.Paste
+    ' Copy the header row to the Anomaly sheet
+    wsEvents.Rows(1).Copy Destination:=wsAnomaly.Rows(1)
     
     iAnom = 2
     
-    For i = 2 To FLastRow
-        Sheets(iSheetEvent).Select
+    For i = 2 To LastUsedRow(wsEvents)
+        wsEvents.Select
         
         If Cells(i, iAnomCol).Value = "Yes" Then
             ' Copy row to anomaly worksheet
-            Sheets(iSheetEvent).Select
-            Rows(i).Select
-            Selection.Copy
-            
-            Sheets(iSheetAnomaly).Select
-            Rows(iAnom).Select
-            ActiveSheet.Paste
+            wsEvents.Rows(i).Copy Destination:=wsAnomaly.Rows(iAnom)
             iAnom = iAnom + 1
             
             ' Colour row red
-            Sheets(iSheetEvent).Select
-            Rows(i).Select
-            With Selection.Interior
+            With wsEvents.Rows(i).Interior
                 .Pattern = xlSolid
                 .PatternColorIndex = xlAutomatic
                 .Color = 13421823
@@ -130,7 +125,7 @@ Sub ProcessAnomalies()
     Next i
     
     Sheets(iSheetAnomaly).Select
-    FormatActiveSheet
+    Call FormatSheet(wsAnomaly)
     Range("A2").Select
     
     Sheets(iSheetEvent).Select
@@ -160,19 +155,23 @@ Sub QCChecks()
     Dim iDimCount As Long
     Dim iPass As Long
     
+    Dim wsActive As Worksheet
+    Dim iLastRow As Long
+    
+    Set wsActive = ActiveSheet
+    iLastRow = LastUsedRow(wsActive)
+    
     ' Ensure the Autofilter is turned on...
-    If ActiveSheet.AutoFilterMode = False Then
-        Range("A1").Select
-        Selection.AutoFilter
+    If wsActive.AutoFilterMode = False Then
+        wsActive.Range("A1").AutoFilter
     End If
     
     ' Insert a "Pass" column, but must be sorted by time first
-    ForceFindExtents
-    iDateCol = FindColumn("Date")
-    iTimeCol = FindColumn("Time")
+    iDateCol = FindColumn(wsActive, "Date")
+    iTimeCol = FindColumn(wsActive, "Time")
     ActiveSheet.AutoFilter.Sort.SortFields.Clear
-    ActiveSheet.AutoFilter.Sort.SortFields.Add Key:=Range(Cells(2, iDateCol), Cells(FLastRow, iDateCol)), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortTextAsNumbers
-    ActiveSheet.AutoFilter.Sort.SortFields.Add Key:=Range(Cells(2, iTimeCol), Cells(FLastRow, iTimeCol)), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortTextAsNumbers
+    ActiveSheet.AutoFilter.Sort.SortFields.Add Key:=Range(Cells(2, iDateCol), Cells(iLastRow, iDateCol)), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortTextAsNumbers
+    ActiveSheet.AutoFilter.Sort.SortFields.Add Key:=Range(Cells(2, iTimeCol), Cells(iLastRow, iTimeCol)), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortTextAsNumbers
     
     With ActiveSheet.AutoFilter.Sort
         .Header = xlYes
@@ -192,8 +191,8 @@ Sub QCChecks()
     End With
     
     iPass = 0
-    iIncident = FindColumn("Incident Code")
-    For i = 2 To FLastRow
+    iIncident = FindColumn(wsActive, "Incident Code")
+    For i = 2 To iLastRow
         If Cells(i, iIncident).Value = "INS" Then
             iPass = iPass + 1
         End If
@@ -207,16 +206,14 @@ Sub QCChecks()
     Selection.AutoFilter
     
     ' Sort by KP
-    ForceFindExtents
-    
-    iDateCol = FindColumn("Date")
-    iTimeCol = FindColumn("Time")
-    iKPCol = FindColumn("KP")
-    iEventCodeCol = FindColumn("Event Code")
+    iDateCol = FindColumn(wsActive, "Date")
+    iTimeCol = FindColumn(wsActive, "Time")
+    iKPCol = FindColumn(wsActive, "KP")
+    iEventCodeCol = FindColumn(wsActive, "Event Code")
     
     ' I'm no longer convinced sort order matters here
     ActiveSheet.AutoFilter.Sort.SortFields.Clear
-    ActiveSheet.AutoFilter.Sort.SortFields.Add Key:=Range(Cells(2, iKPCol), Cells(FLastRow, iKPCol)), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortTextAsNumbers
+    ActiveSheet.AutoFilter.Sort.SortFields.Add Key:=Range(Cells(2, iKPCol), Cells(iLastRow, iKPCol)), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortTextAsNumbers
     
     With ActiveSheet.AutoFilter.Sort
         .Header = xlYes
@@ -227,7 +224,7 @@ Sub QCChecks()
     End With
     
     ' Insert a column to detect the duplicates that cause Coabis issues (Same Incident at Same KP)
-    If FindColumn("Duplicates") = -1 Then
+    If FindColumn(wsActive, "Duplicates") = -1 Then
         ' Stop CountIf updating every time a new item is added
         Application.Calculation = xlCalculationManual
         
@@ -237,17 +234,14 @@ Sub QCChecks()
         Selection.Insert Shift:=xlToRight, CopyOrigin:=xlFormatFromLeftOrAbove
         Cells(1, 1).FormulaR1C1 = "Duplicates"
         
-        ' Update the extents
-        FLastColumn = FLastColumn + 2
-        
-        iKPCol = FindColumn("KP")
-        iEventCodeCol = FindColumn("Event Code")
+        iKPCol = FindColumn(wsActive, "KP")
+        iEventCodeCol = FindColumn(wsActive, "Event Code")
         
         ' Copy the formula across the first column
-        For i = 2 To FLastRow
+        For i = 2 To LastUsedRow(wsActive)
             ' Rounding to 3dp to increase the chance of a collision.  I'd rather have more false positives here than issues in Coabis
             Cells(i, 2).Value = Format(Cells(i, iKPCol).Value, "0.0000") & "." & Cells(i, iEventCodeCol).Value
-            Cells(i, 1).Formula = "=COUNTIF(B2:B" & FLastRow & ", B" & i & ")<>1"
+            Cells(i, 1).Formula = "=COUNTIF(B2:B" & LastUsedRow(ActiveSheet) & ", B" & i & ")<>1"
         Next i
         Columns("A:B").EntireColumn.AutoFit
         
@@ -256,19 +250,16 @@ Sub QCChecks()
     End If
     
     ' Add a column to report issues
-    If FindColumn("Has Issue?") = -1 Then
+    If FindColumn(wsActive, "Has Issue?") = -1 Then
         Columns("A:A").Select
         Selection.Insert Shift:=xlToRight, CopyOrigin:=xlFormatFromLeftOrAbove
         Cells(1, 1).FormulaR1C1 = "Has Issue?"
         Range("A2").Select
         ActiveCell.FormulaR1C1 = "No"
         Selection.Copy
-        Range("A2", "A" & FLastRow).Select
+        Range("A2", "A" & iLastRow).Select
         Selection.PasteSpecial Paste:=xlPasteFormulas, Operation:=xlNone, SkipBlanks:=False, Transpose:=False
         Columns("A:A").EntireColumn.AutoFit
-        
-        ' Update the extents
-        FLastColumn = FLastColumn + 1
     End If
     
     ' Ensure AutoFilter enabled
@@ -288,25 +279,25 @@ Sub QCChecks()
     ' Note: If the column doesn't exist, FindColumn will return -1, which will
     '       cause an error to be raised later.  If any of these are -1 though,
     '       the error is actually here...
-    iHeight = FindColumn("Height")
-    iWidth = FindColumn("Width")
-    iLength = FindColumn("Length")
-    iContactCP = FindColumn("Contact CP")
-    iCPCalibration = FindColumn("CP Calibration")
-    iIncidentType = FindColumn("Incident Type Code")
-    iIncident = FindColumn("Incident Code")
-    iComment = FindColumn("Comment")
-    iAnomaly = FindColumn("Anomaly")
-    iAnomalyComment = FindColumn("Anomaly Comment")
-    iLocation = FindColumn("Location")
-    iClockPosition = FindColumn("Clock Position")
-    iDistanceOff = FindColumn("Distance off")
-    iDuplicatesCol = FindColumn("Duplicates")
-    iKPCol = FindColumn("KP")
-    iEventCodeCol = FindColumn("Event Code")
+    iHeight = FindColumn(wsActive, "Height")
+    iWidth = FindColumn(wsActive, "Width")
+    iLength = FindColumn(wsActive, "Length")
+    iContactCP = FindColumn(wsActive, "Contact CP")
+    iCPCalibration = FindColumn(wsActive, "CP Calibration")
+    iIncidentType = FindColumn(wsActive, "Incident Type Code")
+    iIncident = FindColumn(wsActive, "Incident Code")
+    iComment = FindColumn(wsActive, "Comment")
+    iAnomaly = FindColumn(wsActive, "Anomaly")
+    iAnomalyComment = FindColumn(wsActive, "Anomaly Comment")
+    iLocation = FindColumn(wsActive, "Location")
+    iClockPosition = FindColumn(wsActive, "Clock Position")
+    iDistanceOff = FindColumn(wsActive, "Distance off")
+    iDuplicatesCol = FindColumn(wsActive, "Duplicates")
+    iKPCol = FindColumn(wsActive, "KP")
+    iEventCodeCol = FindColumn(wsActive, "Event Code")
     
     ' Cycle over all the rows, looking for errors
-    For i = 2 To FLastRow
+    For i = 2 To iLastRow
         sIncidentType = Cells(i, iIncidentType).Value
         sIncident = Cells(i, iIncident).Value
         sLocation = Cells(i, iLocation).Value
@@ -505,7 +496,7 @@ Sub QCChecks()
             ' Rats , there 's single codes that meet that requirement....
             ' Better exclude them....
             If (sIncident <> "OTS") And (sIncident <> "CRS") And (sIncident <> "BRS") Then
-                i1 = FindColumn("KP Length")
+                i1 = FindColumn(wsActive, "KP Length")
                 
                 If Cells(i, i1).Value = "0" Then
                     Cells(i, i1).Select
@@ -676,35 +667,20 @@ Sub MarkSelectedAsIssue()
     ColorSelected
 End Sub
 
-Sub FormatActiveSheet()
+Private Sub FormatSheet(ByVal pWS As Worksheet)
     Dim i As Long
     
     ' Use the Basic Tidy as a base...
-    Call BasicTidy(ActiveSheet)
+    Call BasicTidy(pWS)
     
     ' Format specific columns
-    ForceFindExtents
+    Call FormatColumnByName(pWS, "KP", "0.0000")
+    Call FormatColumnByName(pWS, "Easting", "0.0")
+    Call FormatColumnByName(pWS, "Northing", "0.0")
+    Call FormatColumnByName(pWS, "Depth", "0.0")
+    Call FormatColumnByName(pWS, "VWTimestamp", "0")
     
-    Columns(FindColumn("KP")).Select
-    Selection.NumberFormat = "0.0000"
-    
-    Columns(FindColumn("Easting")).Select
-    Selection.NumberFormat = "0.0"
-    
-    Columns(FindColumn("Northing")).Select
-    Selection.NumberFormat = "0.0"
-    
-    Columns(FindColumn("Depth")).Select
-    Selection.NumberFormat = "0.0"
-    
-    i = FindColumn("VWTimestamp")
-    If i <> -1 Then
-        Columns(i).Select
-        Selection.NumberFormat = "0"
-    End If
-    
-    Range(Columns(FindColumn("Temperature")), Columns(FindColumn("DCC"))).Select
-    With Selection
+    With pWS.Range(pWS.Columns(FindColumn(pWS, "Temperature")), pWS.Columns(FindColumn(pWS, "DCC")))
         .HorizontalAlignment = xlCenter
         .WrapText = False
         .Orientation = 0
@@ -715,8 +691,7 @@ Sub FormatActiveSheet()
         .MergeCells = False
     End With
     
-    Range(Columns(FindColumn("Contact CP")), Columns(FindColumn("ROV Heading"))).Select
-    With Selection
+    With pWS.Range(pWS.Columns(FindColumn(pWS, "Contact CP")), pWS.Columns(FindColumn(pWS, "ROV Heading")))
         .HorizontalAlignment = xlCenter
         .WrapText = False
         .Orientation = 0
@@ -727,25 +702,21 @@ Sub FormatActiveSheet()
         .MergeCells = False
     End With
     
-    Columns(FindColumn("Comment")).Select
-    Selection.WrapText = True
-    
-    Columns(FindColumn("Anomaly Comment")).Select
-    Selection.WrapText = True
+    pWS.Columns(FindColumn(pWS, "Comment")).WrapText = True
+    pWS.Columns(FindColumn(pWS, "Anomaly Comment")).WrapText = True
 
-    Columns(FindColumn("Comment")).ColumnWidth = 86.43
-    Columns(FindColumn("Anomaly Comment")).ColumnWidth = 52.86
-    Columns(FindColumn("Incident Type Code")).ColumnWidth = 4.86
-    Columns(FindColumn("Incident Code")).ColumnWidth = 7
-    Columns(FindColumn("Temperature")).ColumnWidth = 7.71
-    Columns(FindColumn("Altitude")).ColumnWidth = 5.14
-    Range(Columns(FindColumn("Distance off")), Columns(FindColumn("Clock Position"))).Select
-    Selection.HorizontalAlignment = xlCenter
+    pWS.Columns(FindColumn(pWS, "Comment")).ColumnWidth = 86.43
+    pWS.Columns(FindColumn(pWS, "Anomaly Comment")).ColumnWidth = 52.86
+    pWS.Columns(FindColumn(pWS, "Incident Type Code")).ColumnWidth = 4.86
+    pWS.Columns(FindColumn(pWS, "Incident Code")).ColumnWidth = 7
+    pWS.Columns(FindColumn(pWS, "Temperature")).ColumnWidth = 7.71
+    pWS.Columns(FindColumn(pWS, "Altitude")).ColumnWidth = 5.14
+    pWS.Range(Columns(FindColumn(pWS, "Distance off")), Columns(FindColumn(pWS, "Clock Position"))).HorizontalAlignment = xlCenter
     
-    Cells.Select
-    Cells.EntireRow.AutoFit
+    pWS.Cells.EntireRow.AutoFit
     
-    Range("A2").Select
+    pWS.Activate
+    pWS.Range("A2").Select
 End Sub
 
 Sub SetCommentsForBurialEvents()
@@ -753,15 +724,15 @@ Sub SetCommentsForBurialEvents()
     Dim bInRockDump As Boolean
     Dim iIncidentCol, iCommentCol As Long
     Dim sIncident, sComment As String
+    Dim wsActive As Worksheet
    
-    ' Set the Header row
-    ForceFindExtents
+    Set wsActive = ActiveSheet
     
-    iIncidentCol = FindColumn("Incident")
-    iCommentCol = FindColumn("Comment")
+    iIncidentCol = FindColumn(ActiveSheet, "Incident")
+    iCommentCol = FindColumn(ActiveSheet, "Comment")
     bInRockDump = False
     
-    For i = 2 To FLastRow
+    For i = 2 To LastUsedRow(ActiveSheet)
         Cells(i, 1).Select
         
         sIncident = Trim(Cells(i, iIncidentCol).Value)
@@ -814,25 +785,25 @@ Sub InterpolatePositionFromMBES()
     Dim dPercent As Double
     Dim sIncidentCode As String, sFixed As String
     Dim dtStart As Date, dtEnd As Date, dtCurr As Date
+    Dim wsActive As Worksheet
     
-    ' Set the Header row
-    ForceFindExtents
+    Set wsActive = ActiveSheet
     
-    iDateCol = FindColumn("Date")
-    iTimeCol = FindColumn("Time")
-    iIncidentCol = FindColumn("Incident Code")
-    iEastingCol = FindColumn("Easting")
-    iNorthingCol = FindColumn("Northing")
-    iDepthCol = FindColumn("Depth")
-    iDCCCol = FindColumn("DCC")
-    iKPCol = FindColumn("KP")
-    iMBESKPCol = FindColumn("MBES_KP")
-    iFixedCol = FindColumn("Fixed")
+    iDateCol = FindColumn(wsActive, "Date")
+    iTimeCol = FindColumn(wsActive, "Time")
+    iIncidentCol = FindColumn(wsActive, "Incident Code")
+    iEastingCol = FindColumn(wsActive, "Easting")
+    iNorthingCol = FindColumn(wsActive, "Northing")
+    iDepthCol = FindColumn(wsActive, "Depth")
+    iDCCCol = FindColumn(wsActive, "DCC")
+    iKPCol = FindColumn(wsActive, "KP")
+    iMBESKPCol = FindColumn(wsActive, "MBES_KP")
+    iFixedCol = FindColumn(wsActive, "Fixed")
     
     iStartRow = -1
     iEndRow = -1
     
-    For iRow = 2 To FLastRow
+    For iRow = 2 To LastUsedRow(ActiveSheet)
     'For iRow = 3053 To 3060
         sFixed = UCase(Trim(Cells(iRow, iFixedCol).Value))
         
@@ -875,7 +846,11 @@ Sub SetInspectionEndPosToNextInspectionStart()
     Dim sCodeTo As String
     Dim iColumn As Long
     Dim dOffset As Double
+    Dim wsActive As Worksheet
+    Dim iLastRow As Long
     
+    Set wsActive = ActiveSheet
+    iLastRow = LastUsedRow(ActiveSheet)
     
     bDirection = True ' Ascending
     ' bDirection = False ' Descending
@@ -888,19 +863,16 @@ Sub SetInspectionEndPosToNextInspectionStart()
         dOffset = 0.0001
     End If
     
-    ' Set the Header row
-    ForceFindExtents
-    
-    iIncidentCol = FindColumn("Incident Code")
-    iKPCol = FindColumn("KP")
-    iDateCol = FindColumn("Date")
-    iTimeCol = FindColumn("Time")
-    iContCP = FindColumn("Continuous CP")
+    iIncidentCol = FindColumn(wsActive, "Incident Code")
+    iKPCol = FindColumn(wsActive, "KP")
+    iDateCol = FindColumn(wsActive, "Date")
+    iTimeCol = FindColumn(wsActive, "Time")
+    iContCP = FindColumn(wsActive, "Continuous CP")
     
     '   Data must be sorted by time first
     ActiveSheet.AutoFilter.Sort.SortFields.Clear
-    ActiveSheet.AutoFilter.Sort.SortFields.Add Key:=Range(Cells(2, iDateCol), Cells(FLastRow, iDateCol)), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortTextAsNumbers
-    ActiveSheet.AutoFilter.Sort.SortFields.Add Key:=Range(Cells(2, iTimeCol), Cells(FLastRow, iTimeCol)), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortTextAsNumbers
+    ActiveSheet.AutoFilter.Sort.SortFields.Add Key:=Range(Cells(2, iDateCol), Cells(iLastRow, iDateCol)), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortTextAsNumbers
+    ActiveSheet.AutoFilter.Sort.SortFields.Add Key:=Range(Cells(2, iTimeCol), Cells(iLastRow, iTimeCol)), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortTextAsNumbers
     With ActiveSheet.AutoFilter.Sort
         .Header = xlYes
         .MatchCase = False
@@ -914,7 +886,7 @@ Sub SetInspectionEndPosToNextInspectionStart()
     iLastEndRow = -1
     sLastCode = "XXX"
     
-    For iRow = 2 To FLastRow - 1
+    For iRow = 2 To iLastRow - 1
         sIncidentCode = UCase(Trim(Cells(iRow, iIncidentCol).Value))
         
         If (sIncidentCode = "INE") Or (sIncidentCode = "INS") Then
@@ -955,7 +927,7 @@ Sub SetInspectionEndPosToNextInspectionStart()
     Next iRow
     
     ActiveSheet.AutoFilter.Sort.SortFields.Clear
-    ActiveSheet.AutoFilter.Sort.SortFields.Add Key:=Range(Cells(2, iKPCol), Cells(FLastRow, iKPCol)), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortNormal
+    ActiveSheet.AutoFilter.Sort.SortFields.Add Key:=Range(Cells(2, iKPCol), Cells(iLastRow, iKPCol)), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortNormal
     With ActiveSheet.AutoFilter.Sort
         .Header = xlYes
         .MatchCase = False
@@ -980,12 +952,10 @@ Sub FixInspectionEndTime()
     Dim iRow As Long
     Dim iDateCol As Long, iTimeCol As Long
     
-     ' Set the Header row
-    ForceFindExtents
-    iDateCol = FindColumn("Date")
-    iTimeCol = FindColumn("Time")
+    iDateCol = FindColumn(ActiveSheet, "Date")
+    iTimeCol = FindColumn(ActiveSheet, "Time")
     
-    For iRow = 2 To FLastRow - 1
+    For iRow = 2 To LastUsedRow(ActiveSheet) - 1
         If Cells(iRow, 32) = "IN.INE" Then
             Cells(iRow, iDateCol).Value = Cells(iRow - 1, iDateCol).Value
             Cells(iRow, iTimeCol).Value = DateAdd("s", 1, Cells(iRow - 1, iTimeCol).Value)
@@ -1008,20 +978,17 @@ Sub InterpolateTimeFromKP()
     Dim dStart As Double, dEnd As Double, dCurr As Double
     Dim DCCStart As Double, DCCEnd As Double, DCCCurr As Double
     
-    ' Set the Header row
-    ForceFindExtents
-    
-    iDateCol = FindColumn("Date")
-    iTimeCol = FindColumn("Time")
-    iIncidentCol = FindColumn("Incident Code")
-    iDCCCol = FindColumn("DCC")
-    iKPCol = FindColumn("KP")
-    iFixedCol = FindColumn("Fixed")
+    iDateCol = FindColumn(ActiveSheet, "Date")
+    iTimeCol = FindColumn(ActiveSheet, "Time")
+    iIncidentCol = FindColumn(ActiveSheet, "Incident Code")
+    iDCCCol = FindColumn(ActiveSheet, "DCC")
+    iKPCol = FindColumn(ActiveSheet, "KP")
+    iFixedCol = FindColumn(ActiveSheet, "Fixed")
     
     iStartRow = -1
     iEndRow = -1
     
-    For iRow = 2 To FLastRow
+    For iRow = 2 To LastUsedRow(ActiveSheet)
         sFixed = UCase(Trim(Cells(iRow, iFixedCol).Value))
         
         If sFixed <> "NEW" Then
@@ -1088,19 +1055,16 @@ Sub ApplyDM_WTC_Hack()
     ' One clock position on a 1m diameter pipeline is approx 250mm
     dOneClockLength = 0.25
     
-    ' Set the Header row
-    ForceFindExtents
-    
     ' Find the columns we'll be using
-    iHeight = FindColumn("Height")
-    iWidth = FindColumn("Width")
-    iLength = FindColumn("Length")
-    iEventCodeCol = FindColumn("Event Code")
-    iComment = FindColumn("Comment")
-    iClockPosition = FindColumn("Clock Position")
+    iHeight = FindColumn(ActiveSheet, "Height")
+    iWidth = FindColumn(ActiveSheet, "Width")
+    iLength = FindColumn(ActiveSheet, "Length")
+    iEventCodeCol = FindColumn(ActiveSheet, "Event Code")
+    iComment = FindColumn(ActiveSheet, "Comment")
+    iClockPosition = FindColumn(ActiveSheet, "Clock Position")
     
     
-    For i = 2 To FLastRow
+    For i = 2 To LastUsedRow(ActiveSheet)
         If Cells(i, iEventCodeCol).Value = "DM.WTC" Then
             ' Only apply this hack under extreme conditions
             If (Cells(i, iHeight).Value = "0") And (Cells(i, iWidth).Value = "0") And (Cells(i, iLength).Value = "0") And (Cells(i, iHeight).Value = "0") Then
@@ -1150,15 +1114,15 @@ Sub UpdateKPLength()
     Dim iDateCol As Long, iTimeCol As Long
     Dim sIncidentCode As String
     Dim dKPLength As Double
+    Dim iLastRow As Long
     
-    ' Set the Header row
-    ForceFindExtents
+    iIncidentCol = FindColumn(ActiveSheet, "Incident Code")
+    iKPCol = FindColumn(ActiveSheet, "KP")
+    iKPLengthCol = FindColumn(ActiveSheet, "KP Length")
+    iDateCol = FindColumn(ActiveSheet, "Date")
+    iTimeCol = FindColumn(ActiveSheet, "Time")
     
-    iIncidentCol = FindColumn("Incident Code")
-    iKPCol = FindColumn("KP")
-    iKPLengthCol = FindColumn("KP Length")
-    iDateCol = FindColumn("Date")
-    iTimeCol = FindColumn("Time")
+    iLastRow = LastUsedRow(ActiveSheet)
     
     ReDim FIncidentPairs(1)
     
@@ -1174,8 +1138,8 @@ Sub UpdateKPLength()
     
     ' Process the time based pairs first
     ActiveSheet.AutoFilter.Sort.SortFields.Clear
-    ActiveSheet.AutoFilter.Sort.SortFields.Add Key:=Range(Cells(2, iDateCol), Cells(FLastRow, iDateCol)), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortTextAsNumbers
-    ActiveSheet.AutoFilter.Sort.SortFields.Add Key:=Range(Cells(2, iTimeCol), Cells(FLastRow, iTimeCol)), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortTextAsNumbers
+    ActiveSheet.AutoFilter.Sort.SortFields.Add Key:=Range(Cells(2, iDateCol), Cells(iLastRow, iDateCol)), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortTextAsNumbers
+    ActiveSheet.AutoFilter.Sort.SortFields.Add Key:=Range(Cells(2, iTimeCol), Cells(iLastRow, iTimeCol)), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortTextAsNumbers
     
     With ActiveSheet.AutoFilter.Sort
         .Header = xlYes
@@ -1185,7 +1149,7 @@ Sub UpdateKPLength()
         .Apply
     End With
     
-    For iRow = 2 To FLastRow
+    For iRow = 2 To iLastRow
         sIncidentCode = UCase(Trim(Cells(iRow, iIncidentCol).Value))
         
         For iCode = 0 To UBound(FIncidentPairs) - 1
@@ -1221,7 +1185,7 @@ Sub UpdateKPLength()
     
     ' Process the KP based pairs
     ActiveSheet.AutoFilter.Sort.SortFields.Clear
-    ActiveSheet.AutoFilter.Sort.SortFields.Add Key:=Range(Cells(2, iKPCol), Cells(FLastRow, iKPCol)), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortTextAsNumbers
+    ActiveSheet.AutoFilter.Sort.SortFields.Add Key:=Range(Cells(2, iKPCol), Cells(iLastRow, iKPCol)), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortTextAsNumbers
     With ActiveSheet.AutoFilter.Sort
         .Header = xlYes
         .MatchCase = False
@@ -1282,7 +1246,7 @@ Sub UpdateKPLength()
 '        FIncidentPairs(5).StartKP = -1
 '    End If
     
-    For iRow = 2 To FLastRow
+    For iRow = 2 To iLastRow
         sIncidentCode = UCase(Trim(Cells(iRow, iIncidentCol).Value))
         
         For iCode = 0 To UBound(FIncidentPairs) - 1
@@ -1322,16 +1286,13 @@ Sub CalculateNumberOfRBPerSpan()
     Dim iRow As Long, iStartRow As Long, iRBCount As Long
     Dim sIncidentCode As String
     
-    ' Set the Header row
-    ForceFindExtents
-    
-    iIncidentCol = FindColumn("Incident Code")
-    iRBCountCol = FindColumn("RB Count")
+    iIncidentCol = FindColumn(ActiveSheet, "Incident Code")
+    iRBCountCol = FindColumn(ActiveSheet, "RB Count")
     
     iStartRow = -1
     iRBCount = 0
     
-    For iRow = 2 To FLastRow
+    For iRow = 2 To LastUsedRow(ActiveSheet)
         sIncidentCode = UCase(Trim(Cells(iRow, iIncidentCol).Value))
         
         If (sIncidentCode = "SPS") Or (sIncidentCode = "SPE") Then
@@ -1387,9 +1348,8 @@ Public Sub ProcessVWCoabisExport()
     Cells.EntireColumn.AutoFit
     
     Rows("1:1").Select
-    ForceFindExtents
     
-    For i = 2 To FLastRow
+    For i = 2 To LastUsedRow(ActiveSheet)
         Cells(i, 5).Select
         sTemp = Trim(Cells(i, 5).Value)
         dTemp = DateValue(Left(sTemp, 10))
@@ -1409,7 +1369,7 @@ Public Sub ProcessVWCoabisExport()
     Selection.NumberFormat = "yyyy/mm/dd"
     
     ActiveCell.SpecialCells(xlLastCell).Select
-    For i = ActiveCell.row To FLastRow + 1 Step -1
+    For i = ActiveCell.row To LastUsedRow(ActiveSheet) + 1 Step -1
         Rows(i).Select
         Rows(i).Delete
     Next i
@@ -1421,107 +1381,4 @@ Public Sub ProcessVWCoabisExport()
     ActiveWorkbook.CheckCompatibility = False
     ActiveWorkbook.Save
     Application.DisplayAlerts = True
-End Sub
-
-Sub InterpolateMiddleRow()
-    ' This code is designed to work on the Coabis Pipeline Import spreadsheet
-    
-    Dim iStartRow As Long, iEndRow As Long, iNewRow As Long
-    Dim iCol As Long
-    Dim iKPCol As Long, iTimeCol As Long, iTypeCol As Long, iCodeCol As Long, iCommentCol As Long, iClockCol As Long
-    Dim dStartKP As Double, dEndKP As Double, dCurrKP As Double
-    Dim vStart, vEnd As Variant   ' Deliberately left as Variants
-    Dim dStart As Double, dEnd As Double
-    
-    If Selection.Rows.Count <> 3 Then
-      MsgBox ("Please ensure you have selected the three rows you wish to interpolate (and only those three rows)." & vbCrLf & "The first and last row must contain the original data, and the middle row must contain KP")
-      Exit Sub
-    End If
-    
-    iStartRow = Selection.Rows(1).row
-    iNewRow = Selection.Rows(2).row
-    iEndRow = Selection.Rows(3).row
-    
-    Rows(iStartRow).Select
-    Selection.Interior.Pattern = xlNone
-    Selection.Font.Color = -10526881
-    
-    Rows(iNewRow).Select
-    Selection.Interior.Color = 10092543
-    
-    Rows(iEndRow).Select
-    Selection.Interior.Pattern = xlNone
-    Selection.Font.Color = -10526881
-    
-    ForceFindExtents
-    
-    iKPCol = FindColumn("KP")
-    iTimeCol = FindColumn("Incident Date and Time")
-    iTypeCol = FindColumn("Incident Type")
-    iCodeCol = FindColumn("Incident Code")
-    iCommentCol = FindColumn("Comment")
-    iClockCol = FindColumn("Clock_Position")
-    
-    If Trim(Cells(iNewRow, iKPCol).Value) = "" Then
-        MsgBox ("You need to populate the KP in the interpolated Row.")
-        Exit Sub
-    End If
-        
-    dStartKP = Cells(iStartRow, iKPCol).Value
-    dCurrKP = Cells(iNewRow, iKPCol).Value
-    dEndKP = Cells(iEndRow, iKPCol).Value
-    
-    Cells(iStartRow, 1).Select
-    
-    For iCol = 1 To FLastColumn
-        Cells(iNewRow, iCol).Select
-        
-        vStart = Cells(iStartRow, iCol).Value
-        vEnd = Cells(iEndRow, iCol).Value
-        
-        If iCol = iKPCol Then
-          ' Do Nothing - this is our baseline Column
-        
-        ElseIf (iCol = iCommentCol) Then
-            If (Trim(Cells(iNewRow, iCol).Value) = "") Then
-                Cells(iNewRow, iCol).Value = "Not recorded during original inspection.  Insertion method: interpolation by KP"
-            End If
-        
-        ElseIf iCol = iTypeCol Then
-            Cells(iNewRow, iCol).Value = "FT"
-        
-        ElseIf iCol = iCodeCol Then
-            Cells(iNewRow, iCol).Value = "CRS"
-        
-        ElseIf iCol = iClockCol Then
-            Cells(iNewRow, iCol).Value = "N/A"
-        
-        ElseIf vStart = vEnd Then
-            ' Only interpolate if we need to
-            Cells(iNewRow, iCol).Value = vStart
-        
-        ElseIf iCol = iTimeCol Then
-            dStart = vStart
-            dEnd = vEnd
-            Cells(iNewRow, iCol).Value = InterpolateByDouble(dStartKP, dEndKP, dCurrKP, dStart, dEnd)
-        
-        ElseIf TypeName(vStart) = "Double" Then
-            dStart = vStart
-            dEnd = vEnd
-            Cells(iNewRow, iCol).Value = InterpolateByDouble(dStartKP, dEndKP, dCurrKP, dStart, dEnd)
-        
-        ElseIf TypeName(vStart) = "String" Then
-            Cells(iNewRow, iCol).Value = "Error: Unable to Interpolate different text"
-            ColorSelected
-        
-        Else
-            Cells(iNewRow, iCol).Value = "Error: Data Type " & TypeName(vStart) & " not handled"
-            ColorSelected
-        End If
-    Next iCol
-    
-    Cells(iNewRow, 1).Select
-    Rows(iNewRow).Select
-   
-    MsgBox ("Finished." & vbCrLf & vbCrLf & "Please review entire new row.  Errors will be highlighted in, err, purple-ish." & vbCrLf & vbCrLf & "When finished please delete the original rows, leaving only the new row" & vbCrLf & vbCrLf & "We hope you enjoyed using this service.  Have a nice day")
 End Sub

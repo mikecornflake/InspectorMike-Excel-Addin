@@ -19,7 +19,7 @@ End Sub
 
 'Callback for btnShowOptions onAction
 Sub Process_VW_Event_Callback(control As IRibbonControl)
-    ShowOptions
+    VW_ShowOptions
 End Sub
 
 'Callback for btnBasicTableTidy onAction

@@ -2,10 +2,6 @@ Attribute VB_Name = "libTable"
 Option Explicit
 Option Private Module
 
-' Deprecated - DELETE THESE
-Public FLastRow As Long
-Public FLastColumn As Long
-
 Public Sub BasicTidy(ByVal pWS As Worksheet, Optional ByVal pUseFilter As Boolean = True)
     Dim i As Long
     Dim lastCol As Long
@@ -94,12 +90,6 @@ Public Function CompareRows(ByVal pWS As Worksheet, ByVal pRow1 As Long, ByVal p
     
     CompareRows = bTemp
 End Function
-
-' Deprecated - DELETE THIS
-Public Sub ForceFindExtents()
-    FLastRow = 0
-    Call FindTableExtents(ActiveSheet, FLastRow, FLastColumn)
-End Sub
 
 ' pStartRange usually = "A1"
 Public Function TableRange(ByVal pWS As Worksheet, Optional ByVal pStartCell As String = "A1", _
@@ -316,6 +306,7 @@ Public Sub FormatColumnByName(ByVal pWS As Worksheet, ByVal pName As String, ByV
     Dim iCol As Long
     
     iCol = FindColumn(pWS, pName)
+    
     Call FormatColumn(pWS, iCol, pFormat)
 End Sub
 
@@ -350,13 +341,13 @@ Public Sub ConvertColumnToValues(ByVal pWS As Worksheet, ByVal pColumnName As St
     End If
 End Sub
 
-Public Function Lookup(ByVal pWS As Worksheet, ByVal pLookupCol As String, ByVal pLookupValue As String, ByVal pReturnCol As String) As String
+Public Function LookupColumnValue(ByVal pWS As Worksheet, ByVal pLookupCol As String, ByVal pLookupValue As String, ByVal pReturnCol As String) As String
     Dim iLookupCol As Long
     Dim iReturnCol As Long
     Dim iRow As Long
     Dim sTemp As String
 
-    Lookup = ""
+    LookupColumnValue = ""
 
     iLookupCol = FindColumn(pWS, pLookupCol)
     iReturnCol = FindColumn(pWS, pReturnCol)
@@ -367,7 +358,7 @@ Public Function Lookup(ByVal pWS As Worksheet, ByVal pLookupCol As String, ByVal
         sTemp = Trim$(CStr(pWS.Cells(iRow, iLookupCol).Value))
 
         If StrComp(sTemp, pLookupValue, vbTextCompare) = 0 Then
-            Lookup = CStr(pWS.Cells(iRow, iReturnCol).Value)
+            LookupColumnValue = CStr(pWS.Cells(iRow, iReturnCol).Value)
             Exit Function
         End If
     Next iRow
@@ -400,6 +391,28 @@ Public Function MoveColumn(ByVal pWS As Worksheet, ByVal pName As String, ByVal 
         pWS.Columns(pDestColumn).Insert Shift:=xlToRight
 
         MoveColumn = True
+    End If
+End Function
+
+Public Function MoveColumnToName(ByVal pWS As Worksheet, ByVal pName As String, ByVal pDestName As String) As Boolean
+    Dim iColumn As Long
+
+    iColumn = FindColumn(pWS, pDestName)
+    MoveColumnToName = MoveColumn(pWS, pName, iColumn)
+End Function
+
+Public Function CopyColumn(ByVal pWS As Worksheet, ByVal pName As String, ByVal pNewName As String) As Boolean
+    Dim iCol As Long
+    
+    iCol = FindColumn(pWS, pName)
+    
+    CopyColumn = False
+    If iCol <> -1 Then
+        pWS.Columns(iCol).Copy
+        pWS.Columns(iCol + 1).Insert Shift:=xlToRight
+        pWS.Cells(1, iCol + 1).Value = pNewName
+        
+        CopyColumn = True
     End If
 End Function
 

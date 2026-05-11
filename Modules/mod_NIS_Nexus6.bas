@@ -97,9 +97,9 @@ Private Sub TidyEventSheet(APipeline As Boolean)
     End If
     
     Application.StatusBar = sStatus + ".  Moving columns"
-    Call Move_Column2("Multimedia.Name", "Start - Survey - Standard.Easting")
-    Call Move_Column2("Multimedia.Image", "Start - Survey - Standard.Easting")
-    Call Move_Column2("Workpack.Name", "Start - Survey - Standard.Easting")
+    Call MoveColumnToName(ActiveSheet, "Multimedia.Name", "Start - Survey - Standard.Easting")
+    Call MoveColumnToName(ActiveSheet, "Multimedia.Image", "Start - Survey - Standard.Easting")
+    Call MoveColumnToName(ActiveSheet, "Workpack.Name", "Start - Survey - Standard.Easting")
     
     Application.StatusBar = sStatus + ".  Moving image links to columns"
     Normalise_Event_By_MM
@@ -107,24 +107,24 @@ Private Sub TidyEventSheet(APipeline As Boolean)
     Reprocess_Multimedia_By_MM_Tab
     
     Application.StatusBar = sStatus + ".  Deleting extra columns"
-    Delete_Column ("Finding.Anomaly")
-    Delete_Column ("Finding.Remedial Action")
-    Delete_Column ("Finding.Anomaly Required")
-    Delete_Column ("Finding.Severity")
+    Call DeleteColumn(ActiveSheet, "Finding.Anomaly")
+    Call DeleteColumn(ActiveSheet, "Finding.Remedial Action")
+    Call DeleteColumn(ActiveSheet, "Finding.Anomaly Required")
+    Call DeleteColumn(ActiveSheet, "Finding.Severity")
     
-    Delete_Column ("Event Review.Personnel")
-    Delete_Column ("Event Review.Date / Time")
-    Delete_Column ("Event Review.Description")
+    Call DeleteColumn(ActiveSheet, "Event Review.Personnel")
+    Call DeleteColumn(ActiveSheet, "Event Review.Date / Time")
+    Call DeleteColumn(ActiveSheet, "Event Review.Description")
     
-    Delete_Column ("Survey Set.Name")
-    Delete_Column ("Survey Set.Comments")
+    Call DeleteColumn(ActiveSheet, "Survey Set.Name")
+    Call DeleteColumn(ActiveSheet, "Survey Set.Comments")
     
     If Not APipeline Then
-        Delete_Column ("Start - Survey - Pipeline.KP")
-        Delete_Column ("End - Survey - Pipeline.KP")
+        Call DeleteColumn(ActiveSheet, "Start - Survey - Pipeline.KP")
+        Call DeleteColumn(ActiveSheet, "End - Survey - Pipeline.KP")
         
-        Delete_Column ("Start - Survey - Pipeline.DCC")
-        Delete_Column ("End - Survey - Pipeline.DCC")
+        Call DeleteColumn(ActiveSheet, "Start - Survey - Pipeline.DCC")
+        Call DeleteColumn(ActiveSheet, "End - Survey - Pipeline.DCC")
     End If
     
     Application.StatusBar = sStatus + ".  Merging Event Type and Event Number"
@@ -149,15 +149,13 @@ Private Sub AddFindingID()
         Exit Sub
     End If
     
-    ForceFindExtents
-
-    iEventNumCol = Find_Column("Event.Event Number")
-    iEventTypeCol = Find_Column("Event.Event Type")
-    iWorkpackCol = Find_Column("Workpack.Name")
-    iFindingCol = Find_Column("Finding.Code")
+    iEventNumCol = FindColumn(ActiveSheet, "Event.Event Number")
+    iEventTypeCol = FindColumn(ActiveSheet, "Event.Event Type")
+    iWorkpackCol = FindColumn(ActiveSheet, "Workpack.Name")
+    iFindingCol = FindColumn(ActiveSheet, "Finding.Code")
 
     If (iEventNumCol > 0) And (iEventTypeCol > 0) And (iWorkpackCol > 0) And (iFindingCol > 0) Then
-        For iRow = 2 To FLastRow
+        For iRow = 2 To LastUsedRow(ActiveSheet)
             sCode = Trim(Cells(iRow, iFindingCol).Value)
             
             If sCode <> "" Then
@@ -206,23 +204,21 @@ Private Sub MergeEventAndEventNumber()
     Dim sTemp As String
     Dim iRow As Long
     
-    ForceFindExtents
-    
-    Add_Column ("Event")
-    Call Move_Column2("Event", "Event.Event Number")
-    iEventNumCol = Find_Column("Event.Event Number")
-    iEventTypeCol = Find_Column("Event.Event Type")
-    iEventCol = Find_Column("Event")
+    Call AppendColumn(ActiveSheet, "Event")
+    Call MoveColumnToName(ActiveSheet, "Event", "Event.Event Number")
+    iEventNumCol = FindColumn(ActiveSheet, "Event.Event Number")
+    iEventTypeCol = FindColumn(ActiveSheet, "Event.Event Type")
+    iEventCol = FindColumn(ActiveSheet, "Event")
     
     If (iEventNumCol > 0) And (iEventTypeCol > 0) Then
-        For iRow = 2 To FLastRow
+        For iRow = 2 To LastUsedRow(ActiveSheet)
             sTemp = Trim(Cells(iRow, iEventTypeCol).Value) & " " & Trim(Cells(iRow, iEventNumCol).Value)
             Cells(iRow, iEventCol).Value = sTemp
         Next iRow
     End If
     
-    Delete_Column ("Event.Event Number")
-    Delete_Column ("Event.Event Type")
+    Call DeleteColumn(ActiveSheet, "Event.Event Number")
+    Call DeleteColumn(ActiveSheet, "Event.Event Type")
 End Sub
 
 Private Sub Tidy_Tabs()
@@ -257,7 +253,7 @@ Private Sub Copy_Finding(ADest As Worksheet, ADestRow As Long, ASource As Worksh
     For iDestCol = 1 To 9
         sColumn = ADest.Cells(1, iDestCol).Value
         
-        iSourceCol = Find_Column(sColumn)
+        iSourceCol = FindColumn(ActiveSheet, sColumn)
         If iSourceCol <> -1 Then
             ADest.Cells(ADestRow, iDestCol).Value = ASource.Cells(ASourceRow, iSourceCol).Value
         End If
@@ -265,14 +261,14 @@ Private Sub Copy_Finding(ADest As Worksheet, ADestRow As Long, ASource As Worksh
     
     ' Process the optional Multimedia Columns
     iMM = 1
-    iSourceCol = Find_Column("Multimedia " & iMM)
+    iSourceCol = FindColumn(ActiveSheet, "Multimedia " & iMM)
     
     While iSourceCol <> -1
         ADest.Cells(1, FMaxFindingCols + iMM) = "Multimedia " & iMM
         ADest.Cells(ADestRow, FMaxFindingCols + iMM).Formula = ASource.Cells(ASourceRow, iSourceCol).Formula
         
         iMM = iMM + 1
-        iSourceCol = Find_Column("Multimedia " & iMM)
+        iSourceCol = FindColumn(ActiveSheet, "Multimedia " & iMM)
     Wend
 End Sub
 
@@ -287,16 +283,16 @@ Private Function Create_Findings_Tab() As Worksheet
         
         ' If more baseline columns get added or removed then don't forget to change
         ' FMaxFindingCols below...
-        Add_Column ("Asset Location.Full Location")
-        Add_Column ("Event")
-        Add_Column ("Event.Start Clock")
+        Call AppendColumn(oFindings, "Asset Location.Full Location")
+        Call AppendColumn(oFindings, "Event")
+        Call AppendColumn(oFindings, "Event.Start Clock")
         If FPipeline Then
-            Add_Column ("Start - Survey - Pipeline.KP")
+            Call AppendColumn(oFindings, "Start - Survey - Pipeline.KP")
         End If
-        Add_Column ("Start - Survey - Standard.Depth")
-        Add_Column ("Finding.Code")
-        Add_Column ("Finding.Reason")
-        Add_Column ("Commentary.Notes")
+        Call AppendColumn(oFindings, "Start - Survey - Standard.Depth")
+        Call AppendColumn(oFindings, "Finding.Code")
+        Call AppendColumn(oFindings, "Finding.Reason")
+        Call AppendColumn(oFindings, "Commentary.Notes")
         
         If FPipeline Then
             FMaxFindingCols = 8
@@ -329,29 +325,30 @@ Private Sub Populate_Findings_Tab()
     
     oFindings.Select
     
-    ForceFindExtents
-    iFindingEventTypeCol = Find_Column("Event")
+    iFindingEventTypeCol = FindColumn(oFindings, "Event")
     
     iFindingsRow = 2
+    
+    Dim iLastRow As Long
+    iLastRow = LastUsedRow(oFindings)
     
     For Each oSheet In ActiveWorkbook.Sheets
         If (oSheet.Name <> "Findings") And (oSheet.Name <> "Multimedia") And (oSheet.Visible) Then
             oSheet.Select
             
             If Cells(2, 1).Value <> "" Then
-                ForceFindExtents
-                iFindingCodeCol = Find_Column("Finding.Code")
-                iFindingReasonCol = Find_Column("Finding.Reason")
-                iEventTypeCol = Find_Column("Event")
+                iFindingCodeCol = FindColumn(oFindings, "Finding.Code")
+                iFindingReasonCol = FindColumn(oFindings, "Finding.Reason")
+                iEventTypeCol = FindColumn(oFindings, "Event")
 
-                For iRow = 2 To FLastRow
+                For iRow = 2 To iLastRow
                     If iRow Mod 10 = 0 Then
-                        Application.StatusBar = sStatus + "Row " & iRow & " of " & FLastRow
+                        Application.StatusBar = sStatus + "Row " & iRow & " of " & iLastRow
                     End If
                     
                     ' If this row has findings, then copy it to the Findings Sheet
                     If (Cells(iRow, iFindingCodeCol).Value <> "") Or (Cells(iRow, iFindingReasonCol).Value <> "") Then
-                        Application.StatusBar = sStatus + "Row " & iRow & " of " & FLastRow & ".  Copying Finding."
+                        Application.StatusBar = sStatus + "Row " & iRow & " of " & iLastRow & ".  Copying Finding."
                         Call Copy_Finding(oFindings, iFindingsRow, oSheet, iRow)
                         
                         ' On the Event Sheet Put in a hyperlink to the Findings Page
@@ -401,21 +398,24 @@ Private Sub Delete_Events_By_Location(AAllowedLocation As String)
     Application.ScreenUpdating = False
     
     sStatus = ActiveSheet.Name + ". Deleting unwanted assets: "
-    ForceFindExtents
     
-    iMMNameCol = Find_Column("Multimedia.Name")
-    iImageCol = Find_Column("Multimedia.Image")
+    iMMNameCol = FindColumn(ActiveSheet, "Multimedia.Name")
+    iImageCol = FindColumn(ActiveSheet, "Multimedia.Image")
     
     sFilename = ActiveWorkbookLocalFilename
     sImagePath = Path_AddTrailingDelimiter(Path_GetFolder(sFilename)) + Path_AddTrailingDelimiter(Path_GetFileNameNoExt(sFilename) + "_Images")
     
-    iAssetCol = Find_Column("Asset Location.Full Location")
+    iAssetCol = FindColumn(ActiveSheet, "Asset Location.Full Location")
     sAllowed = UCase(AAllowedLocation)
     
+    Dim iLastRow As Long
+    
+    iLastRow = LastUsedRow(ActiveSheet)
+    
     If iAssetCol <> -1 Then
-        For iRow = FLastRow To 2 Step -1
+        For iRow = iLastRow To 2 Step -1
                 If iRow Mod 10 = 0 Then
-                    Application.StatusBar = sStatus + "Row " & iRow & " of " & FLastRow
+                    Application.StatusBar = sStatus + "Row " & iRow & " of " & iLastRow
                 End If
                 
                 sAsset = UCase(Trim(Cells(iRow, iAssetCol).Value))
@@ -425,7 +425,7 @@ Private Sub Delete_Events_By_Location(AAllowedLocation As String)
                     sMMImage = Trim(Cells(iRow, iImageCol).Value)
                     
                     If sMMImage <> "" Then
-                        Application.StatusBar = sStatus + "Row " & iRow & " of " & FLastRow & ". Deleting " + sMMImage
+                        Application.StatusBar = sStatus + "Row " & iRow & " of " & iLastRow & ". Deleting " + sMMImage
                         If Not DeleteFile(sImagePath + sMMImage) Then
                             ' Debug.Print ("Failed to delete " + sImagePath + sMMImage)
                         End If
@@ -466,14 +466,15 @@ Private Sub Normalise_Event_By_MM()
     
     sStatus = ActiveSheet.Name + ". Moving images from rows to columns: "
     
+    Dim iLastRow As Long
+    iLastRow = LastUsedRow(ActiveSheet)
+    
     bDebug = False
     
-    ForceFindExtents
-    
-    iEventNoCol = Find_Column("Event.Event Number")
-    iMMNameCol = Find_Column("Multimedia.Name")
-    iImageCol = Find_Column("Multimedia.Image")
-    iFindingCol = Find_Column("Finding.Code")
+    iEventNoCol = FindColumn(ActiveSheet, "Event.Event Number")
+    iMMNameCol = FindColumn(ActiveSheet, "Multimedia.Name")
+    iImageCol = FindColumn(ActiveSheet, "Multimedia.Image")
+    iFindingCol = FindColumn(ActiveSheet, "Finding.Code")
     
     sFilename = ActiveWorkbookLocalFilename
     
@@ -497,11 +498,11 @@ Private Sub Normalise_Event_By_MM()
         sActiveEventNo = ""
         iImageColsAdded = -1
         iActiveEventRow = -1
-            
+        
         ' First pass - move the data from the rows to new columns
-        For iRow = 2 To FLastRow
+        For iRow = 2 To iLastRow
             If iRow Mod 10 = 0 Then
-                Application.StatusBar = sStatus + "First pass:  Row " & iRow & " of " & FLastRow
+                Application.StatusBar = sStatus + "First pass:  Row " & iRow & " of " & iLastRow
             End If
             If bDebug Then
                 Cells(iRow, iEventNoCol).Select
@@ -525,7 +526,7 @@ Private Sub Normalise_Event_By_MM()
             If sMMImage <> "" Then
                 ' Do we need to add an image column?
                 If (iRow - iActiveEventRow) > iImageColsAdded Then
-                    Call Insert_Column("Multimedia " & (iRow - iActiveEventRow) + 1, iImageCol + (iRow - iActiveEventRow) + 1, False)
+                    Call InsertColumn(ActiveSheet, "Multimedia " & (iRow - iActiveEventRow) + 1, iImageCol + (iRow - iActiveEventRow) + 1, False)
                     iImageColsAdded = iImageColsAdded + 1
                     
                     Columns(iImageCol + (iRow - iActiveEventRow) + 1).Select
@@ -554,13 +555,13 @@ Private Sub Normalise_Event_By_MM()
         
         ' Second Pass.  Going to delete the "duplicate image rows"
         ' Nexus colour codes the duplicate rows - don't want to accidentally delete the "duplicate Finding Rows")
-        For iRow = FLastRow To 2 Step -1
+        For iRow = iLastRow To 2 Step -1
             If bDebug Then
                 Cells(iRow, 1).Select
             End If
             
             If iRow Mod 10 = 0 Then
-                Application.StatusBar = sStatus + "Second pass:  Row " & iRow & " of " & FLastRow
+                Application.StatusBar = sStatus + "Second pass:  Row " & iRow & " of " & iLastRow
             End If
             
             If (Cells(iRow, 1).Value = "Delete") Then
@@ -587,14 +588,15 @@ Private Sub Normalise_Event_By_Colour()
     Dim iEventCol As Long
     Dim iTemp As Long
     
-    ForceFindExtents
-    
     bHasSubEvents = False
     bHasDuplicateAssets = False
     bHasOther = False
     bHasReview = False
     
-    For iRow = 2 To FLastRow
+    Dim iLastRow As Long
+    iLastRow = LastUsedRow(ActiveSheet)
+    
+    For iRow = 2 To iLastRow
         iTemp = Cells(iRow, 1).Interior.ColorIndex
         bHasSubEvents = bHasSubEvents Or (iTemp = 15)
         bHasDuplicateAssets = bHasDuplicateAssets Or (iTemp = 20)
@@ -609,12 +611,12 @@ Private Sub Normalise_Event_By_Colour()
         Exit Sub
     End If
     
-    iEventCol = FindFirstColumn(Array("Event", "Event.Event Number"))
+    iEventCol = FindFirstColumn(ActiveSheet, Array("Event", "Event.Event Number"))
     
     If bHasSubEvents Then
         Cells(1, 1).Select
         
-        For iRow = 2 To FLastRow
+        For iRow = 2 To iLastRow
             If (Cells(iRow, 1).Interior.ColorIndex = 15) Then
                 Rows(iRow).Select
                 With Selection.Interior
@@ -629,16 +631,16 @@ Private Sub Normalise_Event_By_Colour()
     End If
     
     If (bHasDuplicateAssets Or bHasReview) And (iEventCol > 0) And (Not bHasOther) Then
-        ForceFindExtents
+        iLastRow = LastUsedRow(ActiveSheet)
         Dim rngTable As Range
         
-        Set rngTable = TableRange(pWS, "A1")
+        Set rngTable = TableRange(ActiveSheet, "A1")
         
         Application.DisplayAlerts = False
         rngTable.RemoveDuplicates Columns:=iEventCol, Header:=xlYes
         Application.DisplayAlerts = True
         
-        For iRow = 2 To FLastRow
+        For iRow = 2 To iLastRow
             If (Cells(iRow, 1).Interior.ColorIndex = 20) Then
                 Rows(iRow).Select
                 With Selection.Interior
@@ -663,19 +665,21 @@ Private Sub Highlight_Finding()
     
     sStatus = ActiveSheet.Name + ". Highlighting Finding Rows: "
     Application.StatusBar = sStatus + "Initialising"
-    ForceFindExtents
     
-    iFindingCodeCol = Find_Column("Finding.Code")
-    iFindingReasonCol = Find_Column("Finding.Reason")
-    iEventCol = FindFirstColumn(Array("Event", "Event.Event Number"))
+    Dim iLastRow As Long
+    iLastRow = LastUsedRow(ActiveSheet)
+
+    iFindingCodeCol = FindColumn(ActiveSheet, "Finding.Code")
+    iFindingReasonCol = FindColumn(ActiveSheet, "Finding.Reason")
+    iEventCol = FindFirstColumn(ActiveSheet, Array("Event", "Event.Event Number"))
     sLastEvent = ""
     bLastEventWasFinding = False
     bCurrFinding = False
     
     If (iFindingCodeCol <> -1) And (iFindingReasonCol <> -1) And (iEventCol <> 0) Then
-        For iRow = 2 To FLastRow
+        For iRow = 2 To iLastRow
             If iRow Mod 10 = 0 Then
-                Application.StatusBar = sStatus + "Row " & iRow & " of " & FLastRow
+                Application.StatusBar = sStatus + "Row " & iRow & " of " & iLastRow
             End If
             
             bCurrFinding = (Cells(iRow, iFindingCodeCol).Value <> "") Or (Cells(iRow, iFindingReasonCol).Value <> "")
@@ -728,10 +732,10 @@ Private Sub Find_Multimedia()
     If Not FMultimedia Is Nothing Then
         FMultimedia.Select
         
-        FmmFilenameCol = Find_Column("Filename")
+        FmmFilenameCol = FindColumn(ActiveSheet, "Filename")
         
-        FmmNewFilenameCol = FindFirstColumn(Array("New_Filename", "New Filename"))
-        FmmFolderCol = FindFirstColumn(Array("Recording_Folder", "Recording Folder"))
+        FmmNewFilenameCol = FindFirstColumn(ActiveSheet, Array("New_Filename", "New Filename"))
+        FmmFolderCol = FindFirstColumn(ActiveSheet, Array("Recording_Folder", "Recording Folder"))
     End If
 End Sub
 
@@ -757,7 +761,7 @@ Private Sub Reprocess_Multimedia_By_MM_Tab()
     End If
     
     Set oCurrent = ActiveWorkbook.ActiveSheet
-    iMediaCol = Find_Column("Multimedia 1")
+    iMediaCol = FindColumn(ActiveSheet, "Multimedia 1")
     
     If iMediaCol <= 0 Then
         Exit Sub
@@ -845,23 +849,21 @@ End Sub
 Private Sub FormatColumns()
     Dim iCol As Long
     
-    ForceFindExtents
+    Call FormatColumnByName(ActiveSheet, "Event.Start Clock", "dd/mm/yyyy HH:mm:ss")
+    Call FormatColumnByName(ActiveSheet, "Event.End Clock", "dd/mm/yyyy HH:mm:ss")
     
-    Call FormatColumnByName("Event.Start Clock", "dd/mm/yyyy HH:mm:ss")
-    Call FormatColumnByName("Event.End Clock", "dd/mm/yyyy HH:mm:ss")
-    
-    Call FormatColumnByName("Start - Survey - Pipeline.KP", "0.0000")
-    Call FormatColumnByName("End - Survey - Pipeline.KP", "0.0000")
-    Call FormatColumnByName("Start - Survey - Standard.Depth", "0.0")
-    Call FormatColumnByName("End - Survey - Standard.Depth", "0.0")
+    Call FormatColumnByName(ActiveSheet, "Start - Survey - Pipeline.KP", "0.0000")
+    Call FormatColumnByName(ActiveSheet, "End - Survey - Pipeline.KP", "0.0000")
+    Call FormatColumnByName(ActiveSheet, "Start - Survey - Standard.Depth", "0.0")
+    Call FormatColumnByName(ActiveSheet, "End - Survey - Standard.Depth", "0.0")
     
     
-    iCol = Find_Column("Finding.Reason")
+    iCol = FindColumn(ActiveSheet, "Finding.Reason")
     If iCol > 0 Then
         Columns(iCol).ColumnWidth = 50
     End If
     
-    iCol = Find_Column("Commentary.Notes")
+    iCol = FindColumn(ActiveSheet, "Commentary.Notes")
     If iCol > 0 Then
         Columns(iCol).ColumnWidth = 50
     End If
@@ -929,8 +931,8 @@ Public Sub PrepareNexusImportFromCurrentSheet()
     RenameColumns (True) ' This adds the missing columns
     
     ' But we don't want all the missing columns here
-    Delete_Column ("Event.Workpack")
-    Delete_Column ("Asset Location.Full Location")
+    Call DeleteColumn(ActiveSheet, "Event.Workpack")
+    Call DeleteColumn(ActiveSheet, "Asset Location.Full Location")
     
     BasicTidyAndFormatColumns
     
@@ -961,15 +963,16 @@ Public Function EnforcePipelineDepthPolarity(ADepthPositive As Boolean)
     Dim dLSB As Double
     Dim dRSB As Double
     
-    ForceFindExtents
+    Dim iLastRow As Long
+    iLastRow = LastUsedRow(ActiveSheet)
     
-    iTOPCol = FindFirstColumn(Array("TOP", "Survey - Pipeline.ToP", "PL - Profile.Top of Pipe"))
-    iBOPCol = FindFirstColumn(Array("BOP", "Survey - Pipeline.BoP", "PL - Profile.Bottom of Pipe"))
-    iLSBCol = FindFirstColumn(Array("LSB", "Survey - Pipeline.Left", "PL - Profile.Left Seabed"))
-    iRSBCol = FindFirstColumn(Array("RSB", "Survey - Pipeline.Right", "PL - Profile.Right Seabed"))
+    iTOPCol = FindFirstColumn(ActiveSheet, Array("TOP", "Survey - Pipeline.ToP", "PL - Profile.Top of Pipe"))
+    iBOPCol = FindFirstColumn(ActiveSheet, Array("BOP", "Survey - Pipeline.BoP", "PL - Profile.Bottom of Pipe"))
+    iLSBCol = FindFirstColumn(ActiveSheet, Array("LSB", "Survey - Pipeline.Left", "PL - Profile.Left Seabed"))
+    iRSBCol = FindFirstColumn(ActiveSheet, Array("RSB", "Survey - Pipeline.Right", "PL - Profile.Right Seabed"))
     
-    For iRow = 2 To FLastRow
-        Application.StatusBar = iRow & " of " & FLastRow
+    For iRow = 2 To iLastRow
+        Application.StatusBar = iRow & " of " & iLastRow
         Cells(iRow, 1).Select
         
         dTOP = Abs(Cells(iRow, iTOPCol).Value)
@@ -1035,99 +1038,96 @@ Public Sub Prepare_PL_Profile_Import()
     ' PL - Profile.Left Seabed
     ' PL - Profile.Right Seabed
 
-    ForceFindExtents
-    
-    iCol = FindFirstColumn(Array("TOP", "Survey - Pipeline.ToP", "PL - Profile.Top of Pipe"))
+    iCol = FindFirstColumn(ActiveSheet, Array("TOP", "Survey - Pipeline.ToP", "PL - Profile.Top of Pipe"))
     Cells(1, iCol).Value = "PL - Profile.Top of Pipe"
     
-    iCol = FindFirstColumn(Array("BOP", "Survey - Pipeline.BoP", "PL - Profile.Bottom of Pipe"))
+    iCol = FindFirstColumn(ActiveSheet, Array("BOP", "Survey - Pipeline.BoP", "PL - Profile.Bottom of Pipe"))
     Cells(1, iCol).Value = "PL - Profile.Bottom of Pipe"
     
-    iCol = FindFirstColumn(Array("LSB", "Survey - Pipeline.Left", "PL - Profile.Left Seabed"))
+    iCol = FindFirstColumn(ActiveSheet, Array("LSB", "Survey - Pipeline.Left", "PL - Profile.Left Seabed"))
     Cells(1, iCol).Value = "PL - Profile.Left Seabed"
     
-    iCol = FindFirstColumn(Array("RSB", "Survey - Pipeline.Right", "PL - Profile.Right Seabed"))
+    iCol = FindFirstColumn(ActiveSheet, Array("RSB", "Survey - Pipeline.Right", "PL - Profile.Right Seabed"))
     Cells(1, iCol).Value = "PL - Profile.Right Seabed"
     
-    iCol = FindFirstColumn(Array("Date Time", "Survey Data.Clock", "Event.Start Clock"))
+    iCol = FindFirstColumn(ActiveSheet, Array("Date Time", "Survey Data.Clock", "Event.Start Clock"))
     Cells(1, iCol).Value = "Event.Start Clock"
     
-    Call Copy_Column("Event.Start Clock", "Event.End Clock")
+    Call CopyColumn(ActiveSheet, "Event.Start Clock", "Event.End Clock")
     
     oPLProfile.Select
-    ForceFindExtents ' used for Populate
     
-    Ensure_Column ("Event.Workpack")
+    Call EnsureColumn(ActiveSheet, "Event.Workpack")
     oColumnNames.Select
-    sTemp = Lookup("Original", "Event.Workpack", "Default Value")
+    sTemp = LookupColumnValue(ActiveSheet, "Original", "Event.Workpack", "Default Value")
     oPLProfile.Select
-    Call PopulateColumn("Event.Workpack", sTemp)
+    Call PopulateColumn(ActiveSheet, "Event.Workpack", sTemp)
     
-    Ensure_Column ("Asset Location.Full Location")
+    Call EnsureColumn(ActiveSheet, "Asset Location.Full Location")
     oColumnNames.Select
-    sTemp = Lookup("Original", "Asset Location.Full Location", "Default Value")
+    sTemp = LookupColumnValue(ActiveSheet, "Original", "Asset Location.Full Location", "Default Value")
     oPLProfile.Select
-    Call PopulateColumn("Asset Location.Full Location", sTemp)
+    Call PopulateColumn(ActiveSheet, "Asset Location.Full Location", sTemp)
     
-    Ensure_Column ("Event.Workpack")
+    Call EnsureColumn(ActiveSheet, "Event.Workpack")
     oColumnNames.Select
-    sTemp = Lookup("Original", "Event.Workpack", "Default Value")
+    sTemp = LookupColumnValue(ActiveSheet, "Original", "Event.Workpack", "Default Value")
     oPLProfile.Select
-    Call PopulateColumn("Event.Workpack", sTemp)
+    Call PopulateColumn(ActiveSheet, "Event.Workpack", sTemp)
     
-    Ensure_Column ("Event.Survey Set")
+    Call EnsureColumn(ActiveSheet, "Event.Survey Set")
     oColumnNames.Select
-    sTemp = Lookup("Original", "Survey Data.Survey Set", "Default Value")
+    sTemp = LookupColumnValue(ActiveSheet, "Original", "Survey Data.Survey Set", "Default Value")
     If sTemp = "" Then
-        sTemp = Lookup("Original", "Event.Survey Set", "Default Value")
+        sTemp = LookupColumnValue(ActiveSheet, "Original", "Event.Survey Set", "Default Value")
     End If
     oPLProfile.Select
-    Call PopulateColumn("Event.Survey Set", sTemp)
+    Call PopulateColumn(ActiveSheet, "Event.Survey Set", sTemp)
     
-    Ensure_Column ("Event.Event Type")
-    Call PopulateColumn("Event.Event Type", "PL - Profile")
+    Call EnsureColumn(ActiveSheet, "Event.Event Type")
+    Call PopulateColumn(ActiveSheet, "Event.Event Type", "PL - Profile")
 
-    Call Move_Column("Event.Workpack", 1)
-    Call Move_Column("Event.Event Type", 2)
-    Call Move_Column("Asset Location.Full Location", 3)
-    Call Move_Column("Event.Survey Set", 4)
-    Call Move_Column("Event.Start Clock", 5)
-    Call Move_Column("Event.End Clock", 6)
-    Call Move_Column("PL - Profile.Top of Pipe", 7)
-    Call Move_Column("PL - Profile.Bottom of Pipe", 8)
-    Call Move_Column("PL - Profile.Left Seabed", 9)
-    Call Move_Column("PL - Profile.Right Seabed", 10)
+    Call MoveColumn(ActiveSheet, "Event.Workpack", 1)
+    Call MoveColumn(ActiveSheet, "Event.Event Type", 2)
+    Call MoveColumn(ActiveSheet, "Asset Location.Full Location", 3)
+    Call MoveColumn(ActiveSheet, "Event.Survey Set", 4)
+    Call MoveColumn(ActiveSheet, "Event.Start Clock", 5)
+    Call MoveColumn(ActiveSheet, "Event.End Clock", 6)
+    Call MoveColumn(ActiveSheet, "PL - Profile.Top of Pipe", 7)
+    Call MoveColumn(ActiveSheet, "PL - Profile.Bottom of Pipe", 8)
+    Call MoveColumn(ActiveSheet, "PL - Profile.Left Seabed", 9)
+    Call MoveColumn(ActiveSheet, "PL - Profile.Right Seabed", 10)
     
-    Call Delete_Column("Easting")
-    Call Delete_Column("Northing")
-    Call Delete_Column("Kp")
-    Call Delete_Column("Dol")
-    Call Delete_Column("Heading")
-    Call Delete_Column("Pitch")
-    Call Delete_Column("Roll")
-    Call Delete_Column("CP Reading")
-    Call Delete_Column("Temperature")
-    Call Delete_Column("Salinity")
-    Call Delete_Column("Velocity")
-    Call Delete_Column("Depth")
-    Call Delete_Column("LSH")
-    Call Delete_Column("RSH")
-    Call Delete_Column("DVLDist")
+    Call DeleteColumn(ActiveSheet, "Easting")
+    Call DeleteColumn(ActiveSheet, "Northing")
+    Call DeleteColumn(ActiveSheet, "Kp")
+    Call DeleteColumn(ActiveSheet, "Dol")
+    Call DeleteColumn(ActiveSheet, "Heading")
+    Call DeleteColumn(ActiveSheet, "Pitch")
+    Call DeleteColumn(ActiveSheet, "Roll")
+    Call DeleteColumn(ActiveSheet, "CP Reading")
+    Call DeleteColumn(ActiveSheet, "Temperature")
+    Call DeleteColumn(ActiveSheet, "Salinity")
+    Call DeleteColumn(ActiveSheet, "Velocity")
+    Call DeleteColumn(ActiveSheet, "Depth")
+    Call DeleteColumn(ActiveSheet, "LSH")
+    Call DeleteColumn(ActiveSheet, "RSH")
+    Call DeleteColumn(ActiveSheet, "DVLDist")
     
-    Call Delete_Column("Survey - Standard.Easting")
-    Call Delete_Column("Survey - Standard.Northing")
-    Call Delete_Column("Survey - Pipeline.KP")
-    Call Delete_Column("Survey - Pipeline.Offset")
-    Call Delete_Column("Other Fields.Heading")
-    Call Delete_Column("Other Fields.Spare1")
-    Call Delete_Column("Other Fields.Spare2")
-    Call Delete_Column("Other Fields.Spare3")
-    Call Delete_Column("Other Fields.Spare4")
-    Call Delete_Column("Other Fields.Temperature")
-    Call Delete_Column("Survey - Standard.Depth")
-    Call Delete_Column("Survey - Standard.Elevation")
-    Call Delete_Column("Survey - Pipeline.Distance")
-    Call Delete_Column("Survey Data.Survey Set")
+    Call DeleteColumn(ActiveSheet, "Survey - Standard.Easting")
+    Call DeleteColumn(ActiveSheet, "Survey - Standard.Northing")
+    Call DeleteColumn(ActiveSheet, "Survey - Pipeline.KP")
+    Call DeleteColumn(ActiveSheet, "Survey - Pipeline.Offset")
+    Call DeleteColumn(ActiveSheet, "Other Fields.Heading")
+    Call DeleteColumn(ActiveSheet, "Other Fields.Spare1")
+    Call DeleteColumn(ActiveSheet, "Other Fields.Spare2")
+    Call DeleteColumn(ActiveSheet, "Other Fields.Spare3")
+    Call DeleteColumn(ActiveSheet, "Other Fields.Spare4")
+    Call DeleteColumn(ActiveSheet, "Other Fields.Temperature")
+    Call DeleteColumn(ActiveSheet, "Survey - Standard.Depth")
+    Call DeleteColumn(ActiveSheet, "Survey - Standard.Elevation")
+    Call DeleteColumn(ActiveSheet, "Survey - Pipeline.Distance")
+    Call DeleteColumn(ActiveSheet, "Survey Data.Survey Set")
     
     EnforcePipelineDepthPolarity (False)
     BasicTidyAndFormatColumns

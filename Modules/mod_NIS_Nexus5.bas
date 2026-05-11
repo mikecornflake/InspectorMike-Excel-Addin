@@ -6,7 +6,7 @@ Dim FMultimedia As Worksheet
 Dim FmmFilenameCol As Long, FmmNewFilenameCol As Long, FmmFolderCol As Long
 
 
-Sub Nexus5_Build_Full_Name()
+Public Sub Nexus5_Build_Full_Name()
 ' Attribute Build_Full_Name.VB_Description = "Macro recorded 31/05/2007 by hutchida"
     Dim iLastRow As Integer
     Dim iLastColumn As Integer
@@ -14,7 +14,7 @@ Sub Nexus5_Build_Full_Name()
     Dim sFormula As String
     
     ' Find the last Component.Location Column
-    iCol = FindColumn("Workpack.Name") - 2
+    iCol = FindColumn(ActiveSheet, "Workpack.Name") - 2
     
     ' Delete the Nexen / Buzzard Columns
     ' Columns("A:B").Select
@@ -96,7 +96,7 @@ Public Sub Nexus5_Tidy_Event_Export()
         Sheets(iSheet).Select
         
         If Sheets(iSheet).Name <> "Multimedia" Then
-            If FindColumn("Component.Location") > 0 Then
+            If FindColumn(ActiveSheet, "Component.Location") > 0 Then
                 ActiveSheet.Tab.ColorIndex = 43
                 
                 Remove_Formatting
@@ -106,7 +106,7 @@ Public Sub Nexus5_Tidy_Event_Export()
                 If Sheets(iSheet).Name <> "Findings" Then
                     Nexus5_Build_Full_Name
                 Else
-                    RenameColumn "Component.Location", "Location"
+                    RenameColumn ActiveSheet, "Component.Location", "Location"
                 End If
             
                 Populate_Event_Name
@@ -148,7 +148,7 @@ Private Sub Process_Multimedia()
     End If
     
     Set oCurrent = ActiveWorkbook.ActiveSheet
-    iMediaCol = Find_Column("Event.Multimedia")
+    iMediaCol = FindColumn(ActiveSheet, "Event.Multimedia")
     
     sImagesFolder = Path_GetFileNameNoExt(ActiveWorkbookLocalFilename) & "_Images\"
     sRootFolder = ActiveWorkbookPath & sImagesFolder
@@ -232,9 +232,9 @@ Private Sub Find_Multimedia()
             
             FMultimedia.Select
             
-            FmmFilenameCol = Find_Column("Filename")
-            FmmNewFilenameCol = Find_Column("New_Filename")
-            FmmFolderCol = Find_Column("Recording_Folder")
+            FmmFilenameCol = FindColumn(ActiveSheet, "Filename")
+            FmmNewFilenameCol = FindColumn(ActiveSheet, "New_Filename")
+            FmmFolderCol = FindColumn(ActiveSheet, "Recording_Folder")
         End If
     Next iSheet
 End Sub
@@ -250,7 +250,6 @@ Private Sub Delete_Lookup_Tabs()
     Next iSheet
     Application.DisplayAlerts = True
 End Sub
-
 
 Private Sub Leave_Sheets_Tidy()
     Dim i As Long
@@ -312,10 +311,8 @@ Private Sub Hyperlink_Findings()
         ActiveSheet.Tab.ColorIndex = 22
         
         If Trim(Cells(2, 1).Value) <> "" Then
-            ForceFindExtents
-            
-            iLastFinding = FLastRow
-            iFindingEventCol = FindColumn("Event")
+            iLastFinding = LastUsedRow(ActiveSheet)
+            iFindingEventCol = FindColumn(ActiveSheet, "Event")
             
             For iFinding = 2 To iLastFinding
                 Sheets("Findings").Select
@@ -327,9 +324,7 @@ Private Sub Hyperlink_Findings()
                     Sheets(sEvent).Select
                     ActiveSheet.Tab.ColorIndex = 22
                     
-                    ForceFindExtents
-                    
-                    iEventCol = FindColumn("Event")
+                    iEventCol = FindColumn(ActiveSheet, "Event")
                     
                     If iEventCol <> 0 Then
                         iEvent = FindInColumn(ActiveSheet, iEventCol, sFullEvent)
@@ -381,8 +376,7 @@ Private Sub Tidy_Header()
         i = i + 1
     Wend
     
-    ForceFindExtents
-    Range(Cells(2, 1), Cells(3, FLastColumn)).Select
+    Range(Cells(2, 1), Cells(3, LastUsedColumn(ActiveSheet))).Select
     Selection.Delete Shift:=xlUp
     
     ' Prettify the head row
@@ -408,8 +402,8 @@ Private Sub Populate_Event_Name()
     Dim iLastRow As Long
     Dim i As Long
     
-    iEventName = Find_Column("Event.Name")
-    iEventNumber = Find_Column("Event.Number")
+    iEventName = FindColumn(ActiveSheet, "Event.Name")
+    iEventNumber = FindColumn(ActiveSheet, "Event.Number")
     
     ' Find Last Row
     Range("A1").Select
@@ -434,52 +428,52 @@ Private Sub Tidy_Columns()
     Application.ScreenUpdating = False
     Application.CutCopyMode = False
     
-    While Delete_Column("Component.Location")
+    While DeleteColumn(ActiveSheet, "Component.Location")
     Wend
 
-    Delete_Column ("Workpack.Name")
+    Call DeleteColumn(ActiveSheet, "Workpack.Name")
 
-    Delete_Column ("Event.Number")
-    Delete_Column ("Video Counter.Survey Start")
-    Delete_Column ("Video Counter.Survey End")
+    Call DeleteColumn(ActiveSheet, "Event.Number")
+    Call DeleteColumn(ActiveSheet, "Video Counter.Survey Start")
+    Call DeleteColumn(ActiveSheet, "Video Counter.Survey End")
     
-    'Delete_Column ("Easting.Survey Start")
-    'Delete_Column ("Easting.Survey End")
+    'Call DeleteColumn(ActiveSheet, "Easting.Survey Start")
+    'Call DeleteColumn(ActiveSheet, "Easting.Survey End")
     
-    'Delete_Column ("Northing.Survey Start")
-    'Delete_Column ("Northing.Survey End")
+    'Call DeleteColumn(ActiveSheet, "Northing.Survey Start")
+    'Call DeleteColumn(ActiveSheet, "Northing.Survey End")
     
-    Delete_Column ("Photo?.Survey Start")
-    Delete_Column ("Photo?.Survey End")
+    Call DeleteColumn(ActiveSheet, "Photo?.Survey Start")
+    Call DeleteColumn(ActiveSheet, "Photo?.Survey End")
     
-    Delete_Column ("Spare3.Survey Start")
-    Delete_Column ("Spare4.Survey Start")
-    Delete_Column ("Spare3.Survey End")
-    Delete_Column ("Spare4.Survey End")
+    Call DeleteColumn(ActiveSheet, "Spare3.Survey Start")
+    Call DeleteColumn(ActiveSheet, "Spare4.Survey Start")
+    Call DeleteColumn(ActiveSheet, "Spare3.Survey End")
+    Call DeleteColumn(ActiveSheet, "Spare4.Survey End")
     
-    Rename_Column "Event.Name", "Event"
-    Rename_Column "Event.Comments", "Comments"
-    Rename_Column "Clock.Survey Start", "Start Time"
-    Rename_Column "Clock.Survey End", "End Time"
-    Rename_Column "KP.Survey Start", "Start KP"
-    Rename_Column "KP.Survey End", "End KP"
-    Rename_Column "Easting.Survey Start", "Start Easting"
-    Rename_Column "Easting.Survey End", "End Easting"
-    Rename_Column "Northing.Survey Start", "Start Northing"
-    Rename_Column "Northing.Survey End", "End Northing"
-    Rename_Column "Offset.Survey Start", "Start Offset"
-    Rename_Column "Offset.Survey End", "End Offset"
-    Rename_Column "Depth.Survey Start", "Start Depth"
-    Rename_Column "Depth.Survey End", "End Depth"
-    Rename_Column "Temperature.Survey Start", "Start Temperature"
-    Rename_Column "Temperature.Survey End", "End Temperature"
-    Rename_Column "Heading.Survey Start", "Start Heading"
-    Rename_Column "Heading.Survey End", "End Heading"
+    RenameColumn ActiveSheet, "Event.Name", "Event"
+    RenameColumn ActiveSheet, "Event.Comments", "Comments"
+    RenameColumn ActiveSheet, "Clock.Survey Start", "Start Time"
+    RenameColumn ActiveSheet, "Clock.Survey End", "End Time"
+    RenameColumn ActiveSheet, "KP.Survey Start", "Start KP"
+    RenameColumn ActiveSheet, "KP.Survey End", "End KP"
+    RenameColumn ActiveSheet, "Easting.Survey Start", "Start Easting"
+    RenameColumn ActiveSheet, "Easting.Survey End", "End Easting"
+    RenameColumn ActiveSheet, "Northing.Survey Start", "Start Northing"
+    RenameColumn ActiveSheet, "Northing.Survey End", "End Northing"
+    RenameColumn ActiveSheet, "Offset.Survey Start", "Start Offset"
+    RenameColumn ActiveSheet, "Offset.Survey End", "End Offset"
+    RenameColumn ActiveSheet, "Depth.Survey Start", "Start Depth"
+    RenameColumn ActiveSheet, "Depth.Survey End", "End Depth"
+    RenameColumn ActiveSheet, "Temperature.Survey Start", "Start Temperature"
+    RenameColumn ActiveSheet, "Temperature.Survey End", "End Temperature"
+    RenameColumn ActiveSheet, "Heading.Survey Start", "Start Heading"
+    RenameColumn ActiveSheet, "Heading.Survey End", "End Heading"
     
-    Rename_Column ".", "Images"
-    Rename_Column "Finding.Code", "Code"
-    Rename_Column "Finding.ID", "ID"
-    Rename_Column "Finding.Description", "Finding"
+    RenameColumn ActiveSheet, ".", "Images"
+    RenameColumn ActiveSheet, "Finding.Code", "Code"
+    RenameColumn ActiveSheet, "Finding.ID", "ID"
+    RenameColumn ActiveSheet, "Finding.Description", "Finding"
     
     ' Find last row
     If Trim(Cells(2, 1).Value) <> "" Then
@@ -506,7 +500,7 @@ Private Sub Tidy_Columns()
         Next iCol
         
         ' Delete End Time if it's not valid
-        iCol = Find_Column("End Time")
+        iCol = FindColumn(ActiveSheet, "End Time")
         If iCol <> -1 Then
             bEmpty = True
             

@@ -155,13 +155,13 @@ Private Sub BuildControls()
 
     Set wsFields = ActiveWorkbook.Worksheets(SHEET_FIELDS)
 
-    colFormID = FindColumnInSheet(wsFields, "FormID")
-    colDisplayOrder = FindColumnInSheet(wsFields, "DisplayOrder")
-    colFieldName = FindColumnInSheet(wsFields, "FieldName")
-    colLabel = FindColumnInSheet(wsFields, "Label")
-    colControlType = FindColumnInSheet(wsFields, "ControlType")
-    colDataType = FindColumnInSheet(wsFields, "DataType")
-    colListID = FindColumnInSheet(wsFields, "ListID")
+    colFormID = FindColumn(wsFields, "FormID")
+    colDisplayOrder = FindColumn(wsFields, "DisplayOrder")
+    colFieldName = FindColumn(wsFields, "FieldName")
+    colLabel = FindColumn(wsFields, "Label")
+    colControlType = FindColumn(wsFields, "ControlType")
+    colDataType = FindColumn(wsFields, "DataType")
+    colListID = FindColumn(wsFields, "ListID")
     
     If (colFormID <= 0) Or _
        (colDisplayOrder <= 0) Or _
@@ -304,9 +304,9 @@ Private Sub PopulateAllLists()
     
     Set wsFields = ActiveWorkbook.Worksheets(SHEET_FIELDS)
     
-    colFormID = FindColumnInSheet(wsFields, "FormID")
-    colFieldName = FindColumnInSheet(wsFields, "FieldName")
-    colControlType = FindColumnInSheet(wsFields, "ControlType")
+    colFormID = FindColumn(wsFields, "FormID")
+    colFieldName = FindColumn(wsFields, "FieldName")
+    colControlType = FindColumn(wsFields, "ControlType")
     
     If (colFormID <= 0) Or (colFieldName <= 0) Or (colControlType <= 0) Then Exit Sub
     
@@ -357,10 +357,10 @@ Private Sub PopulateListForField(ByVal pFieldName As String, ByVal pPreserveValu
     
     Set wsFields = ActiveWorkbook.Worksheets(SHEET_FIELDS)
     
-    colFormID = FindColumnInSheet(wsFields, "FormID")
-    colFieldName = FindColumnInSheet(wsFields, "FieldName")
-    colControlType = FindColumnInSheet(wsFields, "ControlType")
-    colListID = FindColumnInSheet(wsFields, "ListID")
+    colFormID = FindColumn(wsFields, "FormID")
+    colFieldName = FindColumn(wsFields, "FieldName")
+    colControlType = FindColumn(wsFields, "ControlType")
+    colListID = FindColumn(wsFields, "ListID")
     
     If (colFormID <= 0) Or (colFieldName <= 0) Or (colControlType <= 0) Or (colListID <= 0) Then Exit Sub
     
@@ -438,11 +438,11 @@ Public Sub RefreshChildLists(ByVal pParentFieldName As String)
     
     Set wsFields = ActiveWorkbook.Worksheets(SHEET_FIELDS)
     
-    colFormID = FindColumnInSheet(wsFields, "FormID")
-    colFieldName = FindColumnInSheet(wsFields, "FieldName")
-    colControlType = FindColumnInSheet(wsFields, "ControlType")
-    colParentField1 = FindColumnInSheet(wsFields, "ParentField1")
-    colParentField2 = FindColumnInSheet(wsFields, "ParentField2")
+    colFormID = FindColumn(wsFields, "FormID")
+    colFieldName = FindColumn(wsFields, "FieldName")
+    colControlType = FindColumn(wsFields, "ControlType")
+    colParentField1 = FindColumn(wsFields, "ParentField1")
+    colParentField2 = FindColumn(wsFields, "ParentField2")
     
     If (colFormID <= 0) Or (colFieldName <= 0) Or (colControlType <= 0) Then Exit Sub
     
@@ -517,10 +517,10 @@ Private Sub LoadRowValues(ByVal pLoadDependentFields As Boolean)
     Set wsTarget = ActiveWorkbook.Worksheets(sTargetSheet)
     Set wsFields = ActiveWorkbook.Worksheets(SHEET_FIELDS)
     
-    colFormID = FindColumnInSheet(wsFields, "FormID")
-    colFieldName = FindColumnInSheet(wsFields, "FieldName")
-    colParentField1 = FindColumnInSheet(wsFields, "ParentField1")
-    colParentField2 = FindColumnInSheet(wsFields, "ParentField2")
+    colFormID = FindColumn(wsFields, "FormID")
+    colFieldName = FindColumn(wsFields, "FieldName")
+    colParentField1 = FindColumn(wsFields, "ParentField1")
+    colParentField2 = FindColumn(wsFields, "ParentField2")
     
     If (colFormID <= 0) Or (colFieldName <= 0) Then Exit Sub
     
@@ -544,7 +544,7 @@ Private Sub LoadRowValues(ByVal pLoadDependentFields As Boolean)
                     sControlName = CStr(mControlMap(sFieldName))
                     Set ctl = fraHost.Controls(sControlName)
                     
-                    lCol = FindColumnInSheet(wsTarget, sFieldName)
+                    lCol = FindColumn(wsTarget, sFieldName)
                     If lCol > 0 Then
                         vValue = wsTarget.Cells(mActiveRow, lCol).Value
                         Control_SetValue ctl, vValue
@@ -613,17 +613,17 @@ Private Function GetListValues(ByVal pListID As String) As Collection
     
     Set wsLists = ActiveWorkbook.Worksheets(SHEET_LISTS)
     
-    colListID = FindColumnInSheet(wsLists, "ListID")
-    colSourceSheet = FindColumnInSheet(wsLists, "SourceSheet")
-    colValueField = FindColumnInSheet(wsLists, "ValueField")
-    colFilterField1 = FindColumnInSheet(wsLists, "FilterField1")
-    colFilterParentField1 = FindColumnInSheet(wsLists, "FilterParentField1")
-    colFilterField2 = FindColumnInSheet(wsLists, "FilterField2")
-    colFilterParentField2 = FindColumnInSheet(wsLists, "FilterParentField2")
-    colFilterField3 = FindColumnInSheet(wsLists, "FilterField3")
-    colFilterParentField3 = FindColumnInSheet(wsLists, "FilterParentField3")
-    colDistinctValues = FindColumnInSheet(wsLists, "DistinctValues")
-    colSortValues = FindColumnInSheet(wsLists, "SortValues")
+    colListID = FindColumn(wsLists, "ListID")
+    colSourceSheet = FindColumn(wsLists, "SourceSheet")
+    colValueField = FindColumn(wsLists, "ValueField")
+    colFilterField1 = FindColumn(wsLists, "FilterField1")
+    colFilterParentField1 = FindColumn(wsLists, "FilterParentField1")
+    colFilterField2 = FindColumn(wsLists, "FilterField2")
+    colFilterParentField2 = FindColumn(wsLists, "FilterParentField2")
+    colFilterField3 = FindColumn(wsLists, "FilterField3")
+    colFilterParentField3 = FindColumn(wsLists, "FilterParentField3")
+    colDistinctValues = FindColumn(wsLists, "DistinctValues")
+    colSortValues = FindColumn(wsLists, "SortValues")
     
     If (colListID <= 0) Or (colSourceSheet <= 0) Or (colValueField <= 0) Then
         Set GetListValues = Nothing
@@ -670,14 +670,14 @@ Private Function GetListValues(ByVal pListID As String) As Collection
     
     Set wsSource = ActiveWorkbook.Worksheets(sSourceSheet)
     
-    srcColValue = FindColumnInSheet(wsSource, sValueField)
+    srcColValue = FindColumn(wsSource, sValueField)
     If srcColValue <= 0 Then
         Set GetListValues = Nothing
         Exit Function
     End If
     
     If Len(sFilterField1) > 0 Then
-        srcColFilter1 = FindColumnInSheet(wsSource, sFilterField1)
+        srcColFilter1 = FindColumn(wsSource, sFilterField1)
         If srcColFilter1 <= 0 Then
             Set GetListValues = Nothing
             Exit Function
@@ -685,7 +685,7 @@ Private Function GetListValues(ByVal pListID As String) As Collection
     End If
     
     If Len(sFilterField2) > 0 Then
-        srcColFilter2 = FindColumnInSheet(wsSource, sFilterField2)
+        srcColFilter2 = FindColumn(wsSource, sFilterField2)
         If srcColFilter2 <= 0 Then
             Set GetListValues = Nothing
             Exit Function
@@ -693,7 +693,7 @@ Private Function GetListValues(ByVal pListID As String) As Collection
     End If
     
     If Len(sFilterField3) > 0 Then
-        srcColFilter3 = FindColumnInSheet(wsSource, sFilterField3)
+        srcColFilter3 = FindColumn(wsSource, sFilterField3)
         If srcColFilter3 <= 0 Then
             Set GetListValues = Nothing
             Exit Function
@@ -935,7 +935,7 @@ Private Sub WriteFormValuesToSheet(ByVal pWS As Worksheet, ByVal pTargetRow As L
         sControlName = CStr(mControlMap(vFieldName))
         Set ctl = fraHost.Controls(sControlName)
         
-        lCol = FindColumnInSheet(pWS, CStr(vFieldName))
+        lCol = FindColumn(pWS, CStr(vFieldName))
         
         If lCol <= 0 Then
             MsgBox "Target sheet '" & pWS.Name & "' is missing column '" & CStr(vFieldName) & "'.", vbExclamation, "xlEventing"

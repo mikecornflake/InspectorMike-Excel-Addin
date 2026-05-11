@@ -242,21 +242,19 @@ Private Sub Find_MissingFiles()
     
     Dim sWorkpack As String, sInstallation As String
     
-    ForceFindExtents
+    iFirstFileCol = FindFirstColumn(ActiveSheet, Array("First_File", "First File"))
+    iOrigFirstFile = FindColumn(ActiveSheet, "Orig First File")
+    If iOrigFirstFile = -1 Then iOrigFirstFile = InsertColumn(ActiveSheet, "Orig First File", iFirstFileCol)
+    iFirstFileCol = FindFirstColumn(ActiveSheet, Array("First_File", "First File"))
+    iLastFileCol = FindFirstColumn(ActiveSheet, Array("Last_File", "Last File"))
     
-    iFirstFileCol = FindFirstColumn(Array("First_File", "First File"))
-    iOrigFirstFile = Find_Column("Orig First File")
-    If iOrigFirstFile = -1 Then iOrigFirstFile = Insert_Column("Orig First File", iFirstFileCol)
-    iFirstFileCol = FindFirstColumn(Array("First_File", "First File"))
-    iLastFileCol = FindFirstColumn(Array("Last_File", "Last File"))
-    
-    iFolderCol = Find_Column("Folder")
-    iWorkpackCol = Find_Column("Workpack")
-    iInstallationCol = Find_Column("Installation")
+    iFolderCol = FindColumn(ActiveSheet, "Folder")
+    iWorkpackCol = FindColumn(ActiveSheet, "Workpack")
+    iInstallationCol = FindColumn(ActiveSheet, "Installation")
     
     sFilesFolder = ""
     
-    For iRow = 2 To FLastRow
+    For iRow = 2 To LastUsedRow(ActiveSheet)
         Cells(iRow, 1).Select
         
         If iFolderCol > 0 Then

@@ -2,6 +2,10 @@ Attribute VB_Name = "libGantt"
 Option Explicit
 Option Private Module
 
+'
+' Definitely a TODO project....
+'
+
 Public Sub SetGanttColor()
     Dim iRow As Long
     Dim iStartCol As Long
@@ -9,12 +13,10 @@ Public Sub SetGanttColor()
     Dim iColorCol As Long
     Dim iLabelCol As Long
     
-    ForceFindExtents
-    
-    iStartCol = Find_Column("Start")
-    iDurationCol = Find_Column("Duration")
-    iColorCol = Find_Column("Colour")
-    iLabelCol = Find_Column("Label")
+    iStartCol = FindColumn(ActiveSheet, "Start")
+    iDurationCol = FindColumn(ActiveSheet, "Duration")
+    iColorCol = FindColumn(ActiveSheet, "Colour")
+    iLabelCol = FindColumn(ActiveSheet, "Label")
     
     If (iStartCol = -1) Or (iDurationCol = -1) Or (iColorCol = -1) Or (iLabelCol = -1) Then
         MsgBox ("One or more missing Columns.  Need: START, DURATION, COLOUR & LABEL")
@@ -25,7 +27,7 @@ Public Sub SetGanttColor()
     ActiveSheet.ChartObjects("Gantt").Activate
     ActiveChart.FullSeriesCollection(2).Select
     
-    For iRow = 2 To FLastRow
+    For iRow = 2 To LastUsedRow(ActiveSheet)
         ActiveChart.FullSeriesCollection(1).Points(iRow - 1).Select
         With Selection.Format.Fill
             .Visible = msoFalse

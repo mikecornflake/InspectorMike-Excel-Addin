@@ -55,7 +55,7 @@ Public Sub ShowXlEventingForm_EditOrAppendFromActiveSheet()
                 Exit Sub
             End If
             
-            If IsWorksheetRowPopulated(ws, lRow) Then
+            If IsRowPopulated(ws, lRow) Then
                 ShowXlEventingForm sFormID, lRow
             Else
                 ShowXlEventingForm sFormID, -1
@@ -100,8 +100,8 @@ Public Function GetFormTypeForForm(ByVal pFormID As String) As String
     
     Set wsForms = ActiveWorkbook.Worksheets(SHEET_FORMS)
     
-    colFormID = FindColumnInSheet(wsForms, "FormID")
-    colType = FindColumnInSheet(wsForms, "Type")
+    colFormID = FindColumn(wsForms, "FormID")
+    colType = FindColumn(wsForms, "Type")
     
     If (colFormID <= 0) Or (colType <= 0) Then Exit Function
     
@@ -162,13 +162,13 @@ Public Sub IntelligentlyInsertDateTime()
     Dim colStartDateTime As Long
     Dim colEndDateTime As Long
     
-    colDate = FindFirstColumn(Array("Date"))
-    colTimeLocal = FindFirstColumn(Array("Time (Local)", "Time"))
-    colStartTime = FindFirstColumn(Array("Start Time (Local)", "Start Time"))
-    colEndTime = FindFirstColumn(Array("End Time (Local)", "End Time"))
-    colDateTime = FindFirstColumn(Array("Date/Time", "Date Time", "Datetime"))
-    colStartDateTime = FindFirstColumn(Array("Start Date/Time", "Start Date Time", "Start Datetime"))
-    colEndDateTime = FindFirstColumn(Array("End Date/Time", "End Date Time", "End Datetime"))
+    colDate = FindFirstColumn(ws, Array("Date"))
+    colTimeLocal = FindFirstColumn(ws, Array("Time (Local)", "Time"))
+    colStartTime = FindFirstColumn(ws, Array("Start Time (Local)", "Start Time"))
+    colEndTime = FindFirstColumn(ws, Array("End Time (Local)", "End Time"))
+    colDateTime = FindFirstColumn(ws, Array("Date/Time", "Date Time", "Datetime"))
+    colStartDateTime = FindFirstColumn(ws, Array("Start Date/Time", "Start Date Time", "Start Datetime"))
+    colEndDateTime = FindFirstColumn(ws, Array("End Date/Time", "End Date Time", "End Datetime"))
     
     ' --- Date ---
     If colDate > 0 Then
@@ -253,8 +253,8 @@ Public Function GetTargetSheetForForm(ByVal pFormID As String) As String
     
     Set wsForms = ActiveWorkbook.Worksheets(SHEET_FORMS)
     
-    colFormID = FindColumnInSheet(wsForms, "FormID")
-    colTargetSheet = FindColumnInSheet(wsForms, "TargetSheet")
+    colFormID = FindColumn(wsForms, "FormID")
+    colTargetSheet = FindColumn(wsForms, "TargetSheet")
     
     If (colFormID <= 0) Or (colTargetSheet <= 0) Then Exit Function
     
@@ -336,9 +336,9 @@ Public Sub CreateSheetHeadersFromFields(ByVal pWS As Worksheet, ByVal pFormID As
     
     Set wsFields = ActiveWorkbook.Worksheets(SHEET_FIELDS)
     
-    colFormID = FindColumnInSheet(wsFields, "FormID")
-    colDisplayOrder = FindColumnInSheet(wsFields, "DisplayOrder")
-    colFieldName = FindColumnInSheet(wsFields, "FieldName")
+    colFormID = FindColumn(wsFields, "FormID")
+    colDisplayOrder = FindColumn(wsFields, "DisplayOrder")
+    colFieldName = FindColumn(wsFields, "FieldName")
     
     If (colFormID <= 0) Or (colDisplayOrder <= 0) Or (colFieldName <= 0) Then
         MsgBox "xe.fields is missing required columns.", vbExclamation, "xlEventing"
@@ -400,8 +400,8 @@ Public Function GetFormIDForTargetSheet(ByVal pTargetSheet As String) As String
     
     Set wsForms = ActiveWorkbook.Worksheets(SHEET_FORMS)
     
-    colFormID = FindColumnInSheet(wsForms, "FormID")
-    colTargetSheet = FindColumnInSheet(wsForms, "TargetSheet")
+    colFormID = FindColumn(wsForms, "FormID")
+    colTargetSheet = FindColumn(wsForms, "TargetSheet")
     
     If (colFormID <= 0) Or (colTargetSheet <= 0) Then Exit Function
     

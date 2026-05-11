@@ -274,8 +274,8 @@ Private Sub Validate_TargetSheets()
     
     Set wsForms = ActiveWorkbook.Worksheets("xe.forms")
     
-    colFormID = FindColumnInSheet(wsForms, "FormID")
-    colTargetSheet = FindColumnInSheet(wsForms, "TargetSheet")
+    colFormID = FindColumn(wsForms, "FormID")
+    colTargetSheet = FindColumn(wsForms, "TargetSheet")
     
     If colFormID <= 0 Or colTargetSheet <= 0 Then Exit Sub
     
@@ -355,12 +355,12 @@ Public Sub ValidateXEFieldsAgainstTargetSheets()
     Set wsFields = ActiveWorkbook.Worksheets(SHEET_FIELDS)
     Set wsForms = ActiveWorkbook.Worksheets(SHEET_FORMS)
 
-    colFormID = FindColumnInSheet(wsForms, "FormID")
-    colTargetSheet = FindColumnInSheet(wsForms, "TargetSheet")
+    colFormID = FindColumn(wsForms, "FormID")
+    colTargetSheet = FindColumn(wsForms, "TargetSheet")
 
-    colFieldFormID = FindColumnInSheet(wsFields, "FormID")
-    colFieldName = FindColumnInSheet(wsFields, "FieldName")
-    colDisplayOrder = FindColumnInSheet(wsFields, "DisplayOrder")
+    colFieldFormID = FindColumn(wsFields, "FormID")
+    colFieldName = FindColumn(wsFields, "FieldName")
+    colDisplayOrder = FindColumn(wsFields, "DisplayOrder")
 
     If (colFormID <= 0) Or (colTargetSheet <= 0) Or _
        (colFieldFormID <= 0) Or (colFieldName <= 0) Or (colDisplayOrder <= 0) Then
@@ -619,7 +619,7 @@ Private Sub RebuildTargetColumns( _
 
     For Each vItem In pFinalFields
         sFieldName = CStr(vItem)
-        srcCol = FindColumnInSheet(pWS, sFieldName)
+        srcCol = FindColumn(pWS, sFieldName)
 
         If srcCol > 0 Then
             pWS.Columns(srcCol).Copy Destination:=tmpWS.Columns(dstCol)

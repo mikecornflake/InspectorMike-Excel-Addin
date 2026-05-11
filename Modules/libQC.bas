@@ -9,6 +9,7 @@ End Sub
 Public Sub CompareSheets(sSheet1 As String, sSheet2 As String, sQCSheet As String)
     Dim oSheet1 As Worksheet, oSheet2 As Worksheet, oQCSheet As Worksheet
     Dim iMaxRow As Long, iMaxColumn As Long
+    Dim iMaxRow2 As Long, iMaxColumn2 As Long
     
     Set oSheet1 = FindSheet(ActiveWorkbook, sSheet1)
     Set oSheet2 = FindSheet(ActiveWorkbook, sSheet2)
@@ -24,16 +25,13 @@ Public Sub CompareSheets(sSheet1 As String, sSheet2 As String, sQCSheet As Strin
     
     ' Find extents and Copy the header
     oSheet2.Select
-    
-    ForceFindExtents
-    iMaxRow = FLastRow
-    iMaxColumn = FLastColumn
+    Call FindTableExtents(oSheet2, iMaxRow2, iMaxColumn2)
     
     oSheet1.Select
+    Call FindTableExtents(oSheet1, iMaxRow, iMaxColumn)
     
-    ForceFindExtents
-    iMaxRow = Math_Max(iMaxRow, FLastRow)
-    iMaxColumn = Math_Max(iMaxColumn, FLastColumn)
+    iMaxRow = Math_Max(iMaxRow, iMaxRow2)
+    iMaxColumn = Math_Max(iMaxColumn, iMaxColumn2)
     
     Rows("1:1").Select
     Selection.Copy
