@@ -32,14 +32,20 @@ Public Sub RunAllTests()
     ActiveTestModule = ""
 
     ' Determine which tests to run
+    ' Library tests
     Call Test_libString
     Call Test_libMath
     Call Test_libArray
-    Call Test_libClipboard
     Call Test_libDate
-    Call Test_libFiles
-    Call Test_libControls
     Call Test_libInterpolation
+    
+    ' File System Tests
+    Call Test_libClipboard
+    Call Test_libFiles
+    
+    ' UI Tests
+    Call Test_libControls
+    Call Test_libTable
 
     ' Report results
     Dim i As Long
@@ -110,15 +116,29 @@ Public Sub AssertRaises( _
 End Sub
 
 Public Function CreateTestSheet(sheetName As String) As Worksheet
-    Set CreateTestSheet = ThisWorkbook.Sheets.Add
-    CreateTestSheet.Name = sheetName
-    CreateTestSheet.Activate
+    Dim oSheet As Worksheet
+    Dim sName As String
+    
+    sName = Left$("test_" & sheetName, 31)
+    
+    Set oSheet = FindSheet(ThisWorkbook, sName)
+    
+    If oSheet Is Nothing Then
+        Set CreateTestSheet = ThisWorkbook.Sheets.Add
+        CreateTestSheet.Name = sName
+        CreateTestSheet.Activate
+    Else
+        Set CreateTestSheet = oSheet
+    End If
 End Function
 
 Public Sub DeleteTestSheet(sheetName As String)
+    Dim sName As String
+    sName = Left$("test_" & sheetName, 31)
+    
     On Error Resume Next
     Application.DisplayAlerts = False
-    ThisWorkbook.Sheets(sheetName).Delete
+    ThisWorkbook.Sheets(sName).Delete
     Application.DisplayAlerts = True
     On Error GoTo 0
 End Sub

@@ -97,3 +97,25 @@ Public Function FindSheet(ByVal pWB As Workbook, ByVal pName As String) As Works
     On Error GoTo 0
 End Function
 
+Public Function ValidSheetName(ByVal pName As String) As Boolean
+    Dim vBadChars
+    Dim i As Long
+
+    ValidSheetName = False
+
+    If Len(Trim$(pName)) = 0 Then Exit Function
+    If Len(pName) > 31 Then Exit Function
+
+    vBadChars = Array(":", "\", "/", "?", "*", "[", "]")
+
+    For i = LBound(vBadChars) To UBound(vBadChars)
+        If InStr(pName, vBadChars(i)) > 0 Then Exit Function
+    Next i
+
+    If Left$(pName, 1) = "'" Then Exit Function
+    If Right$(pName, 1) = "'" Then Exit Function
+
+    ValidSheetName = True
+End Function
+
+
