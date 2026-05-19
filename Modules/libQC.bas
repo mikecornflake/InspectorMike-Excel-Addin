@@ -11,12 +11,12 @@ Public Sub CompareSheets(sSheet1 As String, sSheet2 As String, sQCSheet As Strin
     Dim iMaxRow As Long, iMaxColumn As Long
     Dim iMaxRow2 As Long, iMaxColumn2 As Long
     
-    Set oSheet1 = FindSheet(ActiveWorkbook, sSheet1)
-    Set oSheet2 = FindSheet(ActiveWorkbook, sSheet2)
-    Set oQCSheet = FindSheet(ActiveWorkbook, sQCSheet)
+    Set oSheet1 = Worksheet_Find(ActiveWorkbook, sSheet1)
+    Set oSheet2 = Worksheet_Find(ActiveWorkbook, sSheet2)
+    Set oQCSheet = Worksheet_Find(ActiveWorkbook, sQCSheet)
     
     If oQCSheet Is Nothing Then
-        Set oQCSheet = AddSheet(ActiveWorkbook, sQCSheet, oSheet2.Index)
+        Set oQCSheet = Worksheet_Add(ActiveWorkbook, sQCSheet, oSheet2.Index)
     End If
     
     oQCSheet.Select

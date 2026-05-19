@@ -98,7 +98,7 @@ Public Sub FormatIEWorkpackDataSheet()
         End If
     Next oSheet
     
-    Call SortSheetsAlphabetically(ActiveWorkbook)
+    Call Worksheet_SortTabs(ActiveWorkbook)
     
     ActiveWorkbook.Sheets(1).Activate
 End Sub

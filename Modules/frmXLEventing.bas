@@ -147,7 +147,7 @@ Private Sub BuildControls()
     Dim labelWidth As Single
     Dim inputWidth As Single
 
-    If Not WorksheetExists(ActiveWorkbook, SHEET_FIELDS) Then
+    If Not Worksheet_Exists(ActiveWorkbook, SHEET_FIELDS) Then
         MsgBox SHEET_FIELDS & " does not exist. Go speak to Mike.", vbExclamation, "xlEventing"
         Exit Sub
     End If
@@ -297,7 +297,7 @@ Private Sub PopulateAllLists()
     Dim sFieldName As String
     Dim sControlType As String
     
-    If Not WorksheetExists(ActiveWorkbook, SHEET_FIELDS) Then Exit Sub
+    If Not Worksheet_Exists(ActiveWorkbook, SHEET_FIELDS) Then Exit Sub
     
     Set wsFields = ActiveWorkbook.Worksheets(SHEET_FIELDS)
     
@@ -346,7 +346,7 @@ Private Sub PopulateListForField(ByVal pFieldName As String, ByVal pPreserveValu
     Dim vItem As Variant
     Dim oldValue As String
     
-    If Not WorksheetExists(ActiveWorkbook, SHEET_FIELDS) Then Exit Sub
+    If Not Worksheet_Exists(ActiveWorkbook, SHEET_FIELDS) Then Exit Sub
     If mControlMap Is Nothing Then Exit Sub
     If Not mControlMap.Exists(pFieldName) Then Exit Sub
     
@@ -427,7 +427,7 @@ Public Sub RefreshChildLists(ByVal pParentFieldName As String)
     Dim sParentField1 As String
     Dim sParentField2 As String
     
-    If Not WorksheetExists(ActiveWorkbook, SHEET_FIELDS) Then Exit Sub
+    If Not Worksheet_Exists(ActiveWorkbook, SHEET_FIELDS) Then Exit Sub
     
     Set wsFields = ActiveWorkbook.Worksheets(SHEET_FIELDS)
     
@@ -495,12 +495,12 @@ Private Sub LoadRowValues(ByVal pLoadDependentFields As Boolean)
         Exit Sub
     End If
     
-    If Not WorksheetExists(ActiveWorkbook, sTargetSheet) Then
+    If Not Worksheet_Exists(ActiveWorkbook, sTargetSheet) Then
         MsgBox "Target sheet '" & sTargetSheet & "' does not exist.", vbExclamation, "xlEventing"
         Exit Sub
     End If
     
-    If Not WorksheetExists(ActiveWorkbook, SHEET_FIELDS) Then
+    If Not Worksheet_Exists(ActiveWorkbook, SHEET_FIELDS) Then
         MsgBox "xe.fields does not exist.", vbExclamation, "xlEventing"
         Exit Sub
     End If
@@ -595,7 +595,7 @@ Private Function GetListValues(ByVal pListID As String) As Collection
     Dim outValues As Collection
     Dim dictDistinct As Object
     
-    If Not WorksheetExists(ActiveWorkbook, SHEET_LISTS) Then
+    If Not Worksheet_Exists(ActiveWorkbook, SHEET_LISTS) Then
         Set GetListValues = Nothing
         Exit Function
     End If
@@ -652,7 +652,7 @@ Private Function GetListValues(ByVal pListID As String) As Collection
         Exit Function
     End If
     
-    If Not WorksheetExists(ActiveWorkbook, sSourceSheet) Then
+    If Not Worksheet_Exists(ActiveWorkbook, sSourceSheet) Then
         Set GetListValues = Nothing
         Exit Function
     End If

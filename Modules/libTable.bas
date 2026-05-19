@@ -23,7 +23,7 @@ Public Sub BasicTidy(ByVal pWS As Worksheet, Optional ByVal pUseFilter As Boolea
         End If
     End If
     
-    FreezeTopRow pWS
+    Worksheet_FreezeTopRow pWS
     
     lastCol = LastUsedColumn(pWS)
     If lastCol > 0 Then

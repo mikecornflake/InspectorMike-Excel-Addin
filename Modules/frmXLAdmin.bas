@@ -127,7 +127,7 @@ End Sub
 Private Sub Validate_xe_forms()
     Dim ws As Worksheet
     
-    If Not WorksheetExists(ActiveWorkbook, "xe.forms") Then
+    If Not Worksheet_Exists(ActiveWorkbook, "xe.forms") Then
         Log "xe.forms tabsheet not found - creating and populating with default data"
         
         Set ws = ActiveWorkbook.Worksheets.Add
@@ -170,7 +170,7 @@ End Sub
 Private Sub Validate_xe_fields()
     Dim ws As Worksheet
     
-    If Not WorksheetExists(ActiveWorkbook, SHEET_FIELDS) Then
+    If Not Worksheet_Exists(ActiveWorkbook, SHEET_FIELDS) Then
         Log "xe.fields tabsheet not found - creating and populating with default data"
         
         Set ws = ActiveWorkbook.Worksheets.Add
@@ -223,7 +223,7 @@ End Sub
 Private Sub Validate_xe_lists()
     Dim ws As Worksheet
     
-    If Not WorksheetExists(ActiveWorkbook, SHEET_LISTS) Then
+    If Not Worksheet_Exists(ActiveWorkbook, SHEET_LISTS) Then
         Log "xe.lists tabsheet not found - creating and populating with default data"
         
         Set ws = ActiveWorkbook.Worksheets.Add
@@ -270,7 +270,7 @@ Private Sub Validate_TargetSheets()
     Dim colFormID As Long
     Dim colTargetSheet As Long
     
-    If Not WorksheetExists(ActiveWorkbook, SHEET_FORMS) Then Exit Sub
+    If Not Worksheet_Exists(ActiveWorkbook, SHEET_FORMS) Then Exit Sub
     
     Set wsForms = ActiveWorkbook.Worksheets("xe.forms")
     
@@ -289,7 +289,7 @@ Private Sub Validate_TargetSheets()
         sheetName = Trim$(CStr(wsForms.Cells(iRow, colTargetSheet).Value))
         
         If Len(sheetName) > 0 Then
-            If WorksheetExists(ActiveWorkbook, sheetName) Then
+            If Worksheet_Exists(ActiveWorkbook, sheetName) Then
                 Log formID & ": sheet '" & sheetName & "' exists"
                 
                 Dim ws As Worksheet
@@ -334,12 +334,12 @@ Public Sub ValidateXEFieldsAgainstTargetSheets()
     Dim sFieldName As String
     Dim wsTarget As Worksheet
 
-    If Not WorksheetExists(ActiveWorkbook, SHEET_FIELDS) Then
+    If Not Worksheet_Exists(ActiveWorkbook, SHEET_FIELDS) Then
         Log SHEET_FIELDS & " does not exist."
         Exit Sub
     End If
 
-    If Not WorksheetExists(ActiveWorkbook, SHEET_FORMS) Then
+    If Not Worksheet_Exists(ActiveWorkbook, SHEET_FORMS) Then
         Log SHEET_FORMS & " does not exist."
         If Len(SHEET_FORMS) > 0 Then
             If Not ComboBox_Contains(cboMissingTabsheets, SHEET_FORMS) Then
@@ -394,7 +394,7 @@ Public Sub ValidateXEFieldsAgainstTargetSheets()
                 If dictTargets.Exists(LCase$(sFormID)) Then
                     sTargetSheet = CStr(dictTargets(LCase$(sFormID)))
 
-                    If WorksheetExists(ActiveWorkbook, sTargetSheet) Then
+                    If Worksheet_Exists(ActiveWorkbook, sTargetSheet) Then
                         Set wsTarget = ActiveWorkbook.Worksheets(sTargetSheet)
                         ValidateOneXEForm wsFields, wsTarget, sFormID, colFieldFormID, colFieldName, colDisplayOrder
                     Else

@@ -35,7 +35,7 @@ Public Sub Test_libFiles()
     Call AssertEqual("File_SanitizeName - custom replacement", "My_File_Name", File_SanitizeName("My/File:Name", "_"))
 
     ' ActiveWorkbookPath (indirect test)
-    Call AssertTrue("ActiveWorkbookPath ends with slash", Right(ActiveWorkbookPath, 1) = "\")
+    Call AssertTrue("Workbook_ActivePath ends with slash", Right(Workbook_ActivePath, 1) = "\")
 
     ' File_EnsureFolder (integration-style test using %TEMP%)
     Dim tempPath As String

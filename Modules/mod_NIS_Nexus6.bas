@@ -36,13 +36,13 @@ Private Sub DoProcessNexus6EventExport(ALocation As String)
     'Delete unwanted sheets
     For Each oSheet In ActiveWorkbook.Sheets
         If Not oSheet.Visible Then
-            Call DeleteSheet(ActiveWorkbook, oSheet)
+            Call Worksheet_Delete(ActiveWorkbook, oSheet)
         End If
     Next oSheet
     
-    Set oSheet = FindSheet(ActiveWorkbook, "Legend")
+    Set oSheet = Worksheet_Find(ActiveWorkbook, "Legend")
     If Not oSheet Is Nothing Then
-        Call DeleteSheet(ActiveWorkbook, oSheet)
+        Call Worksheet_Delete(ActiveWorkbook, oSheet)
     End If
     
     For Each oSheet In ActiveWorkbook.Sheets
@@ -56,7 +56,7 @@ Private Sub DoProcessNexus6EventExport(ALocation As String)
                 End If
                 
                 If Cells(2, 1).Value = "" Then
-                    Call DeleteSheet(ActiveWorkbook, oSheet)
+                    Call Worksheet_Delete(ActiveWorkbook, oSheet)
                 Else
                     TidyEventSheet (bPipeline)
                 End If
@@ -64,12 +64,12 @@ Private Sub DoProcessNexus6EventExport(ALocation As String)
         End If
     Next oSheet
     
-    Call SortSheetsAlphabetically(ActiveWorkbook)
+    Call Worksheet_SortTabs(ActiveWorkbook)
     
     Populate_Findings_Tab
     
     If Not FMultimedia Is Nothing Then
-        Call DeleteSheet(ActiveWorkbook, FMultimedia)
+        Call Worksheet_Delete(ActiveWorkbook, FMultimedia)
         Set FMultimedia = Nothing
     End If
     
@@ -234,7 +234,7 @@ Private Sub Tidy_Tabs()
         End If
     Next oSheet
     
-    Set oSheet = FindSheet(ActiveWorkbook, "Findings")
+    Set oSheet = Worksheet_Find(ActiveWorkbook, "Findings")
     
     If Not oSheet Is Nothing Then
         oSheet.Tab.ColorIndex = 40
@@ -275,9 +275,9 @@ End Sub
 Private Function Create_Findings_Tab() As Worksheet
     Dim oFindings As Worksheet, oSheet As Worksheet
 
-    Set oFindings = FindSheet(ActiveWorkbook, "Findings")
+    Set oFindings = Worksheet_Find(ActiveWorkbook, "Findings")
     If oFindings Is Nothing Then
-        Set oFindings = AddSheet(ActiveWorkbook, "Findings", 1)
+        Set oFindings = Worksheet_Add(ActiveWorkbook, "Findings", 1)
         
         oFindings.Select
         
@@ -318,7 +318,7 @@ Private Sub Populate_Findings_Tab()
     
     sStatus = ActiveSheet.Name + ". Populating Findings Tab: "
     
-    Set oFindings = FindSheet(ActiveWorkbook, "Findings")
+    Set oFindings = Worksheet_Find(ActiveWorkbook, "Findings")
     If oFindings Is Nothing Then
         Set oFindings = Create_Findings_Tab
     End If
@@ -402,7 +402,7 @@ Private Sub Delete_Events_By_Location(AAllowedLocation As String)
     iMMNameCol = FindColumn(ActiveSheet, "Multimedia.Name")
     iImageCol = FindColumn(ActiveSheet, "Multimedia.Image")
     
-    sFilename = ActiveWorkbookLocalFilename
+    sFilename = Workbook_ActiveLocalFilename
     sImagePath = Path_AddTrailingDelimiter(Path_GetFolder(sFilename)) + Path_AddTrailingDelimiter(Path_GetFileNameNoExt(sFilename) + "_Images")
     
     iAssetCol = FindColumn(ActiveSheet, "Asset Location.Full Location")
@@ -476,7 +476,7 @@ Private Sub Normalise_Event_By_MM()
     iImageCol = FindColumn(ActiveSheet, "Multimedia.Image")
     iFindingCol = FindColumn(ActiveSheet, "Finding.Code")
     
-    sFilename = ActiveWorkbookLocalFilename
+    sFilename = Workbook_ActiveLocalFilename
     
     sImagePath = Path_AddTrailingDelimiter(Path_GetFolder(sFilename)) + Path_AddTrailingDelimiter(Path_GetFileNameNoExt(sFilename) + "_Images")
     
@@ -727,7 +727,7 @@ Private Sub Highlight_Finding()
 End Sub
 
 Private Sub Find_Multimedia()
-    Set FMultimedia = FindSheet(ActiveWorkbook, "Multimedia")
+    Set FMultimedia = Worksheet_Find(ActiveWorkbook, "Multimedia")
     
     If Not FMultimedia Is Nothing Then
         FMultimedia.Select
@@ -767,8 +767,8 @@ Private Sub Reprocess_Multimedia_By_MM_Tab()
         Exit Sub
     End If
     
-    sImagesFolder = Path_GetFileNameNoExt(ActiveWorkbookLocalFilename) & "_Images\"
-    sRootFolder = ActiveWorkbookPath & sImagesFolder
+    sImagesFolder = Path_GetFileNameNoExt(Workbook_ActiveLocalFilename) & "_Images\"
+    sRootFolder = Workbook_ActivePath & sImagesFolder
     
     Application.ScreenUpdating = False
     Application.CutCopyMode = False
@@ -875,24 +875,24 @@ End Sub
 
 
 '
-' The below three routines are preparing the input sheets for Malampaya, and is for specific DOF project
+' The below three routines are preparing the input sheets for Malampaya, and is for a specific DOF project
 ' Keeping them in as I might be called to extend them
 '
 Public Sub PrepareNexusImportFromCurrentSheet()
-    If WorksheetExists(ActiveWorkbook, "Survey Import") Then
+    If Worksheet_Exists(ActiveWorkbook, "Survey Import") Then
         MsgBox "Sheet called 'Survey Import' already exists"
         Exit Sub
     End If
     
     ' Rename this sheet to "Original"
-    If Not WorksheetExists(ActiveWorkbook, "Original") Then
+    If Not Worksheet_Exists(ActiveWorkbook, "Original") Then
         If (ActiveSheet.Name <> "Original") And (ActiveSheet.Name <> "ColumnNames") And (ActiveSheet.Name <> "PL _ Profile") Then
             ActiveSheet.Name = "Original"
         End If
         ActiveSheet.Move Before:=Sheets(1)
     End If
     
-    If Not WorksheetExists(ActiveWorkbook, "ColumnNames") Then
+    If Not Worksheet_Exists(ActiveWorkbook, "ColumnNames") Then
         AddColumnNamesLookup
         
         MsgBox "A sheet called 'ColumnNames' has just been added. " & vbCrLf & _
@@ -901,7 +901,7 @@ Public Sub PrepareNexusImportFromCurrentSheet()
         Exit Sub
     End If
     
-    If WorksheetExists(ActiveWorkbook, "Original") Then
+    If Worksheet_Exists(ActiveWorkbook, "Original") Then
         Sheets("Original").Select
     ElseIf ActiveSheet.Name = "ColumnNames" Then
         MsgBox "Please switch to the Excel worksheet with the original survey values first"
@@ -918,7 +918,7 @@ Public Sub PrepareNexusImportFromCurrentSheet()
     End If
       
     ' First save, this file as .xlsx
-    SaveAsXLSX
+    Workbook_SaveAsXLSX
     
     ActiveSheet.Copy After:=Sheets(1)
     Sheets(2).Select
@@ -937,12 +937,12 @@ Public Sub PrepareNexusImportFromCurrentSheet()
     BasicTidyAndFormatColumns
     
     Sheets("Survey Import").Select
-    ExportCurrentWorkSheetAsCSV
+    Worksheet_ExportCurrentAsCSV
     
     Prepare_PL_Profile_Import
     
     Sheets("PL - Profile").Select
-    ExportCurrentWorkSheetAsCSV
+    Worksheet_ExportCurrentAsCSV
     
     MsgBox "Processing complete:" & vbCrLf & _
            "  - 'Survey Import' exported as CSV," & vbCrLf & _
@@ -1012,7 +1012,7 @@ Public Sub Prepare_PL_Profile_Import()
     Dim oColumnNames As Worksheet
     
     ' This works from the Original Data
-    If WorksheetExists(ActiveWorkbook, "Original") Then
+    If Worksheet_Exists(ActiveWorkbook, "Original") Then
         Sheets("Original").Select
     End If
     

@@ -82,9 +82,9 @@ End Sub
 Public Sub Nexus5_Tidy_Event_Export()
     Dim iSheet As Long
     
-    Call SortSheetsAlphabetically(ActiveWorkbook)
+    Call Worksheet_SortTabs(ActiveWorkbook)
 
-    If WorksheetExists(ActiveWorkbook, "Findings") Then
+    If Worksheet_Exists(ActiveWorkbook, "Findings") Then
         Sheets("Findings").Move Before:=Sheets(1)
     End If
     
@@ -150,8 +150,8 @@ Private Sub Process_Multimedia()
     Set oCurrent = ActiveWorkbook.ActiveSheet
     iMediaCol = FindColumn(ActiveSheet, "Event.Multimedia")
     
-    sImagesFolder = Path_GetFileNameNoExt(ActiveWorkbookLocalFilename) & "_Images\"
-    sRootFolder = ActiveWorkbookPath & sImagesFolder
+    sImagesFolder = Path_GetFileNameNoExt(Workbook_ActiveLocalFilename) & "_Images\"
+    sRootFolder = Workbook_ActivePath & sImagesFolder
     
     If iMediaCol <= 0 Then
         Exit Sub
@@ -306,7 +306,7 @@ Private Sub Hyperlink_Findings()
     Application.ScreenUpdating = False
     Application.CutCopyMode = False
     
-    If WorksheetExists(ActiveWorkbook, "Findings") Then
+    If Worksheet_Exists(ActiveWorkbook, "Findings") Then
         Sheets("Findings").Select
         ActiveSheet.Tab.ColorIndex = 22
         
@@ -320,7 +320,7 @@ Private Sub Hyperlink_Findings()
                 sFullEvent = Cells(iFinding, iFindingEventCol)
                 sEvent = Left(sFullEvent, Text_FindLast(sFullEvent, " ") - 1)
                 
-                If WorksheetExists(ActiveWorkbook, sEvent) Then
+                If Worksheet_Exists(ActiveWorkbook, sEvent) Then
                     Sheets(sEvent).Select
                     ActiveSheet.Tab.ColorIndex = 22
                     

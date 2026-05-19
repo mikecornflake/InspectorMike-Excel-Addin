@@ -46,36 +46,36 @@ End Sub
 
 'Callback for btnExportAsCSV onAction
 Sub Export_CSV_Callback(control As IRibbonControl)
-    ExportCurrentWorkSheetAsCSV
+    Worksheet_ExportCurrentAsCSV
 End Sub
 
 'Callback for btnSaveAsPDF onAction
 Sub SaveAs_PDF_Callback(control As IRibbonControl)
-    SaveAsPDF
+    Worksheet_ExportCurrentAsPDF
 End Sub
 
 Sub Text_TitleCase_Selection_Callback(control As IRibbonControl)
-    Text_TitleCase_Selection
+    Selection_TitleCase
 End Sub
 
 Sub Text_SentenceCase_Selection_Callback(control As IRibbonControl)
-    Text_SentenceCase_Selection
+    Selection_SentenceCase
 End Sub
 
 Sub Text_Upper_Selection_Callback(control As IRibbonControl)
-    Text_Upper_Selection
+    Selection_Uppercase
 End Sub
 
 Sub Text_Lower_Selection_Callback(control As IRibbonControl)
-    Text_Lower_Selection
+    Selection_Lowercase
 End Sub
 
 Sub SaveAndBackup_Callback(control As IRibbonControl)
-    SaveAndBackup
+    Workbook_SaveAndBackup
 End Sub
 
 Sub OriginalSaveAs_Callback(control As IRibbonControl)
-    Application.Dialogs(xlDialogSaveAs).Show
+    Application_Original_Save_As_Dialog
 End Sub
 
 Sub PrepareNexusImportFromCurrentSheet_Callback(control As IRibbonControl)
@@ -87,7 +87,7 @@ Sub CompareSheets_Callback(control As IRibbonControl)
 End Sub
 
 Sub Eventing_Admin_Callback(control As IRibbonControl)
-    Call ShowXLAdminForm
+    ShowXLAdminForm
 End Sub
 
 Sub Eventing_Launch_Callback(control As IRibbonControl)

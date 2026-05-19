@@ -121,7 +121,7 @@ Public Function CreateTestSheet(sheetName As String) As Worksheet
     
     sName = Left$("test_" & sheetName, 31)
     
-    Set oSheet = FindSheet(ThisWorkbook, sName)
+    Set oSheet = Worksheet_Find(ThisWorkbook, sName)
     
     If oSheet Is Nothing Then
         Set CreateTestSheet = ThisWorkbook.Sheets.Add

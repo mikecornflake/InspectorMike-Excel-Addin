@@ -1377,7 +1377,7 @@ Public Sub ProcessVWCoabisExport()
     Cells(2, 1).Select
     
     Application.DisplayAlerts = False
-    ActiveWorkbook.SaveAs filename:=Text_Replace(ActiveWorkbookLocalFilename, ".xlsx", ".xls"), FileFormat:=xlExcel8, Local:=True
+    ActiveWorkbook.SaveAs filename:=Text_Replace(Workbook_ActiveLocalFilename, ".xlsx", ".xls"), FileFormat:=xlExcel8, Local:=True
     ActiveWorkbook.CheckCompatibility = False
     ActiveWorkbook.Save
     Application.DisplayAlerts = True

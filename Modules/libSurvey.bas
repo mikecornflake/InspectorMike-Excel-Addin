@@ -171,11 +171,11 @@ Public Sub AddColumnNamesLookup()
     Dim oSheet As Worksheet
     Dim iRow As Long
     
-    If Not WorksheetExists(ActiveWorkbook, SHEET_COLUMNNAMES) Then
+    If Not Worksheet_Exists(ActiveWorkbook, SHEET_COLUMNNAMES) Then
         ActiveWorkbook.Sheets.Add.Name = SHEET_COLUMNNAMES
     End If
     
-    Set oSheet = FindSheet(ActiveWorkbook, SHEET_COLUMNNAMES)
+    Set oSheet = Worksheet_Find(ActiveWorkbook, SHEET_COLUMNNAMES)
     oSheet.Move After:=Sheets(Sheets.Count)
 
     oSheet.Activate
@@ -233,7 +233,7 @@ Public Sub RenameColumns(AToNew As Boolean)
     Dim iRow As Long
     Dim iCol As Long
 
-    Set oNames = FindSheet(ActiveWorkbook, SHEET_COLUMNNAMES)
+    Set oNames = Worksheet_Find(ActiveWorkbook, SHEET_COLUMNNAMES)
     
     If (IsNull(oNames) Or (oNames Is Nothing)) Then
         MsgBox ("Tabsheet '" & SHEET_COLUMNNAMES & "' not found")

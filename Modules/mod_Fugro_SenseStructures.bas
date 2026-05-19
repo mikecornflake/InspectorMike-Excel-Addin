@@ -83,14 +83,14 @@ Public Sub Fugro_SS_ProcessSheet()
     Call SplitByEventCode
 
     ' Sort sheets alphabetically
-    Call SortSheetsAlphabetically(ActiveWorkbook)
+    Call Worksheet_SortTabs(ActiveWorkbook)
     
     ' Copy all the anomalies into a new sheet
     Application.StatusBar = "Processing anomalies..."
     BuildAnomalySheet
     
     ' Delete existing sheet
-    DeleteSheet ("Original")
+    Worksheet_Delete ("Original")
     
     ' Hyperlink the media
     Dim mediaFolder As String
@@ -407,7 +407,7 @@ Private Sub FormatAllSheets()
     Next ws
 End Sub
 
-Private Sub DeleteSheet(sheetName As String)
+Private Sub Worksheet_Delete(sheetName As String)
     Dim wb As Workbook ' Hack...
     Set wb = ActiveWorkbook
     
@@ -446,7 +446,7 @@ Private Sub BuildAnomalySheet()
     Set wb = ActiveWorkbook
 
     ' Delete existing sheet if it exists
-    DeleteSheet ("Anomaly")
+    Call Worksheet_Delete("Anomaly")
 
     ' Create new Anomaly sheet
     Set wsAnomaly = wb.Sheets.Add(Before:=wb.Sheets(1))

@@ -98,7 +98,7 @@ Public Function GetFormTypeForForm(ByVal pFormID As String) As String
     
     GetFormTypeForForm = ""
     
-    If Not WorksheetExists(ActiveWorkbook, SHEET_FORMS) Then Exit Function
+    If Not Worksheet_Exists(ActiveWorkbook, SHEET_FORMS) Then Exit Function
     
     Set wsForms = ActiveWorkbook.Worksheets(SHEET_FORMS)
     
@@ -251,7 +251,7 @@ Public Function GetTargetSheetForForm(ByVal pFormID As String) As String
     
     GetTargetSheetForForm = ""
     
-    If Not WorksheetExists(ActiveWorkbook, SHEET_FORMS) Then Exit Function
+    If Not Worksheet_Exists(ActiveWorkbook, SHEET_FORMS) Then Exit Function
     
     Set wsForms = ActiveWorkbook.Worksheets(SHEET_FORMS)
     
@@ -275,7 +275,7 @@ End Function
 Public Function EnsureTargetSheetExists(ByVal pSheetName As String, ByVal pFormID As String) As Worksheet
     Dim ws As Worksheet
     
-    If WorksheetExists(ActiveWorkbook, pSheetName) Then
+    If Worksheet_Exists(ActiveWorkbook, pSheetName) Then
         Set ws = ActiveWorkbook.Worksheets(pSheetName)
         
         If ws.Visible <> xlSheetVisible Then
@@ -329,7 +329,7 @@ Public Sub CreateSheetHeadersFromFields(ByVal pWS As Worksheet, ByVal pFormID As
     Dim vItem As Variant
     Dim iCol As Long
     
-    If Not WorksheetExists(ActiveWorkbook, SHEET_FIELDS) Then
+    If Not Worksheet_Exists(ActiveWorkbook, SHEET_FIELDS) Then
         MsgBox "xe.fields not found.", vbExclamation, "xlEventing"
         Exit Sub
     End If
@@ -394,7 +394,7 @@ Public Function GetFormIDForTargetSheet(ByVal pTargetSheet As String) As String
     
     GetFormIDForTargetSheet = ""
     
-    If Not WorksheetExists(ActiveWorkbook, SHEET_FORMS) Then Exit Function
+    If Not Worksheet_Exists(ActiveWorkbook, SHEET_FORMS) Then Exit Function
     
     Set wsForms = ActiveWorkbook.Worksheets(SHEET_FORMS)
     
